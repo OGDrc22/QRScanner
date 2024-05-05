@@ -44,13 +44,13 @@
 
     <TextView
         android:id="@+id/titleTextView"
+        style="@style/TitleStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="QR Scanner"
-        style="@style/TitleStyle"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="42dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/currentActivity"
+        app:layout_constraintStart_toEndOf="@+id/backBtn"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
