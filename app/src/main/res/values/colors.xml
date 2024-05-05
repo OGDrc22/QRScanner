@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="paleBlue">#dde0ed</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black_overlay">#66000000</color>
+
+
+
+
+    <color name="defaultStatus">#D5D7E2</color>
+    <color name="defaultStatusN">#253F4F</color>
+
+    <color name="bgL">#E6E9F6</color>
+    <color name="light1">#EBE9FC</color>
+    <color name="bgD">#15181B</color>
+
+
+    <color name="dark1">#3c4042</color>
+    <color name="dark2">#292936</color>
+    <color name="dark3">#202327</color>
+    <color name="dark4">#616C7F</color>
+
+    <color name="bgD2">#253F4F</color>
+
+    <color name="txtTitleL">#4554AC</color>
+    <color name="txtTitleD">#C9E8F1</color>
+
+    <color name="textL">#0F0E16</color>
+    <color name="textD">#BBB2F2</color>
+
+    <color name="accent">#5C6BC6</color>
+    <color name="primary">#6EDACA</color>
+    <color name="secondary">#ADA8F8</color>
+
+    <color name="cl1">#96d1d7</color>
+    <color name="cl2">#f2e69a</color>
+    <color name="cl3">#efcdd6</color>
+    <color name="cl4">#F2CCAE</color>
+
+</resources>
