@@ -41,7 +41,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
 
     private TextView textViewInfo, textViewNoData, textViewItemCount;
     private CardView cardView_options, cardViewDeleteAll;
-    private ImageView currentActivity, settingsIcon, backBtn;
+    private ImageView currentActivity, currentActivity2, settingsIcon, backBtn;
 
 
 
@@ -112,10 +112,13 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("Expired Devices");
         currentActivity = findViewById(R.id.currentActivity);
+        currentActivity.setVisibility(View.GONE);
+        currentActivity2 = findViewById(R.id.currentActivity2);
+        currentActivity2.setVisibility(View.VISIBLE);
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            currentActivity.setImageResource(R.drawable.expiration_light);
+            currentActivity2.setImageResource(R.drawable.expiration_light);
         } else {
-            currentActivity.setImageResource(R.drawable.expiration);
+            currentActivity2.setImageResource(R.drawable.expiration);
         }
 
         cardViewDeleteAll = findViewById(R.id.cardViewDeleteAll);
