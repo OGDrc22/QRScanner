@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     recyclerView.setVisibility(View.VISIBLE);
-                    mainOption.setVisibility(View.GONE);
+                    mainOption.setVisibility(View.VISIBLE);
                 } else {
                     recyclerView.setVisibility(View.GONE);
                     mainOption.setVisibility(View.VISIBLE);
