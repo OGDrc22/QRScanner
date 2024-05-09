@@ -150,14 +150,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="11dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
 
                 <ImageView
                     android:id="@+id/connector"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/vertical_lines"
+                    android:src="@drawable/ic_vertical_lines"
                     style="@style/sizeICMono"
                     android:layout_marginStart="36dp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -177,7 +175,7 @@
                 <ImageView
                     android:id="@+id/imageView3"
                     style="@style/sizeICMono"
-                    android:src="@drawable/user_6764"
+                    android:src="@drawable/ic_user"
                     app:layout_constraintEnd_toEndOf="@+id/connector"
                     app:layout_constraintStart_toStartOf="@+id/connector"
                     app:layout_constraintTop_toBottomOf="@+id/connector" />
@@ -209,9 +207,7 @@
 
                 <ImageView
                     android:id="@+id/connector2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/vertical_lines"
+                    android:src="@drawable/ic_vertical_lines"
                     style="@style/sizeICMono"
                     app:layout_constraintEnd_toEndOf="@+id/imageView3"
                     app:layout_constraintStart_toStartOf="@+id/imageView3"
@@ -221,16 +217,14 @@
                 <ImageView
                     android:id="@+id/imageViewDep"
                     style="@style/sizeICMono"
-                    android:src="@drawable/ic_departent"
+                    android:src="@drawable/ic_department"
                     app:layout_constraintEnd_toEndOf="@+id/connector2"
                     app:layout_constraintStart_toStartOf="@+id/connector2"
                     app:layout_constraintTop_toBottomOf="@+id/connector2" />
 
                 <ImageView
                     android:id="@+id/connector3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/vertical_lines"
+                    android:src="@drawable/ic_vertical_lines"
                     style="@style/sizeICMono"
                     app:layout_constraintEnd_toEndOf="@+id/imageViewDep"
                     app:layout_constraintStart_toStartOf="@+id/imageViewDep"
@@ -257,23 +251,37 @@
                     app:layout_constraintStart_toStartOf="@+id/at"
                     app:layout_constraintTop_toTopOf="@+id/textDep" />
 
-                <ImageView
-                    android:id="@+id/imageView4"
-                    style="@style/sizeICMono"
-                    android:src="@drawable/device_model"
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="@+id/connector3"
                     app:layout_constraintStart_toStartOf="@+id/connector3"
-                    app:layout_constraintTop_toBottomOf="@+id/connector3" />
+                    app:layout_constraintTop_toBottomOf="@+id/connector3">
+
+                    <ImageView
+                        android:id="@+id/deviceIC"
+                        style="@style/sizeICMono"
+                        android:src="@drawable/device_model"
+                        android:visibility="visible"/>
+
+                    <ImageView
+                        android:id="@+id/deviceIC2"
+                        style="@style/sizeIC"
+                        android:layout_height="22dp"
+                        android:src="@drawable/device_model"
+                        android:visibility="gone" />
+
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/connector4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/vertical_lines"
+                    android:src="@drawable/ic_vertical_lines"
                     style="@style/sizeICMono"
-                    app:layout_constraintEnd_toEndOf="@+id/imageView4"
-                    app:layout_constraintStart_toStartOf="@+id/imageView4"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+                    app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+                    app:layout_constraintStart_toStartOf="@+id/linearLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 
                 <TextView
@@ -283,9 +291,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="Device Model"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-                    app:layout_constraintStart_toEndOf="@+id/imageView4"
-                    app:layout_constraintTop_toTopOf="@+id/imageView4" />
+                    app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+                    app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                    app:layout_constraintTop_toTopOf="@+id/linearLayout" />
 
                 <TextView
                     android:id="@+id/dm"
@@ -297,39 +305,18 @@
                     app:layout_constraintStart_toStartOf="@+id/dep"
                     app:layout_constraintTop_toTopOf="@+id/textDM" />
 
-                <ImageView
-                    android:id="@+id/deviceIC"
-                    style="@style/sizeIC2"
-                    android:layout_marginEnd="16dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/dm"
-                    app:layout_constraintEnd_toStartOf="@+id/device"
-                    app:layout_constraintTop_toTopOf="@+id/dm" />
-
-                <TextView
-                    android:id="@+id/device"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="40dp"
-                    android:hint="Device"
-                    app:layout_constraintBottom_toBottomOf="@+id/dm"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/dm" />
-
 
                 <ImageView
                     android:id="@+id/imageView6"
                     style="@style/sizeICMono"
-                    android:src="@drawable/calendar_11015"
+                    android:src="@drawable/ic_calendar"
                     app:layout_constraintEnd_toEndOf="@+id/connector4"
                     app:layout_constraintStart_toStartOf="@+id/connector4"
                     app:layout_constraintTop_toBottomOf="@+id/connector4" />
 
                 <ImageView
                     android:id="@+id/connector5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/vertical_lines"
+                    android:src="@drawable/ic_vertical_lines"
                     style="@style/sizeICMono"
                     app:layout_constraintEnd_toEndOf="@+id/imageView6"
                     app:layout_constraintStart_toStartOf="@+id/imageView6"
@@ -378,9 +365,7 @@
 
                 <ImageView
                     android:id="@+id/connector6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/vertical_lines"
+                    android:src="@drawable/ic_vertical_lines"
                     style="@style/sizeICMono"
                     app:layout_constraintEnd_toEndOf="@+id/imageView5"
                     app:layout_constraintStart_toStartOf="@+id/imageView5"
@@ -412,16 +397,14 @@
                 <ImageView
                     android:id="@+id/imageView10"
                     style="@style/sizeICMono"
-                    android:src="@drawable/convert_3210"
+                    android:src="@drawable/ic_reload"
                     app:layout_constraintEnd_toEndOf="@+id/connector6"
                     app:layout_constraintStart_toStartOf="@+id/connector6"
                     app:layout_constraintTop_toBottomOf="@+id/connector6" />
 
                 <ImageView
                     android:id="@+id/connector7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/vertical_lines"
+                    android:src="@drawable/ic_vertical_lines"
                     style="@style/sizeICMono"
                     app:layout_constraintEnd_toEndOf="@+id/imageView10"
                     app:layout_constraintStart_toStartOf="@+id/imageView10"

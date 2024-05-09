@@ -25,14 +25,15 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/backBtn"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center_vertical">
 
         <ImageView
             android:id="@+id/currentActivity"
             style="@style/sizeIC2"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="4dp"
+            android:layout_margin="4dp"
             android:src="@drawable/laptop_icon"
             android:visibility="visible"/>
 
@@ -40,7 +41,7 @@
             android:id="@+id/currentActivity2"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="4dp"
+            android:layout_margin="4dp"
             android:src="@drawable/laptop_icon"
             android:visibility="gone" />
 
@@ -57,12 +58,12 @@
     <ImageView
         android:id="@+id/settingsIcon"
         style="@style/sizeIC2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:clickable="true"
         android:focusable="true"
         android:gravity="end"
-        android:padding="4dp"
+        android:padding="8dp"
         android:src="@drawable/gear"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

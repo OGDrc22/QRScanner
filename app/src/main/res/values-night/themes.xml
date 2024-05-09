@@ -237,6 +237,11 @@
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
     </style>
+    <style name="sizeIC2M">
+        <item name="tint">@color/light1</item>
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+    </style>
     <style name="sizeICMono">
         <item name="tint">@color/light1</item>
         <item name="android:layout_width">24dp</item>
@@ -267,6 +272,11 @@
         <item name="android:src">@drawable/user_unknown_light</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
+    </style>
+    <style name="unknownDeviceIC">
+        <item name="android:src">@drawable/ic_unknown_device_light</item>
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
     </style>
 
     <style name="spinner">

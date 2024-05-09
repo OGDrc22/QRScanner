@@ -1,15 +1,11 @@
 package com.example.qrscanner.adapter;
 
-import static android.app.Activity.RESULT_OK;
-import static androidx.core.app.ActivityCompat.startActivityForResult;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -241,19 +237,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         if (String.valueOf(data.getDevice()).equals("Laptop")) {
             holder.deviceIC.setImageResource(R.drawable.laptop_icon);
-            holder.device_id.setText(data.getDevice());
         } else if (String.valueOf(data.getDevice()).equals("Desktop")) {
             holder.deviceIC.setImageResource(R.drawable.pc_computer_6840);
-            holder.device_id.setText(data.getDevice());
         } else if (String.valueOf(data.getDevice()).equals("Phone")) {
             holder.deviceIC.setImageResource(R.drawable.mobile_phone_2635);
-            holder.device_id.setText(data.getDevice());
         } else if (String.valueOf(data.getDevice()).equals("Tablet")) {
-            holder.deviceIC.setImageResource(R.drawable.tablet_698);
-            holder.device_id.setText(data.getDevice());
+            holder.deviceIC.setImageResource(R.drawable.ic_tablet);
         } else {
-            holder.deviceIC.setImageResource(R.drawable.device_model);
-            holder.device_id.setText(data.getDevice());
+            if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
+                holder.deviceIC2.setVisibility(View.VISIBLE);
+                holder.deviceIC2.setImageResource(R.drawable.ic_unknown_device_light);
+                holder.deviceIC.setVisibility(View.GONE);
+            } else {
+                holder.deviceIC2.setVisibility(View.VISIBLE);
+                holder.deviceIC2.setImageResource(R.drawable.ic_unknown_device);
+                holder.deviceIC.setVisibility(View.GONE);
+            }
         }
 
     }
@@ -286,9 +285,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         LinearLayout linearLayout2, linearLayout2Alter;
-        TextView serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
+        TextView serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
         ConstraintLayout otherInfo;
-        ImageView hasUser, leftIndicator, imgScan, expiration, userIndicator, deviceIC;
+        ImageView hasUser, leftIndicator, imgScan, expiration, userIndicator, deviceIC, deviceIC2;
         CardView editBtn, deleteBtn;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -297,8 +296,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             serialNum_id = itemView.findViewById(R.id.sn);
             assignedTo_id = itemView.findViewById(R.id.at);
             department_id = itemView.findViewById(R.id.dep);
-            device_id = itemView.findViewById(R.id.device);
             deviceIC = itemView.findViewById(R.id.deviceIC);
+            deviceIC2 = itemView.findViewById(R.id.deviceIC2);
             deviceModel_id = itemView.findViewById(R.id.dm);
             datePurchased_id = itemView.findViewById(R.id.dp);
             dateExpire_id = itemView.findViewById(R.id.de);

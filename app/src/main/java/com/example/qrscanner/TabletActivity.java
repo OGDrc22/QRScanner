@@ -119,7 +119,7 @@ public class TabletActivity extends AppCompatActivity {
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("Tablets");
         currentActivity = findViewById(R.id.currentActivity);
-        currentActivity.setImageResource(R.drawable.tablet_698);
+        currentActivity.setImageResource(R.drawable.ic_tablet);
 
         cardViewDeleteAll = findViewById(R.id.cardViewDeleteAll);
         cardViewDeleteAll.setOnClickListener(new View.OnClickListener() {

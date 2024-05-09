@@ -140,13 +140,14 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingVertical">32dp</item>
+        <item name="android:paddingVertical">48dp</item>
         <item name="android:layout_gravity">center</item>
     </style>
     <style name="linearlayoutstyle2">
         <item name="android:orientation">horizontal</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingVertical">16dp</item>
         <item name="android:paddingHorizontal">30dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
@@ -240,6 +241,11 @@
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
     </style>
+    <style name="sizeIC2M">
+        <item name="tint">@color/black</item>
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+    </style>
     <style name="sizeICMono">
         <item name="tint">@color/black</item>
         <item name="android:layout_width">24dp</item>
@@ -270,6 +276,11 @@
         <item name="android:src">@drawable/user_unknown</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
+    </style>
+    <style name="unknownDeviceIC">
+        <item name="android:src">@drawable/ic_unknown_device</item>
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
     </style>
 
     <style name="spinner">

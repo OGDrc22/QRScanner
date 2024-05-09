@@ -26,7 +26,7 @@ public class Data {
 
         Gadgets Tablet = new Gadgets();
         Tablet.setGadgetName("Tablet");
-        Tablet.setImage(R.drawable.tablet_698);
+        Tablet.setImage(R.drawable.ic_tablet);
         gadgets.add(Tablet);
 
         Gadgets Desktop = new Gadgets();

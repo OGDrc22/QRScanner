@@ -44,17 +44,16 @@
             android:id="@+id/recyclerViewSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             android:visibility="gone" />
 
 
         <GridLayout
             android:id="@+id/gridLayoutMainOption"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="visible"
             android:columnCount="2"
-            android:rowCount="5"
-            android:visibility="visible">
+            android:rowCount="5">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/addBtn"
@@ -105,7 +104,7 @@
                     <LinearLayout style="@style/linearlayoutstyle2">
 
                         <ImageView
-                            style="@style/sizeIC2"
+                            style="@style/sizeIC2M"
                             android:layout_marginEnd="8dp"
                             android:src="@drawable/ic_import" />
 
@@ -130,7 +129,7 @@
                     <LinearLayout style="@style/linearlayoutstyle2">
 
                         <ImageView
-                            style="@style/sizeIC2"
+                            style="@style/sizeIC2M"
                             android:layout_marginEnd="8dp"
                             android:src="@drawable/ic_export" />
 
@@ -155,9 +154,7 @@
 
                     <ImageView
                         android:id="@+id/imageView"
-                        style="@style/sizeIC2"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        style="@style/sizeIC2M"
                         android:src="@drawable/laptop_icon" />
 
                     <TextView
@@ -181,10 +178,8 @@
 
                     <ImageView
                         android:id="@+id/tabletIc"
-                        style="@style/sizeIC2"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/tablet_698" />
+                        style="@style/sizeIC2M"
+                        android:src="@drawable/ic_tablet" />
 
                     <TextView
                         android:id="@+id/textTablet"
@@ -207,9 +202,7 @@
 
                     <ImageView
                         android:id="@+id/cellphoneIc"
-                        style="@style/sizeIC2"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        style="@style/sizeIC2M"
                         android:src="@drawable/mobile_phone_2635" />
 
                     <TextView
@@ -233,9 +226,7 @@
 
                     <ImageView
                         android:id="@+id/pcIc"
-                        style="@style/sizeIC2"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        style="@style/sizeIC2M"
                         android:layout_marginEnd="4dp"
                         android:src="@drawable/pc_computer_6840" />
 
@@ -260,9 +251,7 @@
                     <ImageView
                         android:id="@+id/uUIC"
                         style="@style/hasUserIC"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="4dp" />
+                        android:layout_margin="4dp" />
 
                     <TextView
                         android:id="@+id/uUText"
@@ -285,9 +274,7 @@
                     <ImageView
                         android:id="@+id/expiredIC"
                         style="@style/expiredIC"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="4dp" />
+                        android:layout_margin="4dp" />
 
                     <TextView
                         android:id="@+id/expiredText"
@@ -309,10 +296,8 @@
 
                     <ImageView
                         android:id="@+id/allIC"
-                        style="@style/sizeIC2"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="4dp"
+                        style="@style/sizeIC2M"
+                        android:layout_margin="4dp"
                         android:src="@drawable/device_model" />
 
                     <TextView
@@ -335,10 +320,8 @@
 
                     <ImageView
                         android:id="@+id/unknownIC"
-                        style="@style/sizeIC2"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/device_model" />
+                        style="@style/unknownDeviceIC"
+                        android:layout_margin="4dp"/>
 
                     <TextView
                         android:id="@+id/unknownText"
