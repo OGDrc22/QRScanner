@@ -38,68 +38,68 @@
 
     <!-- TEXT STYLES -->
     <style name="textStyle1">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
     <style name="textStyle2">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgD</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
     <style name="textStyleBoldConstantColor1">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>
         <item name="android:fontFamily">@font/space_grotesk_bold</item>
     </style>
     <style name="textStyleBoldConstantColor2">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgD</item>
         <item name="android:fontFamily">@font/space_grotesk_bold</item>
     </style>
     <style name="textStyleConstantColor1">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
     <style name="textStyleConstantColor2">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgD</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
     <style name="textStyleCounter">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
     <!-- TEXT STYLES ^^^^^ -->
 
     <style name="btnStyleSave">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
         <item name="android:backgroundTint">@color/primary</item>
     </style>
     <style name="btnStyleCancel">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
         <item name="android:backgroundTint">@color/secondary</item>
     </style>
 
     <style name="deleteBtnStyle">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/light1</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
         <item name="android:backgroundTint">@color/dark2</item>
     </style>
     <style name="editBtnStyle">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/textL</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
         <item name="android:backgroundTint">@color/light1</item>
     </style>
@@ -107,7 +107,7 @@
 
     <style name="cardViewOptions">
         <item name="cardBackgroundColor">@color/dark1</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
 
 
@@ -123,14 +123,14 @@
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/light1</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtnUn">
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark2</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
 
     <style name="linearlayoutstyle">
@@ -145,7 +145,7 @@
         <item name="android:orientation">horizontal</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingVertical">16dp</item>
+        <item name="android:paddingVertical">14dp</item>
         <item name="android:paddingHorizontal">30dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
@@ -171,56 +171,56 @@
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark4</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn2">
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark4</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn3">
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark4</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn4">
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark4</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn5">
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark3</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn6">
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark3</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn7">
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark3</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn8">
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/dark3</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
 
     <!-- ICONS SIZE -->
@@ -253,13 +253,13 @@
     </style>
 
     <style name="cardView_Dialog">
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
         <item name="cardBackgroundColor">@color/dark1</item>
     </style>
 
     <style name="cardViewBtnGeneral">
         <item name="cardBackgroundColor">@color/light1</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">14dp</item>
     </style>
 
     <!---CUSTOM ICONS-->
@@ -280,9 +280,14 @@
     </style>
 
     <style name="spinner">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgD</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
         <item name="android:popupBackground">@drawable/bg_gadgets_options_dark</item>
+    </style>
+
+    <style name="toastNotification">
+        <item name="cardBackgroundColor">@color/dark1</item>
+        <item name="cardCornerRadius">16dp</item>
     </style>
 </resources>
