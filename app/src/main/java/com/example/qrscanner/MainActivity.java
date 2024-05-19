@@ -39,10 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
     private CardView addBtn, laptopBtn, tabletBtn, phoneBtn, pcBtn, allBtn, unknownBtn, importBtn, exportBtn, unknownUserBtn, expiredBtn;
 
+    private CustomToastMethod customToastMethod;
+
     private ImageView settings, currentActivity, backBtn;
     private androidx.appcompat.widget.SearchView searchView;
     private RecyclerView recyclerView;
-//    private ConstraintLayout mainOption;
     private GridLayout mainOption;
     private ItemAdapter adapter;
     private ArrayList<Assigned_to_User_Model> deviceList;
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         applyTheme();
 
         findViewById(R.id.main).bringToFront();
+
+        customToastMethod = new CustomToastMethod(MainActivity.this);
 
         currentActivity = findViewById(R.id.currentActivity);
         currentActivity.setVisibility(View.GONE);
@@ -176,9 +179,7 @@ public class MainActivity extends AppCompatActivity {
         exportBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                CustomToastMethod customToast = new CustomToastMethod(MainActivity.this);
-                customToast.notify(R.layout.toasty, R.drawable.warning_sign, "To be added", null, null, null);
+                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "To be added", null, null, null);
 
             }
         });
@@ -425,16 +426,16 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (!dbHelper.getAllSerialNumbers().contains(String.valueOf(intSerial)) && dbHelper.getAllSerialNumbers().contains(String.valueOf(intSerial))) {
-                    Toast.makeText(this, "Successfully imported some of the data", Toast.LENGTH_SHORT).show();
+                    customToastMethod.notify(R.layout.toasty, R.drawable.check, "Success", "Successfully imported some of the data", null, null);
                 } else {
-                    Toast.makeText(this, "Data imported successfully", Toast.LENGTH_SHORT).show();
+                    customToastMethod.notify(R.layout.toasty, R.drawable.check, "Success", "Data Imported successfully", null, null);
                 }
                 loadDataFromDatabase();
 
             } catch (IOException e) {
                 e.printStackTrace();
                 // Handle any errors that occur during file reading or data insertion
-                Toast.makeText(this, "Error importing data", Toast.LENGTH_SHORT).show();
+                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Failed", "Error Importing the data", null, null);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

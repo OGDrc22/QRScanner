@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     style="@style/ScreenBackground"
-    tools:context=".MainActivity">
+    android:id="@+id/main"
+    tools:context=".ScanQR">
 
     <include
         android:id="@+id/navBar"

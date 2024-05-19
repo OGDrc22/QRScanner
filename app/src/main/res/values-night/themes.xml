@@ -42,11 +42,33 @@
         <item name="android:textColor">@color/bgL</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
+    <style name="textStyle1Bold">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/bgL</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+    </style>
     <style name="textStyle2">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgD</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
+    <style name="textStyle2Bold">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/bgD</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+    </style>
+
+    <style name="textStyle3">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/bgL</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+    </style>
+    <style name="textStyle3Bold">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/bgL</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+    </style>
+
     <style name="textStyleBoldConstantColor1">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>

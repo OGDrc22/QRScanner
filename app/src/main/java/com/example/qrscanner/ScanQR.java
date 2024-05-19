@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.qrscanner.expiration.ExpirationUtility;
+import com.example.qrscanner.methods.CustomToastMethod;
 import com.example.qrscanner.options.Data;
 import com.example.qrscanner.options.Gadgets;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,12 +50,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import android.os.Handler;
 
 
 public class ScanQR extends AppCompatActivity {
 
         private EditText assignedTo, department, deviceModel, datePurchased;
-        private TextView qrText, dateExpired, status, availability, device1;
+        private TextView qrText, dateExpired, status, availability;
+        private CustomToastMethod customToastMethod;
         private Spinner spinner;
         private GadgetsAdapter gadgetsAdapter;
         private Button getBtn;
@@ -116,6 +119,8 @@ public class ScanQR extends AppCompatActivity {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_scan_qr);
+
+            customToastMethod = new CustomToastMethod(ScanQR.this);
 
             assignedTo = findViewById(R.id.assignedTo);
             department = findViewById(R.id.department);
@@ -228,11 +233,16 @@ public class ScanQR extends AppCompatActivity {
                         department.setText("");
                         deviceModel.setText("");
                         datePurchased.setText("");
-                        Toast.makeText(ScanQR.this, "Data saved successfully", Toast.LENGTH_SHORT).show();
-                        finish();
+
+
+                        customToastMethod.notify(R.layout.toasty, R.drawable.check, "Saved Success", null, null, null);
+
+                        new Handler().postDelayed(() -> {
+                            finish();
+                        }, 3000);
                     }
                 } else {
-                    Toast.makeText(ScanQR.this, "No QR data scanned", Toast.LENGTH_SHORT).show();
+                    customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Save Failed", "Please fill up all fields", null, null);
                 }
             });
         }
@@ -257,7 +267,7 @@ public class ScanQR extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 init();
             } else {
-                Toast.makeText(ScanQR.this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Permission Denied", null, null, null);
             }
         }
 

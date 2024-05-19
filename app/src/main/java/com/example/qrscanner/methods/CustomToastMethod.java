@@ -2,6 +2,7 @@ package com.example.qrscanner.methods;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,7 @@ public class CustomToastMethod {
         this.rootView = activity.findViewById(R.id.main);
     }
 
-    public void notify(int notificationLayout, int imgResID, String message,String description, Class<?> toActivity, Integer default_duration_3s_3000) {
+    public void notify(int notificationLayout, Integer imgResID, String message,String description, Class<?> toActivity, Integer default_duration_3s_3000) {
         LayoutInflater inflater = activity.getLayoutInflater();
         layoutNotification = inflater.inflate(notificationLayout, rootView, false);
 
@@ -50,7 +51,11 @@ public class CustomToastMethod {
         });
 
         imageView = layoutNotification.findViewById(R.id.imageViewToast);
-        imageView.setImageResource(imgResID);
+        if (imgResID != null) {
+            imageView.setImageResource(imgResID);
+        } else {
+            imageView.setVisibility(View.GONE);
+        }
 
         textViewMessage = layoutNotification.findViewById(R.id.textViewMessage);
         textViewMessage.setText(message);

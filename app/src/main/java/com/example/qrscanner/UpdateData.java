@@ -2,6 +2,7 @@
 
     import android.content.Intent;
     import android.os.Bundle;
+    import android.os.Handler;
     import android.text.Editable;
     import android.text.TextWatcher;
     import android.util.Log;
@@ -24,6 +25,7 @@
 
     import com.example.qrscanner.adapter.ItemAdapter;
     import com.example.qrscanner.expiration.ExpirationUtility;
+    import com.example.qrscanner.methods.CustomToastMethod;
     import com.example.qrscanner.options.Data;
     import com.example.qrscanner.options.Gadgets;
 
@@ -48,6 +50,8 @@
 
         private ItemAdapter itemAdapter;
         private RecyclerView recyclerView;
+
+        private CustomToastMethod customToastMethod;
 
         private void updateAvailabilityStatus() {
             if (!assignedTo.getText().toString().isEmpty()) {
@@ -117,6 +121,8 @@
                 return insets;
             });
 
+            customToastMethod = new CustomToastMethod(UpdateData.this);
+
             currentActivity = findViewById(R.id.currentActivity);
             currentActivity.setImageResource(R.drawable.edit);
 
@@ -127,8 +133,12 @@
             backBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    finish();
-                    Toast.makeText(UpdateData.this, "Canceled", Toast.LENGTH_SHORT).show();
+                    CustomToastMethod customToastMethod = new CustomToastMethod(UpdateData.this);
+                    customToastMethod.notify(R.layout.toasty, null, "Canceled", null, null, null);
+
+                    new Handler().postDelayed(() -> {
+                        finish();
+                    }, 3000);
                 }
             });
 
@@ -138,7 +148,7 @@
                 public void onClick(View v) {
                     Intent intent = new Intent(UpdateData.this, Settings.class);
                     startActivity(intent);
-                    Log.d("TAG", "Clicked Success");
+//                    Log.d("TAG", "Clicked Success");
                 }
             });
 
@@ -240,8 +250,10 @@
             cancelBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    finish();
-                    Toast.makeText(UpdateData.this, "Canceled", Toast.LENGTH_SHORT).show();
+                    customToastMethod.notify(R.layout.toasty, null, "Canceled", null, null, null);
+                    new Handler().postDelayed(() -> {
+                        finish();
+                    }, 1500);
                 }
             });
 
@@ -255,7 +267,7 @@
                     try {
                         inputDate = dateFormat.parse(datePurchased.getText().toString());
                     } catch (ParseException e) {
-                        Toast.makeText(UpdateData.this, "Invalid date format. " + pattern, Toast.LENGTH_SHORT).show();
+                        customToastMethod.notify(R.layout.toasty, null, "Invalid date format. "  + pattern, null, null, null);
                         return;
                     }
 
@@ -270,25 +282,25 @@
                     if (assignedTo.getText().toString().isEmpty() || !assignedTo.getText().toString().isEmpty()) {
                         Assigned_to_User_Model assigned = new Assigned_to_User_Model();
 
-
                         // Proceed with saving data
                         dbHelper.editDevice(getIntent().getStringExtra("serialNumber"),  assignedTo.getText().toString(), department.getText().toString(), gadget, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
 
                         deviceList.add(assigned);
 
-
-
-                        Toast.makeText(UpdateData.this, "Data Override Saved", Toast.LENGTH_SHORT).show();
+                        customToastMethod.notify(R.layout.toasty, R.drawable.check, "Saved Success", null, null, null);
 
                         Intent intent = new Intent();
                         intent.putExtra("dataRefreshed", true);
                         setResult(RESULT_OK, intent);
 
-                        finish();
+                        new Handler().postDelayed(() -> {
+                            finish();
+                        }, 1500);
+
                         itemAdapter.notifyDataSetChanged();
                     }
                 } else {
-                    Toast.makeText(UpdateData.this, "No QR data scanned", Toast.LENGTH_SHORT).show();
+                    customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Save Failed", "Please fill up all fields", null, null);
                 }
             });
         }
