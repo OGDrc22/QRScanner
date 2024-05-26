@@ -34,6 +34,7 @@ import java.util.Date;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
+    public static final String EXTRA_POSITION = "com.example.qrscanner.adapter.EXTRA_POSITION";
     private static final int YOUR_REQUEST_CODE = 1;
     private int itemLayoutId;
     private Context context;
@@ -71,6 +72,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void editItem(Context context, int position) {
         Assigned_to_User_Model device = deviceList.get(position);
         Intent intent = new Intent(context, UpdateData.class); // Use context instead of this
+        intent.putExtra(EXTRA_POSITION, position);
         intent.putExtra("device", String.valueOf(device));
         intent.putExtra("serialNumber", String.valueOf(device.getSerialNumber()));
         intent.putExtra("name", String.valueOf(device.getName()));
@@ -183,6 +185,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.deviceModel_id.setText(String.valueOf(data.getDeviceModel()));
         holder.datePurchased_id.setText(String.valueOf(data.getDatePurchased()));
 
+        if (data.getStatus() != null) {
+            holder.sts2.setText(String.valueOf(data.getStatus()));
+        } else {
+            holder.sts2.setText("null");
+        }
+
         // Call calculateExpirationAndStatus method
         try {
 //            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
@@ -285,7 +293,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         LinearLayout linearLayout2, linearLayout2Alter;
-        TextView serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
+        TextView serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, sts2;
         ConstraintLayout otherInfo;
         ImageView hasUser, leftIndicator, imgScan, expiration, userIndicator, deviceIC, deviceIC2;
         CardView editBtn, deleteBtn;
@@ -315,6 +323,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             userIndicator = itemView.findViewById(R.id.userIndicator);
             hasUser = itemView.findViewById(R.id.hasUser);
             expiration = itemView.findViewById(R.id.expirationIndicator);
+
+            sts2 = itemView.findViewById(R.id.sts2);
 
             itemView.setOnClickListener(this);
 

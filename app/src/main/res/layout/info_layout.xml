@@ -432,6 +432,16 @@
                     app:layout_constraintStart_toStartOf="@+id/de"
                     app:layout_constraintTop_toTopOf="@+id/textSTS" />
 
+                <TextView
+                    android:id="@+id/sts2"
+                    style="@style/textStyle1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Status2"
+                    app:layout_constraintBottom_toBottomOf="@+id/textSTS"
+                    app:layout_constraintStart_toEndOf="@+id/sts"
+                    app:layout_constraintTop_toTopOf="@+id/textSTS" />
+
 
 
 

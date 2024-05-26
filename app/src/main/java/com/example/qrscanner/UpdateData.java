@@ -1,12 +1,16 @@
     package com.example.qrscanner;
 
+    import android.app.Activity;
+    import android.content.Context;
     import android.content.Intent;
     import android.os.Bundle;
     import android.os.Handler;
     import android.text.Editable;
     import android.text.TextWatcher;
     import android.util.Log;
+    import android.view.Gravity;
     import android.view.View;
+    import android.view.ViewGroup;
     import android.widget.AdapterView;
     import android.widget.Button;
     import android.widget.EditText;
@@ -37,7 +41,7 @@
 
     public class UpdateData extends AppCompatActivity {
 
-        private EditText assignedTo, department, device, deviceModel, datePurchased;
+        private EditText assignedTo, department, deviceModel, datePurchased;
         private TextView qrText, dateExpired, status, availability, titleTextView;
         private ImageView backBtn, settings, currentActivity;
         private CardView saveBtn, cancelBtn;
@@ -180,7 +184,6 @@
             status_id = new ArrayList<>();
             availability_id = new ArrayList<>();
             itemAdapter = new ItemAdapter(R.layout.info_layout, this, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, null, null);
-//            recyclerView.setAdapter(itemAdapter);
             gadgetsAdapter = new GadgetsAdapter(UpdateData.this, Data.getGadgetsList());
             spinner.setAdapter(gadgetsAdapter);
 
@@ -221,7 +224,7 @@
             deviceModel.setText(getIntent().getStringExtra("deviceModel"));
             datePurchased.setText(getIntent().getStringExtra("datePurchased"));
             dateExpired.setText(getIntent().getStringExtra("dateExpired"));
-            status.setText(getIntent().getStringExtra("status"));
+//            status.setText(getIntent().getStringExtra("status"));
             availability.setText(getIntent().getStringExtra("availability"));
             updateAvailabilityStatus();
 
@@ -273,11 +276,13 @@
 
                     // Calculate expiration date and set status
                     ExpirationUtility.calculateExpirationAndStatus(inputDate, dateExpired, status);
+                    itemAdapter.notifyDataSetChanged();
                 }
             });
 
 
             saveBtn.setOnClickListener(v -> {
+                Intent intent = new Intent();
                 if (!deviceModel.getText().toString().isEmpty() && !datePurchased.getText().toString().isEmpty()) {
                     if (assignedTo.getText().toString().isEmpty() || !assignedTo.getText().toString().isEmpty()) {
                         Assigned_to_User_Model assigned = new Assigned_to_User_Model();
@@ -285,24 +290,45 @@
                         // Proceed with saving data
                         dbHelper.editDevice(getIntent().getStringExtra("serialNumber"),  assignedTo.getText().toString(), department.getText().toString(), gadget, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
 
+                        Log.d("Saved?", "onCreate: " + deviceModel.getText().toString());
                         deviceList.add(assigned);
 
-                        customToastMethod.notify(R.layout.toasty, R.drawable.check, "Saved Success", null, null, null);
+//                        customToastMethod.notify(R.layout.toasty, R.drawable.check, "Saved Success", null, null, null);
 
-                        Intent intent = new Intent();
+
+//                        new Handler().postDelayed(() -> {
+//                            intent.putExtra("dataRefreshed", true);
+//                            setResult(RESULT_OK, intent);
+//                            finish();
+//                        }, 1500);
+
                         intent.putExtra("dataRefreshed", true);
                         setResult(RESULT_OK, intent);
+                        finish();
+//                        Toast toast = Toast.makeText(UpdateData.this, "Saved Success", Toast.LENGTH_SHORT);
+//                        toast.setGravity(Gravity.CENTER, 0, 0);
+//                        toast.show();
 
-                        new Handler().postDelayed(() -> {
-                            finish();
-                        }, 1500);
-
-                        itemAdapter.notifyDataSetChanged();
+                        displayToast("Saved");
                     }
                 } else {
                     customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Save Failed", "Please fill up all fields", null, null);
                 }
+
             });
+        }
+
+        private void displayToast(String message) {
+            // Inflate toast XML layout
+            View layout = getLayoutInflater().inflate(R.layout.toast_layout,
+                    (ViewGroup) findViewById(R.id.toast_layout_root));
+            // Fill in the message into the textview
+            TextView text = layout.findViewById(R.id.text23);
+            text.setText(message);
+            // Construct the toast, set the view and display
+            Toast toast = new Toast(UpdateData.this);
+            toast.setView(layout);
+            toast.show();
         }
 
     }

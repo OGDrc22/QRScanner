@@ -1,23 +1,42 @@
 package com.example.qrscanner;
 
+import static android.content.ContentValues.TAG;
+
+import android.Manifest;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -26,17 +45,22 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.methods.CustomToastMethod;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int CREATE_FILE_REQUEST_CODE = 16168;
     private CardView addBtn, laptopBtn, tabletBtn, phoneBtn, pcBtn, allBtn, unknownBtn, importBtn, exportBtn, unknownUserBtn, expiredBtn;
 
     private CustomToastMethod customToastMethod;
@@ -44,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView settings, currentActivity, backBtn;
     private androidx.appcompat.widget.SearchView searchView;
     private RecyclerView recyclerView;
+    private ConstraintLayout constraintLayout;
     private GridLayout mainOption;
     private ItemAdapter adapter;
     private ArrayList<Assigned_to_User_Model> deviceList;
@@ -54,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
     private DBHelper dbHelper;
 
     private static final int FILE_REQUEST_CODE = 013;
+    private static final int STORAGE_PERMISSION_CODE = 22;
+
+    private String fileNameToExport;
+    private Uri selectedFileUri;
 
     private void applyTheme() {
         SharedPreferences sharedPref = getSharedPreferences("isDarkMode", Context.MODE_PRIVATE);
@@ -71,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         applyTheme();
+
+//        checkStoragePermission();
 
         findViewById(R.id.main).bringToFront();
 
@@ -98,15 +129,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        constraintLayout = findViewById(R.id.constraintLayoutop);
+
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     recyclerView.setVisibility(View.VISIBLE);
-                    mainOption.setVisibility(View.VISIBLE);
+                    constraintLayout.setVisibility(View.GONE);
                 } else {
                     recyclerView.setVisibility(View.GONE);
-                    mainOption.setVisibility(View.VISIBLE);
+                    constraintLayout.setVisibility(View.VISIBLE);
+                    recreate(); // Temporary solution
                 }
             }
         });
@@ -179,8 +213,8 @@ public class MainActivity extends AppCompatActivity {
         exportBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "To be added", null, null, null);
-
+//                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "To be added", null, null, null);
+                promptExportWithFileName();
             }
         });
 
@@ -302,10 +336,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 //    Importing excel code block
-    // TODO exclude existing data from excel in importation
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Toast.makeText(MainActivity.this, "Data exported successfully", Toast.LENGTH_LONG).show();
+        if (requestCode == CREATE_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            selectedFileUri = data.getData();
+            exportDatabaseToExcel(fileNameToExport);
+        }
 
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             // Handle the selected file here
@@ -443,6 +481,76 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO implement exportation of data from SQLite to excel format
+    // Add this method to export data
+    private void exportDatabaseToExcel(String fileName) {
+            Log.d(TAG, "Storage permission granted");
+            // Fetch data from the database
+            ArrayList<Assigned_to_User_Model> deviceList = dbHelper.fetchDevice();
+            Log.d(TAG, "Fetched " + deviceList.size() + " records from the database");
+
+            // Create an Excel workbook and sheet
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("Devices");
+
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Serial Number");
+            headerRow.createCell(1).setCellValue("Assigned To");
+            headerRow.createCell(2).setCellValue("Department");
+            headerRow.createCell(3).setCellValue("Device");
+            headerRow.createCell(4).setCellValue("Device Model");
+            headerRow.createCell(5).setCellValue("Date Purchased");
+            headerRow.createCell(6).setCellValue("Date Expired");
+            headerRow.createCell(7).setCellValue("Status");
+            headerRow.createCell(8).setCellValue("Availability");
+
+            // Fill data rows
+            int rowNum = 1;
+            for (Assigned_to_User_Model device : deviceList) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(device.getSerialNumber());
+                row.createCell(1).setCellValue(device.getName());
+                row.createCell(2).setCellValue(device.getDepartment());
+                row.createCell(3).setCellValue(device.getDevice());
+                row.createCell(4).setCellValue(device.getDeviceModel());
+                row.createCell(5).setCellValue(device.getDatePurchased());
+                row.createCell(6).setCellValue(device.getDateExpired());
+                row.createCell(7).setCellValue(device.getStatus());
+                row.createCell(8).setCellValue(device.getAvailability());
+                Log.d(TAG, "Added row " + rowNum + " to the sheet");
+            }
+
+        try {
+            if (selectedFileUri != null) {
+                OutputStream outputStream = getContentResolver().openOutputStream(selectedFileUri);
+                workbook.write(outputStream);
+                outputStream.close();
+                Log.d(TAG, "Excel file saved to: " + selectedFileUri.getPath());
+                Toast.makeText(MainActivity.this, "Data exported successfully to " + selectedFileUri.getPath(), Toast.LENGTH_LONG).show();
+            } else {
+                
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle any errors that occur during file writing
+            Toast.makeText(MainActivity.this, "Failed to export data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Storage permission granted by user");
+                exportDatabaseToExcel(fileNameToExport);  // Retry exporting now that permission is granted
+            } else {
+                Log.d(TAG, "Storage permission denied by user");
+                Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 
 //    Utility functions
@@ -460,4 +568,86 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
     }
+
+    private void checkStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                // Permission is granted
+                return;
+            } else {
+                try {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    startActivityForResult(intent, STORAGE_PERMISSION_CODE);
+                } catch (Exception e) {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivityForResult(intent, STORAGE_PERMISSION_CODE);
+                }
+            }
+        } else {
+            // Below Android 11
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        STORAGE_PERMISSION_CODE);
+            }
+        }
+    }
+
+    // Show Dialog to put file name
+    private void promptExportWithFileName() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.layout_export_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+        builder.setView(view);
+
+        // Set up the input
+        final EditText input = view.findViewById(R.id.editText);
+        final Button actionOK = view.findViewById(R.id.actionOK);
+        final Button actionCancel = view.findViewById(R.id.actionCancel);
+
+        final AlertDialog alertDialog = builder.create();
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+
+
+        // Set up the buttons
+        actionOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String fileName = input.getText().toString();
+                if (!fileName.isEmpty()) {
+                    fileNameToExport = fileName;
+                    checkStoragePermission();
+                    createFile();
+                    exportDatabaseToExcel(fileNameToExport);
+                    alertDialog.hide();
+                } else {
+                    Toast.makeText(MainActivity.this, "File name cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        actionCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+
+    private void createFile() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        intent.putExtra(Intent.EXTRA_TITLE, fileNameToExport );
+        startActivityForResult(intent, CREATE_FILE_REQUEST_CODE);
+    }
+
 }

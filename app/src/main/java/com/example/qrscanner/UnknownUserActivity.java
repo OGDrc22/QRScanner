@@ -105,19 +105,6 @@ public class UnknownUserActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        displayData();
-
-        if (filteredList.isEmpty()) {
-            textViewNoData.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            textViewNoData.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-        }
-
-        String deviceCount = String.valueOf(filteredList.size());
-        textViewItemCount.setText("Item Count: " + deviceCount);
-
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("No User");
         currentActivity = findViewById(R.id.currentActivity);
@@ -182,36 +169,9 @@ public class UnknownUserActivity extends AppCompatActivity {
             }
         });
 
+        filterDeviceList();
 
     }
-
-
-    // Show the item that has a "Laptop" in the Device column
-    private void displayData() {
-        filteredList = new ArrayList<>();
-
-        if (deviceList.isEmpty()) {
-            // Show a toast message or handle empty list case
-        } else {
-            // Iterate through the original list and add items that match the criteria to the filtered list
-            for (Assigned_to_User_Model device : deviceList) {
-                // Assuming device contains the name of the gadget
-                String userName = device.getName();
-                // Check if the device name contains "laptop" (case-insensitive)
-                if (userName.isEmpty()) {
-                    filteredList.add(device);
-                }
-            }
-        }
-
-        // Update the dataset used by the adapter with the filtered results
-        adapter.setDeviceList(filteredList);
-
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
-    }
-
-
 
     private void onEditClick(int position) {
     }
@@ -258,8 +218,41 @@ public class UnknownUserActivity extends AppCompatActivity {
     private void loadDataFromDatabase() {
         deviceList.clear();
         deviceList.addAll(dbHelper.fetchDevice());
+        filterDeviceList();
         adapter.notifyDataSetChanged();
 
+    }
+
+    // Show the item that has a no user column
+    private void filterDeviceList() {
+        filteredList = new ArrayList<>();
+        filteredList.clear();
+        if (deviceList.isEmpty()) {
+            // Show a toast message or handle empty list case
+        } else {
+            // Iterate through the original list and add items that match the criteria to the filtered list
+            for (Assigned_to_User_Model device : deviceList) {
+                // Assuming device contains the name of the gadget
+                String userName = device.getName();
+                // Check if the device name contains "laptop" (case-insensitive)
+                if (userName.isEmpty()) {
+                    filteredList.add(device);
+                }
+            }
+
+            String deviceCount = String.valueOf(filteredList.size());
+            textViewItemCount.setText("Item Count: " + deviceCount);
+
+            if (filteredList.isEmpty()) {
+                textViewNoData.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                textViewNoData.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        adapter.setDeviceList(filteredList);
     }
 
 }

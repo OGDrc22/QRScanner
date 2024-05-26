@@ -141,6 +141,8 @@
     </style>
 
     <style name="cardViewBtnAdd">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -148,6 +150,8 @@
         <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtnUn">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -189,6 +193,8 @@
 
 
     <style name="cardViewBtn1">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -196,6 +202,8 @@
         <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn2">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -203,6 +211,8 @@
         <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn3">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -210,6 +220,8 @@
         <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn4">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -217,6 +229,8 @@
         <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn5">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -224,6 +238,8 @@
         <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn6">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -231,6 +247,8 @@
         <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn7">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
@@ -238,6 +256,8 @@
         <item name="cardCornerRadius">14dp</item>
     </style>
     <style name="cardViewBtn8">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>

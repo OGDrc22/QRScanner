@@ -178,7 +178,7 @@ public class allDevice extends AppCompatActivity {
     }
 
 
-    // Show the item that has a "Laptop" in the Device column
+    // Show All Item
     private void displayData() {
         if (deviceList.isEmpty()) {
             Toast.makeText(this, "No Data Available", Toast.LENGTH_SHORT).show();

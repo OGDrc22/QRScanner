@@ -22,9 +22,11 @@
 
             <ImageView
                 style="@style/sizeIC"
+                android:src="@drawable/ic_export"
                 android:id="@+id/warning"
                 android:layout_margin="12dp"
                 android:elevation="6dp"
+                android:tint="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -32,6 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/titleText"
+                android:text="Export as .xlsx"
                 android:background="@color/accent"
                 android:paddingVertical="12dp"
                 android:paddingHorizontal="46dp"
@@ -39,17 +42,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
 
-            <ImageView
-                android:id="@+id/icon_action"
-                style="@style/sizeIC"
-                android:layout_margin="12dp"
-                android:background="@color/accent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/layoutDialog" />
 
-
-            <TextView
-                android:id="@+id/messageText"
+            <EditText
+                android:id="@+id/editText"
+                android:hint="File Name.xlsx"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
@@ -60,6 +56,7 @@
 
             <Button
                 android:id="@+id/actionCancel"
+                android:text="Cancel"
                 style="@style/textStyleConstantColor2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,10 +64,11 @@
                 android:backgroundTint="@color/primary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/messageText" />
+                app:layout_constraintTop_toBottomOf="@+id/editText" />
 
             <Button
-                android:id="@+id/actionDelete"
+                android:id="@+id/actionOK"
+                android:text="Export"
                 style="@style/textStyleConstantColor2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,7 +76,7 @@
                 android:backgroundTint="@color/secondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/messageText" />
+                app:layout_constraintTop_toBottomOf="@+id/editText" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

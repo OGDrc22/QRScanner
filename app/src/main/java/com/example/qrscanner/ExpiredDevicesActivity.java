@@ -104,11 +104,6 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        displayData();
-
-        String deviceCount = String.valueOf(filteredList.size());
-        textViewItemCount.setText("Item Count: " + deviceCount);
-
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("Expired Devices");
         currentActivity = findViewById(R.id.currentActivity);
@@ -173,40 +168,8 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
             }
         });
 
-        if (filteredList.isEmpty()) {
-            textViewNoData.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            textViewNoData.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-        }
+        filterDeviceList();
 
-    }
-
-
-    // Show the item that has a "Laptop" in the Device column
-    private void displayData() {
-        filteredList = new ArrayList<>();
-
-        if (deviceList.isEmpty()) {
-            // Show a toast message or handle empty list case
-        } else {
-            // Iterate through the original list and add items that match the criteria to the filtered list
-            for (Assigned_to_User_Model device : deviceList) {
-                // Assuming device contains the name of the gadget
-                String deviceStatus = device.getStatus();
-                // Check if the device name contains "laptop" (case-insensitive)
-                if (deviceStatus.equals("For Refresh")) {
-                    filteredList.add(device);
-                }
-            }
-        }
-
-        // Update the dataset used by the adapter with the filtered results
-        adapter.setDeviceList(filteredList);
-
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
     }
 
 
@@ -254,8 +217,41 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
     private void loadDataFromDatabase() {
         deviceList.clear();
         deviceList.addAll(dbHelper.fetchDevice());
+        filterDeviceList();
         adapter.notifyDataSetChanged();
 
+    }
+
+    // Show the item that is Expired Device column
+    private void filterDeviceList() {
+        filteredList = new ArrayList<>();
+        filteredList.clear();
+        if (deviceList.isEmpty()) {
+            // Show a toast message or handle empty list case
+        } else {
+            // Iterate through the original list and add items that match the criteria to the filtered list
+            for (Assigned_to_User_Model device : deviceList) {
+                // Assuming device contains the name of the gadget
+                String deviceStatus = device.getStatus();
+                // Check if the device name contains "laptop" (case-insensitive)
+                if (deviceStatus.toLowerCase().contains("for refresh")) {
+                    filteredList.add(device);
+                }
+            }
+
+            String deviceCount = String.valueOf(filteredList.size());
+            textViewItemCount.setText("Item Count: " + deviceCount);
+
+            if (filteredList.isEmpty()) {
+                textViewNoData.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                textViewNoData.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        adapter.setDeviceList(filteredList);
     }
 
 }

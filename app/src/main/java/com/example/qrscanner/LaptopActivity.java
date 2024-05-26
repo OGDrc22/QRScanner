@@ -104,11 +104,6 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        displayData();
-
-        String deviceCount = String.valueOf(filteredList.size());
-        textViewItemCount.setText("Item Count: " + deviceCount);
-
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("Laptops");
         currentActivity = findViewById(R.id.currentActivity);
@@ -166,42 +161,8 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
             }
         });
 
-        if (filteredList.isEmpty()) {
-            textViewNoData.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            textViewNoData.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-        }
-
+        filterDeviceList();
     }
-
-
-    // Show the item that has a "Laptop" in the Device column
-    private void displayData() {
-        filteredList = new ArrayList<>();
-
-        if (deviceList.isEmpty()) {
-            // Show a toast message or handle empty list case
-        } else {
-            // Iterate through the original list and add items that match the criteria to the filtered list
-            for (Assigned_to_User_Model device : deviceList) {
-                // Assuming device contains the name of the gadget
-                String deviceName = device.getDevice();
-                // Check if the device name contains "laptop" (case-insensitive)
-                if (deviceName.toLowerCase().contains("laptop")) {
-                    filteredList.add(device);
-                }
-            }
-        }
-
-        // Update the dataset used by the adapter with the filtered results
-        adapter.setDeviceList(filteredList);
-
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
-    }
-
 
 
     private void onEditClick(int position) {
@@ -241,15 +202,50 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
             // Refresh the UI here, for example, reload data from the database
             loadDataFromDatabase();
-            adapter.notifyDataSetChanged(); // Notify the adapter of dataset changes
+            adapter.notifyDataSetChanged();
         }
     }
+
 
     private void loadDataFromDatabase() {
         deviceList.clear();
         deviceList.addAll(dbHelper.fetchDevice());
+        filterDeviceList();
         adapter.notifyDataSetChanged();
 
+    }
+
+
+    // Show the item that has a "Laptop" in the Device column
+    private void filterDeviceList() {
+        filteredList = new ArrayList<>();
+        filteredList.clear();
+        if (deviceList.isEmpty()) {
+            // Show a toast message or handle empty list case
+        } else {
+            // Iterate through the original list and add items that match the criteria to the filtered list
+            for (Assigned_to_User_Model device : deviceList) {
+                // Assuming device contains the name of the gadget
+                String deviceName = device.getDevice();
+                // Check if the device name contains "laptop" (case-insensitive)
+                if (deviceName.toLowerCase().contains("laptop")) {
+                    filteredList.add(device);
+                }
+            }
+
+            String deviceCount = String.valueOf(filteredList.size());
+            textViewItemCount.setText("Item Count: " + deviceCount);
+
+            if (filteredList.isEmpty()) {
+                textViewNoData.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                textViewNoData.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        adapter.setDeviceList(filteredList);
     }
 
 }
