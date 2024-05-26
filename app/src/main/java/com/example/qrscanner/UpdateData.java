@@ -309,7 +309,7 @@
 //                        toast.setGravity(Gravity.CENTER, 0, 0);
 //                        toast.show();
 
-                        displayToast("Saved");
+
                     }
                 } else {
                     customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Save Failed", "Please fill up all fields", null, null);
@@ -318,17 +318,5 @@
             });
         }
 
-        private void displayToast(String message) {
-            // Inflate toast XML layout
-            View layout = getLayoutInflater().inflate(R.layout.toast_layout,
-                    (ViewGroup) findViewById(R.id.toast_layout_root));
-            // Fill in the message into the textview
-            TextView text = layout.findViewById(R.id.text23);
-            text.setText(message);
-            // Construct the toast, set the view and display
-            Toast toast = new Toast(UpdateData.this);
-            toast.setView(layout);
-            toast.show();
-        }
 
     }
