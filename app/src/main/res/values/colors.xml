@@ -43,4 +43,7 @@
     <color name="cl3">#efcdd6</color>
     <color name="cl4">#F2CCAE</color>
 
+
+    <color name="clDelete">#ED1C1C</color>
+
 </resources>

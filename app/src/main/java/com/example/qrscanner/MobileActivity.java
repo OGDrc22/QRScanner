@@ -3,7 +3,6 @@ package com.example.qrscanner;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.ItemAdapter;
 
 import java.util.ArrayList;

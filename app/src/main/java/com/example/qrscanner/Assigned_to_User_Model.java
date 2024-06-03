@@ -11,16 +11,15 @@ public class Assigned_to_User_Model {
 
     public String device;
     private int originalPosition;
-    int id, serial_number;
-    String name;
-    String department;
-    String gadgetName;
-    String device_model;
-    String date_purchased;
-    String date_expired;
-    String status;
-    String availability;
-
+    public int id, serial_number;
+    public byte[] image;
+    public String name;
+    public String department;
+    public String device_model;
+    public String date_purchased;
+    public String date_expired;
+    public String status;
+    public String availability;
 
     // Getter methods
     public int getId() {
@@ -59,6 +58,9 @@ public class Assigned_to_User_Model {
         return availability;
     }
 
+    public byte[] getImage() {
+        return image;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -101,8 +103,7 @@ public class Assigned_to_User_Model {
         this.originalPosition = originalPosition;
     }
 
-    public int getOriginalPosition() {
-        return originalPosition;
+    public void setImage(byte[] image) {
+        this.image = image;
     }
-
 }

@@ -22,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.ItemAdapter;
 
 import java.util.ArrayList;
@@ -225,7 +226,7 @@ public class UnknownDeviceActivity extends AppCompatActivity {
                 // Assuming device contains the name of the gadget
                 String deviceName = device.getDevice();
                 // Check if the device name contains "laptop" (case-insensitive)
-                if (deviceName.toLowerCase().contains("unknown")) {
+                if (deviceName.toLowerCase().contains("unknown") || deviceName.isEmpty()) {
                     filteredList.add(device);
                 }
             }

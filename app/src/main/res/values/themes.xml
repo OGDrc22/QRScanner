@@ -25,6 +25,16 @@
         <item name="android:background">@color/bgL</item>
     </style>
 
+    <style name="logoDC">
+        <item name="android:src">@drawable/logo</item>
+    </style>
+
+    <style name="iconMain">
+        <item name="android:src">@drawable/splash_vector</item>
+        <item name="android:layout_width">148dp</item>
+        <item name="android:layout_height">148dp</item>
+    </style>
+
     <style name="TitleStyle">
         <item name="android:textColor">@color/txtTitleL</item>
         <item name="android:textSize">20dp</item>

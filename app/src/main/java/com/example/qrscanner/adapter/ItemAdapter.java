@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,10 +24,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qrscanner.Assigned_to_User_Model;
-import com.example.qrscanner.DBHelper;
+import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.UpdateData;
-import com.example.qrscanner.expiration.ExpirationUtility;
+import com.example.qrscanner.utils.ExpirationUtility;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -182,6 +184,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.assignedTo_id.setText(String.valueOf(data.getName()));
         holder.department_id.setText(String.valueOf(data.getDepartment()));
 //        holder.device_id.setText(String.valueOf(data.getDevice()));
+        holder.textViewDM.setText(data.getDevice()); // TODO FIX
         holder.deviceModel_id.setText(String.valueOf(data.getDeviceModel()));
         holder.datePurchased_id.setText(String.valueOf(data.getDatePurchased()));
 
@@ -251,6 +254,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             holder.deviceIC.setImageResource(R.drawable.mobile_phone_2635);
         } else if (String.valueOf(data.getDevice()).equals("Tablet")) {
             holder.deviceIC.setImageResource(R.drawable.ic_tablet);
+        } else if (String.valueOf(data.getDevice()).equals(data.getDevice())) {
+            if (data.image != null){
+                // Convert byte array to Bitmap/int
+                byte[] imageBytes = data.getImage();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                holder.deviceIC.setImageBitmap(bitmap);
+            } else {
+                Toast.makeText(context, "Null Image wtf", Toast.LENGTH_SHORT).show();
+            }
         } else {
             if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
                 holder.deviceIC2.setVisibility(View.VISIBLE);
@@ -293,7 +305,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         LinearLayout linearLayout2, linearLayout2Alter;
-        TextView serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, sts2;
+        TextView serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, sts2, textViewDM;
         ConstraintLayout otherInfo;
         ImageView hasUser, leftIndicator, imgScan, expiration, userIndicator, deviceIC, deviceIC2;
         CardView editBtn, deleteBtn;
@@ -305,6 +317,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             assignedTo_id = itemView.findViewById(R.id.at);
             department_id = itemView.findViewById(R.id.dep);
             deviceIC = itemView.findViewById(R.id.deviceIC);
+            textViewDM = itemView.findViewById(R.id.textDM);
             deviceIC2 = itemView.findViewById(R.id.deviceIC2);
             deviceModel_id = itemView.findViewById(R.id.dm);
             datePurchased_id = itemView.findViewById(R.id.dp);

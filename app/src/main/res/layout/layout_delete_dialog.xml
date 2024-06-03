@@ -41,7 +41,7 @@
 
             <ImageView
                 android:id="@+id/icon_action"
-                style="@style/sizeIC"
+                style="@style/sizeIC2"
                 android:layout_margin="12dp"
                 android:background="@color/accent"
                 app:layout_constraintTop_toTopOf="parent"

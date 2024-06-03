@@ -1,23 +1,17 @@
     package com.example.qrscanner;
 
-    import android.app.Activity;
-    import android.content.Context;
     import android.content.Intent;
     import android.os.Bundle;
     import android.os.Handler;
     import android.text.Editable;
     import android.text.TextWatcher;
     import android.util.Log;
-    import android.view.Gravity;
     import android.view.View;
-    import android.view.ViewGroup;
     import android.widget.AdapterView;
-    import android.widget.Button;
     import android.widget.EditText;
     import android.widget.ImageView;
     import android.widget.Spinner;
     import android.widget.TextView;
-    import android.widget.Toast;
 
     import androidx.activity.EdgeToEdge;
     import androidx.appcompat.app.AppCompatActivity;
@@ -27,10 +21,12 @@
     import androidx.core.view.WindowInsetsCompat;
     import androidx.recyclerview.widget.RecyclerView;
 
+    import com.example.qrscanner.DB.DBHelper;
+    import com.example.qrscanner.adapter.GadgetsAdapter;
     import com.example.qrscanner.adapter.ItemAdapter;
-    import com.example.qrscanner.expiration.ExpirationUtility;
+    import com.example.qrscanner.utils.ExpirationUtility;
     import com.example.qrscanner.methods.CustomToastMethod;
-    import com.example.qrscanner.options.Data;
+//    import com.example.qrscanner.options.Data;
     import com.example.qrscanner.options.Gadgets;
 
     import java.text.ParseException;
@@ -184,8 +180,8 @@
             status_id = new ArrayList<>();
             availability_id = new ArrayList<>();
             itemAdapter = new ItemAdapter(R.layout.info_layout, this, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, null, null);
-            gadgetsAdapter = new GadgetsAdapter(UpdateData.this, Data.getGadgetsList());
-            spinner.setAdapter(gadgetsAdapter);
+//            gadgetsAdapter = new GadgetsAdapter(UpdateData.this, Data.getGadgetsList());
+//            spinner.setAdapter(gadgetsAdapter);
 
 
             // Get Value from intent

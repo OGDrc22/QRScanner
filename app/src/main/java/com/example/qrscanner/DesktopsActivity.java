@@ -22,6 +22,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.qrscanner.DB.DBHelper;
+import com.example.qrscanner.adapter.GadgetsAdapter;
 import com.example.qrscanner.adapter.ItemAdapter;
 
 import java.util.ArrayList;
