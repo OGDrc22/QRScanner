@@ -80,11 +80,10 @@ public class ScanQR extends AppCompatActivity {
     private Gadgets gadgetPosition;
 
     private ListView listView;
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
     private DBHelper dbHelper;
     private static final String pattern = "MM/dd/yy";
-
-    ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
     private void updateAvailabilityStatus() {
         if (!assignedTo.getText().toString().isEmpty()) {
@@ -225,8 +224,8 @@ public class ScanQR extends AppCompatActivity {
         });
 
         // What?
-        List<Gadgets> gadgetList1 = getGadgetsFromDatabase();
-        gadgetsAdapter = new GadgetsAdapter(ScanQR.this, gadgetList1);
+//        List<Gadgets> gadgetList1 = getGadgetsFromDatabase();
+//        gadgetsAdapter = new GadgetsAdapter(ScanQR.this, gadgetList1);
 
 
         //Icon picker for edit gadget items
@@ -279,6 +278,63 @@ public class ScanQR extends AppCompatActivity {
         });
     }
 
+    private void init() {
+        cameraProviderListenableFuture = ProcessCameraProvider.getInstance(ScanQR.this);
+
+        cameraProviderListenableFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderListenableFuture.get();
+                bindImageAnalysis(cameraProvider);
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, ContextCompat.getMainExecutor(ScanQR.this));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            init();
+        } else {
+            customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Permission Denied", null, null, null);
+        }
+    }
+
+    private void bindImageAnalysis(ProcessCameraProvider processCameraProvider) {
+        ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
+                .setTargetResolution(new Size(1280, 1280))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build();
+
+        imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(ScanQR.this), image -> {
+            Image mediaImage = image.getImage();
+
+            if (mediaImage != null) {
+                InputImage image2 = InputImage.fromMediaImage(mediaImage, image.getImageInfo().getRotationDegrees());
+                BarcodeScanner scanner = BarcodeScanning.getClient();
+                Task<List<Barcode>> result = scanner.process(image2);
+                result.addOnSuccessListener(barcodes -> {
+                    for (Barcode barcode : barcodes) {
+                        scannedData = barcode.getRawValue();
+                        qrText.setText(scannedData);
+                    }
+
+                    ArrayList<Assigned_to_User_Model> data = dbHelper.fetchDevice();
+                    image.close();
+                    mediaImage.close();
+                });
+            }
+        });
+
+        Preview preview = new Preview.Builder().build();
+        CameraSelector cameraSelector = new CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
+        preview.setSurfaceProvider(cameraPreview.getSurfaceProvider());
+        processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
+    }
+
+    //GADGET CHOOSER
     private void clickOptionDevice() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ScanQR.this, R.style.AlertDialogTheme);
@@ -493,61 +549,6 @@ public class ScanQR extends AppCompatActivity {
 
 
 
-    private void init() {
-            cameraProviderListenableFuture = ProcessCameraProvider.getInstance(ScanQR.this);
-
-            cameraProviderListenableFuture.addListener(() -> {
-                try {
-                    ProcessCameraProvider cameraProvider = cameraProviderListenableFuture.get();
-                    bindImageAnalysis(cameraProvider);
-                } catch (ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }, ContextCompat.getMainExecutor(ScanQR.this));
-        }
-
-        @Override
-        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                init();
-            } else {
-                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Permission Denied", null, null, null);
-            }
-        }
-
-        private void bindImageAnalysis(ProcessCameraProvider processCameraProvider) {
-            ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
-                    .setTargetResolution(new Size(1280, 1280))
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build();
-
-            imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(ScanQR.this), image -> {
-                Image mediaImage = image.getImage();
-
-                if (mediaImage != null) {
-                    InputImage image2 = InputImage.fromMediaImage(mediaImage, image.getImageInfo().getRotationDegrees());
-                    BarcodeScanner scanner = BarcodeScanning.getClient();
-                    Task<List<Barcode>> result = scanner.process(image2);
-                    result.addOnSuccessListener(barcodes -> {
-                        for (Barcode barcode : barcodes) {
-                            scannedData = barcode.getRawValue();
-                            qrText.setText(scannedData);
-                        }
-
-                        ArrayList<Assigned_to_User_Model> data = dbHelper.fetchDevice();
-                        image.close();
-                        mediaImage.close();
-                    });
-                }
-            });
-
-            Preview preview = new Preview.Builder().build();
-            CameraSelector cameraSelector = new CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
-            preview.setSurfaceProvider(cameraPreview.getSurfaceProvider());
-            processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
-        }
 
     private List<Gadgets> getGadgetsFromDatabase() {
         List<Gadgets> gadgetsList = dbHelper.getAllGadgets();

@@ -75,7 +75,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         Assigned_to_User_Model device = deviceList.get(position);
         Intent intent = new Intent(context, UpdateData.class); // Use context instead of this
         intent.putExtra(EXTRA_POSITION, position);
-        intent.putExtra("device", String.valueOf(device));
+//        intent.putExtra("device", String.valueOf(device));
         intent.putExtra("serialNumber", String.valueOf(device.getSerialNumber()));
         intent.putExtra("name", String.valueOf(device.getName()));
         intent.putExtra("department", String.valueOf(device.getDepartment()));

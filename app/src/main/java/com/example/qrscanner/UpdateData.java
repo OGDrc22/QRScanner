@@ -1,21 +1,34 @@
     package com.example.qrscanner;
 
+    import android.content.Context;
     import android.content.Intent;
+    import android.graphics.Bitmap;
+    import android.graphics.BitmapFactory;
+    import android.graphics.drawable.ColorDrawable;
     import android.os.Bundle;
     import android.os.Handler;
     import android.text.Editable;
     import android.text.TextWatcher;
     import android.util.Log;
+    import android.view.LayoutInflater;
     import android.view.View;
     import android.widget.AdapterView;
+    import android.widget.Button;
     import android.widget.EditText;
     import android.widget.ImageView;
+    import android.widget.ListView;
     import android.widget.Spinner;
     import android.widget.TextView;
+    import android.widget.Toast;
 
     import androidx.activity.EdgeToEdge;
+    import androidx.activity.result.ActivityResultLauncher;
+    import androidx.activity.result.PickVisualMediaRequest;
+    import androidx.activity.result.contract.ActivityResultContracts;
+    import androidx.appcompat.app.AlertDialog;
     import androidx.appcompat.app.AppCompatActivity;
     import androidx.cardview.widget.CardView;
+    import androidx.constraintlayout.widget.ConstraintLayout;
     import androidx.core.graphics.Insets;
     import androidx.core.view.ViewCompat;
     import androidx.core.view.WindowInsetsCompat;
@@ -28,6 +41,7 @@
     import com.example.qrscanner.methods.CustomToastMethod;
 //    import com.example.qrscanner.options.Data;
     import com.example.qrscanner.options.Gadgets;
+    import com.example.qrscanner.utils.Utils;
 
     import java.text.ParseException;
     import java.text.SimpleDateFormat;
@@ -38,18 +52,19 @@
     public class UpdateData extends AppCompatActivity {
 
         private EditText assignedTo, department, deviceModel, datePurchased;
-        private TextView qrText, dateExpired, status, availability, titleTextView;
-        private ImageView backBtn, settings, currentActivity;
+        private TextView qrText, dateExpired, status, availability, titleTextView, chooser;
+        private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, imageViewGadget;
         private CardView saveBtn, cancelBtn;
-        private Spinner spinner;
         private GadgetsAdapter gadgetsAdapter;
-        private String gadget;
+        private String gadget, gadgetName;
         private ArrayList<String> serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
         private DBHelper dbHelper;
         private static final String pattern = "MM/dd/yy";
 
         private ItemAdapter itemAdapter;
-        private RecyclerView recyclerView;
+        private Gadgets gadgetPosition;
+        private ListView listView;
+        private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
         private CustomToastMethod customToastMethod;
 
@@ -66,12 +81,6 @@
 
         }
 
-        // Method to update RecyclerView data
-        public void updateRecyclerViewData() {
-            // Update your data here if needed
-            // Notify the adapter about the data change
-            itemAdapter.notifyDataSetChanged();
-        }
 
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -167,7 +176,9 @@
             status = findViewById(R.id.status);
             availability = findViewById(R.id.availability);
             saveBtn = findViewById(R.id.saveBtn);
-            spinner = findViewById(R.id.spinner);
+
+            imageViewGadget = findViewById(R.id.imageViewGadget);
+            chooser = findViewById(R.id.chooser);
 
             ArrayList<Assigned_to_User_Model> deviceList = new ArrayList<>();
             serialNum_id = new ArrayList<>();
@@ -179,9 +190,7 @@
             dateExpire_id = new ArrayList<>();
             status_id = new ArrayList<>();
             availability_id = new ArrayList<>();
-            itemAdapter = new ItemAdapter(R.layout.info_layout, this, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, null, null);
-//            gadgetsAdapter = new GadgetsAdapter(UpdateData.this, Data.getGadgetsList());
-//            spinner.setAdapter(gadgetsAdapter);
+            itemAdapter = new ItemAdapter(R.layout.info_layout, this, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, null, null);;
 
 
             // Get Value from intent
@@ -189,34 +198,7 @@
             assignedTo.setText(getIntent().getStringExtra("name"));
             department.setText(getIntent().getStringExtra("department"));
 
-            String device = getIntent().getStringExtra("device");
-            if (device != null) {
-                Log.d("UpdateData", "Received device value from intent: " + device);
-                // Get the list of gadgets from the adapter
-                List<Gadgets> gadgetsList = gadgetsAdapter.getGadgetsList();
-                for (Gadgets gadget : gadgetsList) {
-                    Log.d("UpdateData", "Gadget in spinner list: " + gadget.getGadgetName());
-                }
-
-                // Iterate through the list of gadgets to find the position of the device
-                int position = -1;
-                for (int i = 0; i < gadgetsList.size(); i++) {
-                    if (gadgetsList.get(i).getGadgetName().equals(device)) {
-                        position = i;
-                        break;
-                    }
-                }
-                Log.d("UpdateData", "Position found: " + position);
-
-                // Set the selection of the spinner to the found position
-                if (position != -1) {
-                    spinner.setSelection(position);
-                } else {
-                    // Handle the case where the device is not found
-                    // You may want to display a default selection or handle it in a different way
-                    Log.e("UpdateData", "Device not found in spinner list: " + device);
-                }
-            }
+            chooser.setText(getIntent().getStringExtra("device"));
             deviceModel.setText(getIntent().getStringExtra("deviceModel"));
             datePurchased.setText(getIntent().getStringExtra("datePurchased"));
             dateExpired.setText(getIntent().getStringExtra("dateExpired"));
@@ -230,18 +212,22 @@
             dateExpired.addTextChangedListener(textWatcher);
             status.addTextChangedListener(textWatcher);
 
+            // Add chooser here
+            chooser.setOnClickListener(v -> {
+                clickOptionDevice();
+//                chooser.setText("Unknown");
+            });
 
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    Gadgets gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
-                    gadget = gadgetPosition.getGadgetName();
+            //Icon picker for edit gadget items
+            pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    // Handle the selected image URI
+                    currentIcon.setImageURI(uri);
 
-                }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
+                    Log.d("PhotoPicker", "Selected URI: " + uri);
+                } else {
+                    Log.d("PhotoPicker", "No media selected");
                 }
             });
 
@@ -277,6 +263,7 @@
             });
 
 
+            //SAVE BUTTON
             saveBtn.setOnClickListener(v -> {
                 Intent intent = new Intent();
                 if (!deviceModel.getText().toString().isEmpty() && !datePurchased.getText().toString().isEmpty()) {
@@ -284,7 +271,7 @@
                         Assigned_to_User_Model assigned = new Assigned_to_User_Model();
 
                         // Proceed with saving data
-                        dbHelper.editDevice(getIntent().getStringExtra("serialNumber"),  assignedTo.getText().toString(), department.getText().toString(), gadget, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
+                        dbHelper.editDevice(getIntent().getStringExtra("serialNumber"),  assignedTo.getText().toString(), department.getText().toString(), gadgetName, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
 
                         Log.d("Saved?", "onCreate: " + deviceModel.getText().toString());
                         deviceList.add(assigned);
@@ -313,6 +300,244 @@
 
             });
         }
+        private void clickOptionDevice() {
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
+            View customView = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+
+            // Find the ListView in your custom layout
+            listView = customView.findViewById(R.id.list_item_option);
+
+            // Set the adapter for the ListView
+            listView.setAdapter(new GadgetsAdapter(UpdateData.this, getGadgetsFromDatabase()));
+
+            // Set the custom view to the AlertDialog.Builder
+            builder.setView(customView);
+
+            // Create and show the AlertDialog
+            AlertDialog itemDialog = builder.create();
+            if (itemDialog.getWindow() != null) {
+                itemDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            }
+            itemDialog.show();
+
+
+            add_newGadget = customView.findViewById(R.id.addGadgetBtn);
+            add_newGadget.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAddNewGadgetDialog();
+                }
+            });
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
+                    if (gadgetPosition != null) {
+                        gadgetName = gadgetPosition.getGadgetName();
+                        itemDialog.dismiss();
+                        chooser.setText(gadgetName);
+                        int positionNew = position+1;
+                        displayGadgetImageInt(UpdateData.this, imageViewGadget, positionNew);
+
+                        Toast.makeText(UpdateData.this, "Selected " + gadgetName, Toast.LENGTH_SHORT).show();
+                    } else {
+                        //TODO fix this
+                        gadgetName = "Unknown";
+                        Toast.makeText(UpdateData.this, "Null pos", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
+                    showEditDialog(gadgetPosition);
+                    gadgetName = gadgetPosition.getGadgetName();
+                    Toast.makeText(UpdateData.this, gadgetName, Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+        }
+
+        private void showEditDialog(final Gadgets gadgets) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
+            View view = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            builder.setView(view);
+
+            // Set up the input
+            final EditText input = view.findViewById(R.id.editText);
+            gadgetName = gadgetPosition.getGadgetName();
+            input.setText(gadgetName);
+            final Button actionOK = view.findViewById(R.id.actionOK);
+            final Button actionCancel = view.findViewById(R.id.actionCancel);
+            final Button actionDelete = view.findViewById(R.id.actionDelete);
+            final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+            currentIcon = iconICPick;
+            byte[] gImage = gadgetPosition.getImage();
+
+            final AlertDialog deviceChooserDialog = builder.create();
+            if (deviceChooserDialog.getWindow() != null) {
+                deviceChooserDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            }
+            deviceChooserDialog.show();
+
+            iconICPick.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pickMedia.launch(new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                            .build());
+                }
+            });
+
+
+            // Set up the buttons
+            actionOK.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String newGadgetName = input.getText().toString();
+                    byte[] newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
+
+//                Toast.makeText(UpdateData.this, "Gadget to edit ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
+
+                    if (newGadgetName.isEmpty()) {
+                        Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (newGadgetImage == null) {
+                            if (gImage != null) {
+                                newGadgetImage = gImage;
+                            }
+                        } else {
+                            newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
+                        }
+                        dbHelper.updateGadget(gadgets, newGadgetName, newGadgetImage);
+                        updateGadgetList();
+                        deviceChooserDialog.dismiss();
+
+                    }
+                }
+            });
+
+            actionDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(UpdateData.this, "Gadget to delete ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
+//                gadgetsAdapter = new GadgetsAdapter(UpdateData.this, getGadgetsFromDatabase());
+                    dbHelper.deleteGadget(gadgets);
+//                gadgetsAdapter.notifyDataSetChanged();
+                    updateGadgetList();
+                    deviceChooserDialog.dismiss();
+                    Toast.makeText(UpdateData.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            actionCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deviceChooserDialog.dismiss();
+                }
+            });
+        }
+
+
+        private void showAddNewGadgetDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
+            View view = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_add_new_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            builder.setView(view);
+
+            final ImageView imageView = view.findViewById(R.id.warning);
+            imageView.setImageResource(R.drawable.add_icon);
+            // Set up the input
+            final EditText input = view.findViewById(R.id.editText);
+            final Button actionOK = view.findViewById(R.id.actionOK);
+            final Button actionCancel = view.findViewById(R.id.actionCancel);
+            final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+
+            currentIcon = iconICPick;
+
+            final AlertDialog deviceChooserDialog = builder.create();
+            if (deviceChooserDialog.getWindow() != null) {
+                deviceChooserDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            }
+            deviceChooserDialog.show();
+
+            iconICPick.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(UpdateData.this, "Add image clicked", Toast.LENGTH_SHORT).show();
+                    pickMedia.launch(new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                            .build());
+                }
+            });
+
+
+            // Set up the buttons
+            actionOK.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String newGadgetName = input.getText().toString();
+                    byte[] newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
+
+                    if (newGadgetName.isEmpty()) {
+                        Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        if (newGadgetImage == null) {
+                            newGadgetImage = Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.device_model);
+                        }
+                        dbHelper.addGadget(newGadgetName, newGadgetImage);
+                        updateGadgetList();
+                        deviceChooserDialog.dismiss();
+
+                    }
+                }
+            });
+
+            actionCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deviceChooserDialog.dismiss();
+                }
+            });
+        }
+
+
+        private void updateGadgetList() {
+            List<Gadgets> gadgetsList = getGadgetsFromDatabase();
+            gadgetsAdapter = new GadgetsAdapter(UpdateData.this, gadgetsList);
+            listView.setAdapter(gadgetsAdapter);
+            gadgetsAdapter.notifyDataSetChanged();
+        }
+
+        private List<Gadgets> getGadgetsFromDatabase() {
+            List<Gadgets> gadgetsList = dbHelper.getAllGadgets();
+
+            // Add default gadgets if database is empty
+            if (gadgetsList.isEmpty()) {
+                dbHelper.addGadget("Unknown", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_unknown_device));
+                dbHelper.addGadget("Laptop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.laptop_icon));
+                dbHelper.addGadget("Phone", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.mobile_phone_2635));
+                dbHelper.addGadget("Tablet", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_tablet));
+                dbHelper.addGadget("Desktop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.pc_computer_6840));
+
+                gadgetsList = dbHelper.getAllGadgets();
+            }
+
+            return gadgetsList;
+        }
+
+        public void displayGadgetImageInt(Context context, ImageView imageView, int gadgetId) {
+            byte[] imageBytes = dbHelper.getGadgetImageInt(gadgetId);
+            if (imageBytes != null) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                imageView.setImageBitmap(bitmap);
+            } else {
+                // Set a default image if no image is found
+                imageView.setImageResource(R.drawable.device_model);
+            }
+        }
 
     }

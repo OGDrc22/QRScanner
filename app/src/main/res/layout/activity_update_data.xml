@@ -131,12 +131,41 @@
                         android:paddingVertical="10dp"
                         android:text="Device : " />
 
-                    <Spinner
-                        android:id="@+id/spinner"
-                        style="@style/spinner"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"/>
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/imageViewGadget"
+                            style="@style/sizeIC2"
+                            android:src="@drawable/ic_unknown_device"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/chooser"
+                            style="@style/textStyle1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="12dp"
+                            android:hint="Choose Device. -Unknown"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imageViewGadget"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/open_option"
+                            style="@style/sizeIC2"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/edit"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </LinearLayout>
 
