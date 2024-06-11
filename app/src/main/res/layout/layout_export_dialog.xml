@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
+    android:padding="32dp"
     android:id="@+id/layoutDialogContainer">
 
     <androidx.cardview.widget.CardView
@@ -15,68 +15,119 @@
         app:cardElevation="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/layoutDialog">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                style="@style/sizeIC"
-                android:src="@drawable/ic_export"
-                android:id="@+id/warning"
-                android:layout_margin="12dp"
-                android:elevation="6dp"
-                android:tint="@color/white"
+            <View
+                android:id="@+id/view3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/accent"
+                app:layout_constraintBottom_toBottomOf="@+id/layoutTitle"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+
+
+            <LinearLayout
+                android:id="@+id/layoutTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/titleText"
-                android:text="Export as .xlsx"
-                android:background="@color/accent"
-                android:paddingVertical="12dp"
-                android:paddingHorizontal="46dp"
-                style="@style/textStyleBoldConstantColor1"
+                android:orientation="horizontal"
+                android:gravity="center"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
+
+                <ImageView
+                    android:id="@+id/warning"
+                    style="@style/icConstantColor1"
+                    android:layout_marginVertical="12dp"
+                    android:src="@drawable/ic_export"/>
+
+                <TextView
+                    android:id="@+id/titleText"
+                    style="@style/textStyleBoldConstantColorTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="8dp"
+                    android:text="Export Data"/>
+
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/editText"
-                android:hint="File Name.xlsx"
+                style="@style/textStyle1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="36dp"
+                android:layout_marginTop="32dp"
+                android:hint="  File Name.xlsx"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutTitle" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="18dp"
-                android:layout_marginBottom="40dp"
-                android:layout_marginTop="20dp"
-                style="@style/textStyle1"
-                app:layout_constraintTop_toBottomOf="@+id/titleText"/>
+                android:layout_marginTop="32dp"
+                app:layout_constraintTop_toBottomOf="@+id/editText">
 
-            <Button
-                android:id="@+id/actionCancel"
-                android:text="Cancel"
-                style="@style/textStyleConstantColor2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="12dp"
-                android:backgroundTint="@color/primary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editText" />
+                <Button
+                    android:id="@+id/actionCancel"
+                    style="@style/CancelBTNTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="1dp"
+                    android:paddingVertical="18dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:text="Cancel"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/view2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/actionOK"
-                android:text="Export"
-                style="@style/textStyleConstantColor2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="12dp"
-                android:backgroundTint="@color/secondary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editText" />
+                <View
+                    android:id="@+id/view"
+                    style="@style/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    app:layout_constraintBottom_toTopOf="@+id/view2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view2"
+                    style="@style/divider"
+                    android:layout_width="2dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <Button
+                    android:id="@+id/actionOK"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="1dp"
+                    android:paddingVertical="18dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:text="Export"
+                    style="@style/ExportBTNTextStyle"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/view2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

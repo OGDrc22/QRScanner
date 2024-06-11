@@ -160,7 +160,7 @@
                             android:id="@+id/open_option"
                             style="@style/sizeIC2"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/edit"
+                            android:src="@drawable/ic_edit"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -313,7 +313,7 @@
                 android:paddingVertical="12dp">
 
                 <ImageView
-                    style="@style/sizeICMedium"
+                    style="@style/deleteICMedium"
                     android:layout_marginEnd="12dp"
                     android:src="@drawable/cancel"/>
 
@@ -321,7 +321,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cancel"
-                    style="@style/textStyleConstantColor2"/>
+                    style="@style/deleteBtnStyle"/>
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

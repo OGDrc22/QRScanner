@@ -40,8 +40,9 @@ public class TabletActivity extends AppCompatActivity {
         private ArrayList<Assigned_to_User_Model> filteredList;
 
         private TextView textViewInfo, textViewNoData, textViewItemCount;
-        private CardView cardView_options, cardViewDeleteAll;
+        private CardView cardView_options;
         private ImageView currentActivity, settingsIcon, backBtn;
+        private ConstraintLayout constraintLayoutDeleteAll;
 
 
 
@@ -109,8 +110,8 @@ public class TabletActivity extends AppCompatActivity {
         currentActivity = findViewById(R.id.currentActivity);
         currentActivity.setImageResource(R.drawable.ic_tablet);
 
-        cardViewDeleteAll = findViewById(R.id.cardViewDeleteAll);
-        cardViewDeleteAll.setOnClickListener(new View.OnClickListener() {
+        constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
+        constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {

@@ -114,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
         searchView = findViewById(R.id.search_bar);
         searchView.clearFocus();
 
+        constraintLayout = findViewById(R.id.constraintLayoutOp);
+
+        recyclerView = findViewById(R.id.recyclerViewSearch);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,8 +127,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("TAG", "Clicked Success");
             }
         });
-
-        constraintLayout = findViewById(R.id.constraintLayoutop);
 
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -134,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     recyclerView.setVisibility(View.GONE);
                     constraintLayout.setVisibility(View.VISIBLE);
-                    recreate(); // Temporary solution
+//                    recreate(); // Temporary solution
                 }
             }
         });
@@ -151,9 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        recyclerView = findViewById(R.id.recyclerViewSearch);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         // Database

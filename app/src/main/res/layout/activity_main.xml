@@ -30,7 +30,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nav_bar"
         app:queryBackground="@android:color/transparent"
-        app:queryHint="Search here..." />
+        app:queryHint="Search here..."/>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:name="com.example.qrscanner.SearchFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_bar"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -48,13 +61,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayoutop"
+            android:id="@+id/constraintLayoutOp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible"
@@ -87,7 +99,7 @@
 
                         <ImageView
                             android:id="@+id/imageViewAdd"
-                            style="@style/icConstantColor"
+                            style="@style/icConstantColor2"
                             android:layout_width="28dp"
                             android:layout_height="28dp"
                             android:layout_marginEnd="8dp"

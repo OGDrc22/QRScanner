@@ -306,7 +306,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         LinearLayout linearLayout2, linearLayout2Alter;
         TextView serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, sts2, textViewDM;
-        ConstraintLayout otherInfo;
+        ConstraintLayout otherInfo, actions;
         ImageView hasUser, leftIndicator, imgScan, expiration, userIndicator, deviceIC, deviceIC2;
         CardView editBtn, deleteBtn;
         public ViewHolder(@NonNull View itemView) {
@@ -328,6 +328,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             deleteBtn =  itemView.findViewById(R.id.deleteBtn);
 
             otherInfo = itemView.findViewById(R.id.otherInfo);
+            actions = itemView.findViewById(R.id.actions);
 
             imgScan = itemView.findViewById(R.id.imageViewScan);
             // Get the layout parameters of the view
@@ -358,8 +359,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     Log.d("ItemAdapter", "otherInfo is VISIBLE");
                     // otherInfo is closed
                     otherInfo.setVisibility(View.VISIBLE); // Set otherInfo to VISIBLE
-                    editBtn.setVisibility(View.VISIBLE); // Set edit to VISIBLE
-                    deleteBtn.setVisibility(View.VISIBLE); // Set delete to VISIBLE
+                    actions.setVisibility(View.VISIBLE); // Set ic_edit and delete to VISIBLE
 
                     hasUser.setVisibility(View.GONE);
                     leftIndicator.setVisibility(View.GONE);
@@ -398,8 +398,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
                     // otherInfo is visible
                     otherInfo.setVisibility(View.GONE); // Set otherInfo to GONE
-                    editBtn.setVisibility(View.GONE); // Set edit to VISIBLE
-                    deleteBtn.setVisibility(View.GONE); // Set delete to VISIBLE
+                    actions.setVisibility(View.GONE); // Set ic_edit and delete to GONE
                     if (!data.getName().isEmpty()) {
                         // otherInfo is finally GONE and getName is not null
                         hasUser.setVisibility(View.GONE);

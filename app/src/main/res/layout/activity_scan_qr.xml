@@ -193,7 +193,7 @@
                                 android:id="@+id/open_option"
                                 style="@style/sizeIC2"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/edit"
+                                android:src="@drawable/ic_edit"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />

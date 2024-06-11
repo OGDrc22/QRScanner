@@ -83,12 +83,12 @@ public class Settings extends AppCompatActivity {
 
 
 //                if (switchTheme.isChecked()) {
-//                    SharedPreferences.Editor SettingsEdit = getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE).edit();
+//                    SharedPreferences.Editor SettingsEdit = getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE).ic_edit();
 //                    SettingsEdit.putBoolean(KEY_PREFS_NAME, true);
 //                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 //                    SettingsEdit.apply();
 //                } else {
-//                    SharedPreferences.Editor SettingsEdit = getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE).edit();
+//                    SharedPreferences.Editor SettingsEdit = getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE).ic_edit();
 //                    SettingsEdit.putBoolean(KEY_PREFS_NAME, false);
 //                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 //                    SettingsEdit.apply();

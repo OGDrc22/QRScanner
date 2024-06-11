@@ -49,7 +49,7 @@
     <!-- TEXT STYLES -->
     <style name="textStyle1">
         <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/bgL</item>
+        <item name="android:textColor">@color/textOffWhite</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
     <style name="textStyle1Bold">
@@ -79,6 +79,13 @@
         <item name="android:fontFamily">@font/space_grotesk_bold</item>
     </style>
 
+    <style name="textStyleBoldConstantColorTitle">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/bgL</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="textStyleBoldConstantColor1">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>
@@ -105,7 +112,22 @@
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
     </style>
     <!-- TEXT STYLES ^^^^^ -->
-
+    <style name="ExportBTNTextStyle">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+    </style>
+    <style name="CancelBTNTextStyle">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/light1</item>
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+    </style>
+    <style name="textStyleConstantColorRed">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/clDelete</item>
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+    </style>
+    <!-- BUTTONS -->
     <style name="btnStyleSave">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/textL</item>
@@ -123,18 +145,20 @@
 
     <style name="deleteBtnStyle">
         <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/light1</item>
+        <item name="android:textColor">@color/clDelete</item>
         <item name="cardCornerRadius">14dp</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
         <item name="android:backgroundTint">@color/dark2</item>
     </style>
     <style name="editBtnStyle">
         <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/textL</item>
+        <item name="android:textColor">@color/textOffWhite</item>
         <item name="cardCornerRadius">14dp</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
         <item name="android:backgroundTint">@color/light1</item>
     </style>
+
+    <!-- BUTTONS ^^^^^ -->
 
 
     <style name="cardViewOptions">
@@ -144,12 +168,6 @@
 
 
     <!-- CARD VIEW BTN -->
-    <style name="icConstantColor">
-        <item name="android:tint">@color/black</item>
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
-    </style>
-
     <style name="cardViewBtnAdd">
         <item name="maxHeight">160dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -281,8 +299,8 @@
         <item name="android:layout_height">24dp</item>
     </style>
     <style name="sizeICMedium">
-        <item name="android:layout_width">36dp</item>
-        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
     </style>
     <style name="sizeIC2">
         <item name="tint">@color/light1</item>
@@ -299,13 +317,43 @@
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
     </style>
+    <style name="deleteIC">
+        <item name="tint">@color/clDelete</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+    </style>
+    <style name="deleteICMedium">
+        <item name="tint">@color/clDelete</item>
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+    </style>
+    <style name="icConstantColor1">
+        <item name="android:tint">@color/textOffWhite</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+    </style>
+    <style name="icConstantColor1Medium">
+        <item name="android:tint">@color/textOffWhite</item>
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+    </style>
+
+    <style name="icConstantColor2">
+        <item name="android:tint">@color/black</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+    </style>
+
+    <!-- ICONS SIZE ^^^^^ -->
+
+
 
     <style name="itemBG">
         <item name="cardBackgroundColor">@color/dark1</item>
     </style>
 
     <style name="cardView_Dialog">
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">32dp</item>
         <item name="cardBackgroundColor">@color/dark1</item>
     </style>
 
@@ -342,4 +390,9 @@
         <item name="cardBackgroundColor">@color/dark1</item>
         <item name="cardCornerRadius">16dp</item>
     </style>
+
+    <style name="divider">
+        <item name="android:background">@color/dark0</item>>
+    </style>
+
 </resources>

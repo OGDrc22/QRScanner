@@ -87,6 +87,7 @@
 
         </LinearLayout>
 
+        <!--Alternative-->
         <LinearLayout
             android:id="@+id/linearLayoutShown2Alter"
             android:layout_width="wrap_content"
@@ -135,13 +136,16 @@
         </LinearLayout>
 
 
+
+
+        <!--OTHER INFO CONTAINER-->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="12dp"
-            android:elevation="24dp"
             style="@style/itemBG"
+            app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayoutShown2">
 
@@ -149,9 +153,8 @@
                 android:id="@+id/otherInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="11dp"
-                android:visibility="visible">
-
+                android:paddingBottom="12dp"
+                android:visibility="gone"><!--*************  VISIBILITY FOR OTHER INFO CONTAINER  *************-->
 
                 <ImageView
                     android:id="@+id/connector"
@@ -392,7 +395,7 @@
                     app:layout_constraintBottom_toBottomOf="@+id/textDE"
                     app:layout_constraintStart_toStartOf="@+id/dp"
                     app:layout_constraintTop_toTopOf="@+id/textDE" />
-                
+
 
                 <ImageView
                     android:id="@+id/imageView10"
@@ -478,76 +481,115 @@
 
         </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/editBtn"
-                    android:visibility="gone"
-                    style="@style/editBtnStyle"
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="18dp"
-                    android:layout_marginBottom="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cardView">
 
-                    <LinearLayout
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/editBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:layout_marginHorizontal="16dp"
+                android:visibility="visible"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/view2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"><!--style="@style/editBtnStyle"-->
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="20dp">
+
+                    <ImageView
+                        style="@style/sizeIC2"
+                        android:src="@drawable/ic_edit" />
+
+                    <TextView
+                        style="@style/textStyle1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:layout_gravity="center">
-
-                        <ImageView
-                            style="@style/icConstantColor"
-                            android:src="@drawable/edit" />
-
-                        <TextView
-                            style="@style/editBtnStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Edit" />
+                        android:text="Edit" />
 
 
-                    </LinearLayout>
+                </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/deleteBtn"
-                    android:visibility="gone"
-                    android:layout_width="140dp"
+
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                style="@style/divider"
+                app:layout_constraintBottom_toTopOf="@+id/view2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="2dp"
+                android:layout_height="0dp"
+                style="@style/divider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/deleteBtn"
+                android:backgroundTint="@android:color/transparent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:clickable="true"
+                android:visibility="visible"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/view2"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/deleteBtnStyle"
-                    android:clickable="true"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginTop="18dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cardView">
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="20dp">
 
-                    <LinearLayout
+                    <ImageView
+                        style="@style/deleteIC"
+                        android:src="@drawable/trash_can_10416" />
+
+                    <TextView
+                        style="@style/deleteBtnStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            style="@style/sizeIC2"
-                            android:src="@drawable/trash_can_10416" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Delete"
-                            style="@style/deleteBtnStyle"/>
+                        android:text="Delete" />
 
 
-                    </LinearLayout>
+                </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

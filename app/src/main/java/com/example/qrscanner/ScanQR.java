@@ -75,7 +75,7 @@ public class ScanQR extends AppCompatActivity {
     private PreviewView cameraPreview;
     private ListenableFuture<ProcessCameraProvider> cameraProviderListenableFuture;
     private String scannedData, gadgetName;
-    private ImageView settings, backBtn, currentActivity, add_newGadget, currentIcon, imageViewGadget;
+    private ImageView settings, backBtn, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewGadget;
 
     private Gadgets gadgetPosition;
 
@@ -228,11 +228,12 @@ public class ScanQR extends AppCompatActivity {
 //        gadgetsAdapter = new GadgetsAdapter(ScanQR.this, gadgetList1);
 
 
-        //Icon picker for edit gadget items
+        //Icon picker for ic_edit gadget items
         pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
             if (uri != null) {
                 // Handle the selected image URI
                 currentIcon.setImageURI(uri);
+                currentIcon2.setImageURI(uri);
 
 
                 Log.d("PhotoPicker", "Selected URI: " + uri);
@@ -409,8 +410,13 @@ public class ScanQR extends AppCompatActivity {
         final Button actionCancel = view.findViewById(R.id.actionCancel);
         final Button actionDelete = view.findViewById(R.id.actionDelete);
         final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+        ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
+
         currentIcon = iconICPick;
+        currentIcon2 = imageViewCurrent;
+
         byte[] gImage = gadgetPosition.getImage();
+
 
         final AlertDialog deviceChooserDialog = builder.create();
         if (deviceChooserDialog.getWindow() != null) {
@@ -427,6 +433,13 @@ public class ScanQR extends AppCompatActivity {
             }
         });
 
+        // Set Image to imageViewCurrent whe the gadget is selected
+        byte[] imageBytes = gadgetPosition.getImage();
+        if (imageBytes != null) {
+            // ImageView To Bitmap
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            imageViewCurrent.setImageBitmap(bitmap);
+        }
 
         // Set up the buttons
         actionOK.setOnClickListener(new View.OnClickListener() {
@@ -435,7 +448,7 @@ public class ScanQR extends AppCompatActivity {
                 String newGadgetName = input.getText().toString();
                 byte[] newGadgetImage = Utils.imageViewToByte(ScanQR.this, iconICPick);
 
-//                Toast.makeText(ScanQR.this, "Gadget to edit ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ScanQR.this, "Gadget to ic_edit ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
 
                 if (newGadgetName.isEmpty()) {
                     Toast.makeText(ScanQR.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
@@ -489,8 +502,10 @@ public class ScanQR extends AppCompatActivity {
         final Button actionOK = view.findViewById(R.id.actionOK);
         final Button actionCancel = view.findViewById(R.id.actionCancel);
         final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+        ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
 
         currentIcon = iconICPick;
+        currentIcon2 = imageViewCurrent;
 
         final AlertDialog deviceChooserDialog = builder.create();
         if (deviceChooserDialog.getWindow() != null) {
@@ -570,6 +585,7 @@ public class ScanQR extends AppCompatActivity {
     public void displayGadgetImageInt(Context context, ImageView imageView, int gadgetId) {
         byte[] imageBytes = dbHelper.getGadgetImageInt(gadgetId);
         if (imageBytes != null) {
+            // ImageView To Bitmap
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
             imageView.setImageBitmap(bitmap);
         } else {

@@ -40,8 +40,9 @@ public class allDevice extends AppCompatActivity {
     private ArrayList<Assigned_to_User_Model> deviceList;
 
     private TextView textViewInfo, textViewNoData, textViewItemCount;
-    private CardView cardView_options, cardViewDeleteAll;
+    private CardView cardView_options;
     private ImageView currentActivity, settingsIcon, backBtn;
+    private ConstraintLayout constraintLayoutDeleteAll;
 
     private GadgetsAdapter gadgetsAdapter;
 
@@ -125,8 +126,8 @@ public class allDevice extends AppCompatActivity {
         currentActivity = findViewById(R.id.currentActivity);
         currentActivity.setImageResource(R.drawable.device_model);
 
-        cardViewDeleteAll = findViewById(R.id.cardViewDeleteAll);
-        cardViewDeleteAll.setOnClickListener(new View.OnClickListener() {
+        constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
+        constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {

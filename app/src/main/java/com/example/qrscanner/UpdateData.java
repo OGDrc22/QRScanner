@@ -17,7 +17,6 @@
     import android.widget.EditText;
     import android.widget.ImageView;
     import android.widget.ListView;
-    import android.widget.Spinner;
     import android.widget.TextView;
     import android.widget.Toast;
 
@@ -32,7 +31,6 @@
     import androidx.core.graphics.Insets;
     import androidx.core.view.ViewCompat;
     import androidx.core.view.WindowInsetsCompat;
-    import androidx.recyclerview.widget.RecyclerView;
 
     import com.example.qrscanner.DB.DBHelper;
     import com.example.qrscanner.adapter.GadgetsAdapter;
@@ -133,7 +131,7 @@
             customToastMethod = new CustomToastMethod(UpdateData.this);
 
             currentActivity = findViewById(R.id.currentActivity);
-            currentActivity.setImageResource(R.drawable.edit);
+            currentActivity.setImageResource(R.drawable.ic_edit);
 
             titleTextView = findViewById(R.id.titleTextView);
             titleTextView.setText("Update Data");
@@ -215,10 +213,10 @@
             // Add chooser here
             chooser.setOnClickListener(v -> {
                 clickOptionDevice();
-//                chooser.setText("Unknown");
+                chooser.setText(getIntent().getStringExtra("device"));
             });
 
-            //Icon picker for edit gadget items
+            //Icon picker for ic_edit gadget items
             pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
                     // Handle the selected image URI
@@ -400,7 +398,7 @@
                     String newGadgetName = input.getText().toString();
                     byte[] newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
 
-//                Toast.makeText(UpdateData.this, "Gadget to edit ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(UpdateData.this, "Gadget to ic_edit ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
 
                     if (newGadgetName.isEmpty()) {
                         Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
