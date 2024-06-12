@@ -5,7 +5,6 @@ public class Item {
     private String assignedTo;
     private String department;
     private String deviceModel;
-    private String gadgetType;
     private String datePur;
     private String dateExp;
     private String sts;
@@ -76,11 +75,4 @@ public class Item {
         this.availability = availability;
     }
 
-    public String getGadgetType() {
-        return gadgetType;
-    }
-
-    public void setGadgetType(String gadgetType) {
-        this.gadgetType = gadgetType;
-    }
 }

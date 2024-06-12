@@ -1,21 +1,15 @@
-package com.example.qrscanner;
+package com.example.qrscanner.models;
 
 public class Assigned_to_User_Model {
-    public String getDevice() {
-        return device;
-    }
 
-    public void setDevice(String device) {
-        this.device = device;
-    }
 
-    public String device;
     private int originalPosition;
     public int id, serial_number;
     public byte[] image;
     public String name;
     public String department;
-    public String device_model;
+    public String device_brand;
+    public String device;
     public String date_purchased;
     public String date_expired;
     public String status;
@@ -38,8 +32,11 @@ public class Assigned_to_User_Model {
         return department;
     }
 
-    public String getDeviceModel() {
-        return device_model;
+    public String getDeviceBrand() {
+        return device_brand;
+    }
+    public String getDeviceType() {
+        return device;
     }
 
     public String getDatePurchased() {
@@ -78,8 +75,12 @@ public class Assigned_to_User_Model {
         this.department = department;
     }
 
-    public void setDevice_model(String device_model) {
-        this.device_model = device_model;
+    public void setDevice_brand(String device_brand) {
+        this.device_brand = device_brand;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
     }
 
     public void setDate_purchased(String date_purchased) {

@@ -44,7 +44,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.ItemAdapter;
-import com.example.qrscanner.methods.CustomToastMethod;
+import com.example.qrscanner.models.Assigned_to_User_Model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int CREATE_FILE_REQUEST_CODE = 16168;
     private CardView addBtn, laptopBtn, tabletBtn, phoneBtn, pcBtn, allBtn, unknownBtn, importBtn, exportBtn, unknownUserBtn, expiredBtn;
-
-    private CustomToastMethod customToastMethod;
 
     private ImageView settings, currentActivity, backBtn;
     private androidx.appcompat.widget.SearchView searchView;
@@ -99,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.main).bringToFront();
 
-        customToastMethod = new CustomToastMethod(MainActivity.this);
 
         currentActivity = findViewById(R.id.currentActivity);
         currentActivity.setVisibility(View.GONE);
@@ -309,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
                 if (serialNumString.toLowerCase().contains(searchText)
                         || item.getName().toLowerCase().contains(searchText) || item.getName().toLowerCase().contains(".")
                         || item.getDepartment().contains(searchText) || item.getDepartment().contains(".")
-                        || item.getDeviceModel().contains(searchText) || item.getDatePurchased().contains(searchText) || item.getDateExpired().contains(searchText)) {
+                        || item.getDeviceBrand().contains(searchText) || item.getDatePurchased().contains(searchText) || item.getDateExpired().contains(searchText)) {
 
                     filteredList.add(item);
                 }
@@ -458,16 +455,16 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (!dbHelper.getAllSerialNumbers().contains(String.valueOf(intSerial)) && dbHelper.getAllSerialNumbers().contains(String.valueOf(intSerial))) {
-                    customToastMethod.notify(R.layout.toasty, R.drawable.check, "Success", "Successfully imported some of the data", null, null);
+                    // Toast "Success", "Successfully imported some of the data"
                 } else {
-                    customToastMethod.notify(R.layout.toasty, R.drawable.check, "Success", "Data Imported successfully", null, null);
+                    // Toast "Success", "Data Imported successfully"
                 }
                 loadDataFromDatabase();
 
             } catch (IOException e) {
                 e.printStackTrace();
                 // Handle any errors that occur during file reading or data insertion
-                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Failed", "Error Importing the data", null, null);
+                // Toast "Failed", "Error Importing the data"
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -505,8 +502,8 @@ public class MainActivity extends AppCompatActivity {
                 row.createCell(0).setCellValue(device.getSerialNumber());
                 row.createCell(1).setCellValue(device.getName());
                 row.createCell(2).setCellValue(device.getDepartment());
-                row.createCell(3).setCellValue(device.getDevice());
-                row.createCell(4).setCellValue(device.getDeviceModel());
+                row.createCell(3).setCellValue(device.getDeviceType());
+                row.createCell(4).setCellValue(device.getDeviceBrand());
                 row.createCell(5).setCellValue(device.getDatePurchased());
                 row.createCell(6).setCellValue(device.getDateExpired());
                 row.createCell(7).setCellValue(device.getStatus());

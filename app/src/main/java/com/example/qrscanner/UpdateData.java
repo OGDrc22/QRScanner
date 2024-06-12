@@ -6,7 +6,6 @@
     import android.graphics.BitmapFactory;
     import android.graphics.drawable.ColorDrawable;
     import android.os.Bundle;
-    import android.os.Handler;
     import android.text.Editable;
     import android.text.TextWatcher;
     import android.util.Log;
@@ -35,9 +34,8 @@
     import com.example.qrscanner.DB.DBHelper;
     import com.example.qrscanner.adapter.GadgetsAdapter;
     import com.example.qrscanner.adapter.ItemAdapter;
-    import com.example.qrscanner.utils.ExpirationUtility;
-    import com.example.qrscanner.methods.CustomToastMethod;
-//    import com.example.qrscanner.options.Data;
+    import com.example.qrscanner.models.Assigned_to_User_Model;
+    //    import com.example.qrscanner.options.Data;
     import com.example.qrscanner.options.Gadgets;
     import com.example.qrscanner.utils.Utils;
 
@@ -51,7 +49,7 @@
 
         private EditText assignedTo, department, deviceModel, datePurchased;
         private TextView qrText, dateExpired, status, availability, titleTextView, chooser;
-        private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, imageViewGadget;
+        private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewGadget;
         private CardView saveBtn, cancelBtn;
         private GadgetsAdapter gadgetsAdapter;
         private String gadget, gadgetName;
@@ -63,8 +61,6 @@
         private Gadgets gadgetPosition;
         private ListView listView;
         private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
-
-        private CustomToastMethod customToastMethod;
 
         private void updateAvailabilityStatus() {
             if (!assignedTo.getText().toString().isEmpty()) {
@@ -128,7 +124,6 @@
                 return insets;
             });
 
-            customToastMethod = new CustomToastMethod(UpdateData.this);
 
             currentActivity = findViewById(R.id.currentActivity);
             currentActivity.setImageResource(R.drawable.ic_edit);
@@ -140,12 +135,7 @@
             backBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CustomToastMethod customToastMethod = new CustomToastMethod(UpdateData.this);
-                    customToastMethod.notify(R.layout.toasty, null, "Canceled", null, null, null);
-
-                    new Handler().postDelayed(() -> {
-                        finish();
-                    }, 3000);
+                    finish();
                 }
             });
 
@@ -200,7 +190,7 @@
             deviceModel.setText(getIntent().getStringExtra("deviceModel"));
             datePurchased.setText(getIntent().getStringExtra("datePurchased"));
             dateExpired.setText(getIntent().getStringExtra("dateExpired"));
-//            status.setText(getIntent().getStringExtra("status"));
+            status.setText(getIntent().getStringExtra("status"));
             availability.setText(getIntent().getStringExtra("availability"));
             updateAvailabilityStatus();
 
@@ -221,6 +211,7 @@
                 if (uri != null) {
                     // Handle the selected image URI
                     currentIcon.setImageURI(uri);
+                    currentIcon2.setImageURI(uri);
 
 
                     Log.d("PhotoPicker", "Selected URI: " + uri);
@@ -233,10 +224,7 @@
             cancelBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    customToastMethod.notify(R.layout.toasty, null, "Canceled", null, null, null);
-                    new Handler().postDelayed(() -> {
-                        finish();
-                    }, 1500);
+                    finish();
                 }
             });
 
@@ -250,12 +238,12 @@
                     try {
                         inputDate = dateFormat.parse(datePurchased.getText().toString());
                     } catch (ParseException e) {
-                        customToastMethod.notify(R.layout.toasty, null, "Invalid date format. "  + pattern, null, null, null);
+                        // Toast "Invalid date format. "
                         return;
                     }
 
                     // Calculate expiration date and set status
-                    ExpirationUtility.calculateExpirationAndStatus(inputDate, dateExpired, status);
+                    Utils.calculateExpirationAndStatus(inputDate, dateExpired, status);
                     itemAdapter.notifyDataSetChanged();
                 }
             });
@@ -274,15 +262,6 @@
                         Log.d("Saved?", "onCreate: " + deviceModel.getText().toString());
                         deviceList.add(assigned);
 
-//                        customToastMethod.notify(R.layout.toasty, R.drawable.check, "Saved Success", null, null, null);
-
-
-//                        new Handler().postDelayed(() -> {
-//                            intent.putExtra("dataRefreshed", true);
-//                            setResult(RESULT_OK, intent);
-//                            finish();
-//                        }, 1500);
-
                         intent.putExtra("dataRefreshed", true);
                         setResult(RESULT_OK, intent);
                         finish();
@@ -293,7 +272,7 @@
 
                     }
                 } else {
-                    customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Save Failed", "Please fill up all fields", null, null);
+                    // Toast "Save Failed", "Please fill up all fields"
                 }
 
             });
@@ -372,7 +351,12 @@
             final Button actionCancel = view.findViewById(R.id.actionCancel);
             final Button actionDelete = view.findViewById(R.id.actionDelete);
             final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+            ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
+
+            // Set the ImageView resource Based on what user pick
             currentIcon = iconICPick;
+            currentIcon2 = imageViewCurrent;
+
             byte[] gImage = gadgetPosition.getImage();
 
             final AlertDialog deviceChooserDialog = builder.create();
@@ -452,8 +436,11 @@
             final Button actionOK = view.findViewById(R.id.actionOK);
             final Button actionCancel = view.findViewById(R.id.actionCancel);
             final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+            ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
 
+            // Set the ImageView resource Based on what user pick
             currentIcon = iconICPick;
+            currentIcon2 = imageViewCurrent;
 
             final AlertDialog deviceChooserDialog = builder.create();
             if (deviceChooserDialog.getWindow() != null) {

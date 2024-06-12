@@ -5,12 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.qrscanner.Assigned_to_User_Model;
+import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.options.Gadgets;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
 
 
-    private static final String TABLE_NAME = "Assigned_Laptop";
+    private static final String TABLE_ASSIGNED_TO_USER = "Assigned_Laptop";
     // Add Key to add Row
     private static final String KEY_ID = "id";
     private static final String KEY_SERIAL_NUMBER = "serial_number";
@@ -49,7 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("CREATE TABLE " + TABLE_NAME + "("
+        db.execSQL("CREATE TABLE " + TABLE_ASSIGNED_TO_USER + "("
                 + KEY_ID +" INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_SERIAL_NUMBER + " INTEGER, "
                 + KEY_NAME + " TEXT, "
@@ -87,7 +86,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(CREATE_GADGETS_OPTION_TABLE);
         }
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSIGNED_TO_USER);
         onCreate(db);
 
 
@@ -108,7 +107,7 @@ public class DBHelper extends SQLiteOpenHelper {
 //            ContentValues values = new ContentValues();
 //            values.put(KEY_SERIAL_NUMBER, serialNum);
 //            values.put(KEY_NAME, name);
-//            db.insert(TABLE_NAME, null, values);
+//            db.insert(TABLE_ASSIGNED_TO_USER, null, values);
 //        } else {
 //            // Handle case where qrContent does not contain enough parts
 //            // For example, log an error or show a message to the user
@@ -127,34 +126,39 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_STATUS, status);
         values.put(KEY_AVAILABILITY, availability);
 
-        database.insert(TABLE_NAME, null, values);
+        database.insert(TABLE_ASSIGNED_TO_USER, null, values);
 
     }
 
     public ArrayList<Assigned_to_User_Model> fetchDevice() {
         SQLiteDatabase database = this.getReadableDatabase();
-        String query = "SELECT al.*, go." + KEY_GADGETS_IMAGE + " FROM " + TABLE_NAME + " al LEFT JOIN " + TABLE_GADGETS + " go ON al.device = go." + KEY_GADGETS_NAME;
+        String query = "SELECT al.*, go." + KEY_GADGETS_IMAGE + " FROM " + TABLE_ASSIGNED_TO_USER + " al LEFT JOIN " + TABLE_GADGETS + " go ON al.device = go." + KEY_GADGETS_NAME;
         Cursor cursor = database.rawQuery(query, null);
         ArrayList<Assigned_to_User_Model> arrayList = new ArrayList<>();
 
         while (cursor.moveToNext()) {
             Assigned_to_User_Model assignedToUserModel = new Assigned_to_User_Model();
 
+            // TABLE_ASSIGNED_TO_USER TABLE_ASSIGNED_TO_USER
             assignedToUserModel.id = cursor.getInt(0);
             assignedToUserModel.serial_number = cursor.getInt(1);
             assignedToUserModel.name = cursor.getString(2);
             assignedToUserModel.department = cursor.getString(3);
             assignedToUserModel.device = cursor.getString(4);
-            assignedToUserModel.device_model = cursor.getString(5);
+            assignedToUserModel.device_brand = cursor.getString(5);
             assignedToUserModel.date_purchased = cursor.getString(6);
             assignedToUserModel.date_expired = cursor.getString(7);
             assignedToUserModel.status = cursor.getString(8);
             assignedToUserModel.availability = cursor.getString(9);
+
+            // Gadget Image TABLE_GADGETS
+            // Get the image from the database and pass it in assignedToUserModel object
             assignedToUserModel.image = (cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_IMAGE)));
 
-            Log.d("FetchDevice", "Serial Number: " + assignedToUserModel.serial_number);
-            Log.d("FetchDevice", "Assigned to: " + assignedToUserModel.name);
-            Log.d("FetchDevice", "Device Model: " + assignedToUserModel.device_model);
+            // Debugging Logs
+//            Log.d("FetchDevice", "Serial Number: " + assignedToUserModel.serial_number);
+//            Log.d("FetchDevice", "Assigned to: " + assignedToUserModel.name);
+//            Log.d("FetchDevice", "Device Model: " + assignedToUserModel.device_brand);
             arrayList.add(assignedToUserModel);
         }
 
@@ -165,7 +169,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void deleteDeviceBySerialNumber(String serialNumber) {
         Log.d("TAG", "deleteDeviceBySerialNumber: deleted");
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, KEY_SERIAL_NUMBER + " = ?", new String[]{serialNumber});
+        db.delete(TABLE_ASSIGNED_TO_USER, KEY_SERIAL_NUMBER + " = ?", new String[]{serialNumber});
         db.close();
     }
 
@@ -182,14 +186,14 @@ public class DBHelper extends SQLiteOpenHelper {
         if (newStatus != null) values.put(KEY_STATUS, newStatus);
         if (newAvailability != null) values.put(KEY_AVAILABILITY, newAvailability);
 
-        db.update(TABLE_NAME, values, KEY_SERIAL_NUMBER + " = ?", new String[]{serialNumber});
+        db.update(TABLE_ASSIGNED_TO_USER, values, KEY_SERIAL_NUMBER + " = ?", new String[]{serialNumber});
 
         db.close();
     }
 
     public void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, null, null);
+        db.delete(TABLE_ASSIGNED_TO_USER, null, null);
         db.close();
     }
 
@@ -199,10 +203,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // Define the table name and the WHERE clause for the DELETE statement
         String whereClause = KEY_DEVICE + " = ?";
-        String[] whereArgs = {device.getDevice()}; // Provide the device name as the WHERE clause argument
+        String[] whereArgs = {device.getDeviceType()}; // Provide the device name as the WHERE clause argument
 
         // Execute the DELETE statement
-        db.delete(TABLE_NAME, whereClause, whereArgs);
+        db.delete(TABLE_ASSIGNED_TO_USER, whereClause, whereArgs);
 
         // Close the database connection
         db.close();
@@ -212,14 +216,14 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = KEY_NAME + " = ?";
         String[] selectionArgs = {device.getName()};
-        db.delete(TABLE_NAME, selection, selectionArgs);
+        db.delete(TABLE_ASSIGNED_TO_USER, selection, selectionArgs);
         db.close();
     }
     public void deleteExpiredDevice(Assigned_to_User_Model device) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = KEY_DATE_EXPIRED + " = ?";
         String[] selectionArgs = {device.getDateExpired()};
-        db.delete(TABLE_NAME, selection, selectionArgs);
+        db.delete(TABLE_ASSIGNED_TO_USER, selection, selectionArgs);
         db.close();
     }
 
@@ -356,4 +360,4 @@ public class DBHelper extends SQLiteOpenHelper {
 //    ContentValues values = new ContentValues();
 //    values.put(KEY_SERIAL_NUMBER, serialNumber);
 //    values.put(KEY_NAME, name);
-//    long newRowId = db.insert(TABLE_NAME, null, values);
+//    long newRowId = db.insert(TABLE_ASSIGNED_TO_USER, null, values);

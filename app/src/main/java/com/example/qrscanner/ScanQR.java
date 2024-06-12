@@ -36,14 +36,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.GadgetsAdapter;
-import com.example.qrscanner.utils.ExpirationUtility;
-import com.example.qrscanner.methods.CustomToastMethod;
+import com.example.qrscanner.models.Assigned_to_User_Model;
 //import com.example.qrscanner.options.Data;
 import com.example.qrscanner.options.Gadgets;
 import com.example.qrscanner.utils.Utils;
@@ -67,10 +65,7 @@ public class ScanQR extends AppCompatActivity {
 
     private EditText assignedTo, department, deviceModel, datePurchased;
     private TextView qrText, dateExpired, status, availability, chooser;
-    private CustomToastMethod customToastMethod;
-    private Spinner spinner;
     private GadgetsAdapter gadgetsAdapter;
-    private Button getBtn;
     private CardView saveBtn;
     private PreviewView cameraPreview;
     private ListenableFuture<ProcessCameraProvider> cameraProviderListenableFuture;
@@ -134,8 +129,6 @@ public class ScanQR extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_qr);
-
-        customToastMethod = new CustomToastMethod(ScanQR.this);
 
         assignedTo = findViewById(R.id.assignedTo);
         department = findViewById(R.id.department);
@@ -211,7 +204,7 @@ public class ScanQR extends AppCompatActivity {
                 }
 
                 // Calculate expiration date and set status
-                ExpirationUtility.calculateExpirationAndStatus(inputDate, dateExpired, status);
+                Utils.calculateExpirationAndStatus(inputDate, dateExpired, status);
             }
         });
 
@@ -267,14 +260,14 @@ public class ScanQR extends AppCompatActivity {
                     datePurchased.setText("");
 
 
-                    customToastMethod.notify(R.layout.toasty, R.drawable.check, "Saved Success", null, null, null);
+                    // Toast Saved Success
 
                     new Handler().postDelayed(() -> {
                         finish();
                     }, 3000);
                 }
             } else {
-                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Save Failed", "Please fill up all fields", null, null);
+                // Toast "Save Failed", "Please fill up all fields"
             }
         });
     }
@@ -299,7 +292,7 @@ public class ScanQR extends AppCompatActivity {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             init();
         } else {
-            customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "Permission Denied", null, null, null);
+            // Toast "Permission Denied", "Please allow camera permission"
         }
     }
 
@@ -412,6 +405,7 @@ public class ScanQR extends AppCompatActivity {
         final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
         ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
 
+        // Set the ImageView resource Based on what user pick
         currentIcon = iconICPick;
         currentIcon2 = imageViewCurrent;
 
@@ -472,9 +466,7 @@ public class ScanQR extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(ScanQR.this, "Gadget to delete ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
-//                gadgetsAdapter = new GadgetsAdapter(ScanQR.this, getGadgetsFromDatabase());
                 dbHelper.deleteGadget(gadgets);
-//                gadgetsAdapter.notifyDataSetChanged();
                 updateGadgetList();
                 deviceChooserDialog.dismiss();
                 Toast.makeText(ScanQR.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
@@ -504,6 +496,7 @@ public class ScanQR extends AppCompatActivity {
         final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
         ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
 
+        // Set the ImageView resource Based on what user pick
         currentIcon = iconICPick;
         currentIcon2 = imageViewCurrent;
 
@@ -554,16 +547,12 @@ public class ScanQR extends AppCompatActivity {
         });
     }
 
-
     private void updateGadgetList() {
         List<Gadgets> gadgetsList = getGadgetsFromDatabase();
         gadgetsAdapter = new GadgetsAdapter(ScanQR.this, gadgetsList);
         listView.setAdapter(gadgetsAdapter);
         gadgetsAdapter.notifyDataSetChanged();
     }
-
-
-
 
     private List<Gadgets> getGadgetsFromDatabase() {
         List<Gadgets> gadgetsList = dbHelper.getAllGadgets();

@@ -25,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.GadgetsAdapter;
 import com.example.qrscanner.adapter.ItemAdapter;
+import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,47 +133,10 @@ public class allDevice extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(allDevice.this, R.style.AlertDialogTheme);
-                    View view = LayoutInflater.from(allDevice.this).inflate(R.layout.layout_delete_dialog,(ConstraintLayout)findViewById(R.id.layoutDialogContainer));
-                    builder.setView(view);
-                    ((TextView) view.findViewById(R.id.titleText)).setText("Delete [ All ]");
-                    ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All device ] ?" + "\n" + "\n" + "This action cannot be undone.");
-                    ((ImageView) view.findViewById(R.id.icon_action)).setImageResource(R.drawable.trash_can_10416);
-                    ((ImageView) view.findViewById(R.id.warning)).setImageResource(R.drawable.warning_sign);
-                    ((Button) view.findViewById(R.id.actionDelete)).setText("Delete");
-                    ((Button) view.findViewById(R.id.actionCancel)).setText("Cancel");
-
-                    final  AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-
-                    // function
-                    view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dbHelper.deleteAll();
-                            deviceList.clear();
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(allDevice.this, "All Data Deleted", Toast.LENGTH_SHORT).show();
-                            alertDialog.hide();
-                        }
-                    });
-
-
-                    // For Cancel Button
-                    view.findViewById(R.id.actionCancel).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(allDevice.this, "Canceled", Toast.LENGTH_SHORT).show();
-                            alertDialog.hide();
-                        }
-                    });
-
-                    if (alertDialog.getWindow() != null) {
-                        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-                    }
-
-                } else {
+                    String idetifier = "device";
+                    Utils.showDeleteAllDialog(allDevice.this, idetifier);
+                    adapter.notifyDataSetChanged();
+                }else {
                     Toast.makeText(allDevice.this, "There's no Data", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -192,8 +157,8 @@ public class allDevice extends AppCompatActivity {
                 serialNum.add(String.valueOf(devices.getSerialNumber()));
                 assignedTo.add(devices.getName());
                 department.add(devices.getDepartment());
-                device.add(devices.getDevice());
-                deviceModel.add(devices.getDeviceModel());
+                device.add(devices.getDeviceType());
+                deviceModel.add(devices.getDeviceBrand());
                 datePurchased.add(devices.getDatePurchased());
                 dateExpire.add(devices.getDateExpired());
                 status.add(devices.getStatus());

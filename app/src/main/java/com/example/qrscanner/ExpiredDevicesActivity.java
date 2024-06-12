@@ -25,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.ItemAdapter;
+import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -124,46 +126,10 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ExpiredDevicesActivity.this, R.style.AlertDialogTheme);
-                        View view = LayoutInflater.from(ExpiredDevicesActivity.this).inflate(R.layout.layout_delete_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
-                        builder.setView(view);
-                        ((TextView) view.findViewById(R.id.titleText)).setText("Delete [ All Expired Device ]");
-                        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All Expired device ] ?" + "\n" + "\n" + "This action cannot be undone.");
-                        ((ImageView) view.findViewById(R.id.icon_action)).setImageResource(R.drawable.trash_can_10416);
-                        ((ImageView) view.findViewById(R.id.warning)).setImageResource(R.drawable.warning_sign);
-                        ((Button) view.findViewById(R.id.actionDelete)).setText("Delete");
-                        ((Button) view.findViewById(R.id.actionCancel)).setText("Cancel");
-
-                        final AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
-
-                        // function
-                        view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                deleteDataByGadgetName();
-                                deviceList.clear();
-                                Toast.makeText(ExpiredDevicesActivity.this, "All Expired Device Deleted", Toast.LENGTH_SHORT).show();
-                                alertDialog.hide();
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-
-
-                        // For Cancel Button
-                        view.findViewById(R.id.actionCancel).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(ExpiredDevicesActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
-                                alertDialog.hide();
-                            }
-                        });
-
-                        if (alertDialog.getWindow() != null) {
-                            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-                        }
-
-                    } else {
+                        String identifier = "expired device";
+                        Utils.showDeleteAllDialog(ExpiredDevicesActivity.this, identifier);
+                        adapter.notifyDataSetChanged();
+                    }else {
                         Toast.makeText(ExpiredDevicesActivity.this, "Expired Devices is empty", Toast.LENGTH_SHORT).show();
                     }
                 }

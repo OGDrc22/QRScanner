@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.ItemAdapter;
+import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -116,45 +118,9 @@ public class TabletActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(TabletActivity.this, R.style.AlertDialogTheme);
-                        View view = LayoutInflater.from(TabletActivity.this).inflate(R.layout.layout_delete_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
-                        builder.setView(view);
-                        ((TextView) view.findViewById(R.id.titleText)).setText("Delete [ All Tablets ]");
-                        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All tablets device ] ?" + "\n" + "\n" + "This action cannot be undone.");
-                        ((ImageView) view.findViewById(R.id.icon_action)).setImageResource(R.drawable.trash_can_10416);
-                        ((ImageView) view.findViewById(R.id.warning)).setImageResource(R.drawable.warning_sign);
-                        ((Button) view.findViewById(R.id.actionDelete)).setText("Delete");
-                        ((Button) view.findViewById(R.id.actionCancel)).setText("Cancel");
-
-                        final AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
-
-                        // function
-                        view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                deleteDataByGadgetName();
-                                deviceList.clear();
-                                Toast.makeText(TabletActivity.this, "All Tablets Deleted", Toast.LENGTH_SHORT).show();
-                                alertDialog.hide();
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-
-
-                        // For Cancel Button
-                        view.findViewById(R.id.actionCancel).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(TabletActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
-                                alertDialog.hide();
-                            }
-                        });
-
-                        if (alertDialog.getWindow() != null) {
-                            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-                        }
-
+                        String identifier = "tablets";
+                        Utils.showDeleteAllDialog(TabletActivity.this, identifier);
+                        adapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(TabletActivity.this, "Tablet is empty", Toast.LENGTH_SHORT).show();
                     }
@@ -182,7 +148,7 @@ public class TabletActivity extends AppCompatActivity {
         while (iterator.hasNext()) {
             Assigned_to_User_Model device = iterator.next();
             // Assuming getDeviceName() returns the name of the device
-            if (device.getDevice().equalsIgnoreCase("Tablet")) {
+            if (device.getDeviceType().equalsIgnoreCase("Tablet")) {
                 // Remove the item from the list
                 iterator.remove();
                 dbHelper.deleteDevice(device);
@@ -229,7 +195,7 @@ public class TabletActivity extends AppCompatActivity {
             // Iterate through the original list and add items that match the criteria to the filtered list
             for (Assigned_to_User_Model device : deviceList) {
                 // Assuming device contains the name of the gadget
-                String deviceName = device.getDevice();
+                String deviceName = device.getDeviceType();
                 // Check if the device name contains "laptop" (case-insensitive)
                 if (deviceName.toLowerCase().contains("tablet")) {
                     filteredList.add(device);
