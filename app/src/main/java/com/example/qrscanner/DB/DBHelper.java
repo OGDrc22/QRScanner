@@ -10,7 +10,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.qrscanner.models.Assigned_to_User_Model;
-import com.example.qrscanner.options.Gadgets;
+import com.example.qrscanner.models.Department;
+import com.example.qrscanner.models.Gadgets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,11 +36,16 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_STATUS = "status";
     private static final String KEY_AVAILABILITY = "availability";
 
-    //TABLE FOR GADGET OPTION
-    private static final String TABLE_GADGETS = "Gadgets_Option";
-    private static final String KEY_GADGETS_ID = "gadgets_id";
-    private static final String KEY_GADGETS_NAME = "gadgets_name";
-    private static final String KEY_GADGETS_IMAGE = "gadgets_image";
+    //TABLE FOR GADGET CATEGORY OPTION
+    private static final String TABLE_GADGETS_CATEGORY = "Gadgets_Category_Option";
+    private static final String KEY_GADGETS_CATEGORY_ID = "gadgets_id";
+    private static final String KEY_GADGETS_CATEGORY_NAME = "gadgets_name";
+    private static final String KEY_GADGETS_CATEGORY_IMAGE = "gadgets_image";
+
+    // TABLE FOR DEPARTMENT CATEGORY
+    private static final String TABLE_DEPARTMENT_CATEGORY = "Department_Category";
+    private static final String KEY_DEPARTMENT_CATEGORY_ID = "department_id";
+    private static final String KEY_DEPARTMENT_CATEGORY_NAME = "department_name";
 
     public DBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -48,6 +54,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        // TABLE FOR ASSIGNED TO USER
         db.execSQL("CREATE TABLE " + TABLE_ASSIGNED_TO_USER + "("
                 + KEY_ID +" INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_SERIAL_NUMBER + " INTEGER, "
@@ -61,10 +68,15 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_AVAILABILITY + " TEXT) ");
 
         // TABLE FOR GADGETS OPTION
-        db.execSQL("CREATE TABLE " + TABLE_GADGETS + "("
-                + KEY_GADGETS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + KEY_GADGETS_NAME + " TEXT, "
-                + KEY_GADGETS_IMAGE + " BLOB)");
+        db.execSQL("CREATE TABLE " + TABLE_GADGETS_CATEGORY + "("
+                + KEY_GADGETS_CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + KEY_GADGETS_CATEGORY_NAME + " TEXT, "
+                + KEY_GADGETS_CATEGORY_IMAGE + " BLOB)");
+
+        // TABLE FOR DEPARTMENT CATEGORY
+        db.execSQL("CREATE TABLE " + TABLE_DEPARTMENT_CATEGORY + "("
+                + KEY_DEPARTMENT_CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + KEY_DEPARTMENT_CATEGORY_NAME + " TEXT)");
 
 //        SQLiteDatabase database = this.getWritableDatabase();
 
@@ -79,10 +91,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if (oldVersion < 2) {
             // Create the new table without affecting existing data
-            String CREATE_GADGETS_OPTION_TABLE = "CREATE TABLE " + TABLE_GADGETS + "(" +
+            String CREATE_GADGETS_OPTION_TABLE = "CREATE TABLE " + TABLE_GADGETS_CATEGORY + "(" +
                     KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    KEY_GADGETS_NAME + " TEXT, " +
-                    KEY_GADGETS_IMAGE + " INTEGER)";
+                    KEY_GADGETS_CATEGORY_NAME + " TEXT, " +
+                    KEY_GADGETS_CATEGORY_IMAGE + " INTEGER)";
             db.execSQL(CREATE_GADGETS_OPTION_TABLE);
         }
 
@@ -132,7 +144,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public ArrayList<Assigned_to_User_Model> fetchDevice() {
         SQLiteDatabase database = this.getReadableDatabase();
-        String query = "SELECT al.*, go." + KEY_GADGETS_IMAGE + " FROM " + TABLE_ASSIGNED_TO_USER + " al LEFT JOIN " + TABLE_GADGETS + " go ON al.device = go." + KEY_GADGETS_NAME;
+        String query = "SELECT al.*, go." + KEY_GADGETS_CATEGORY_IMAGE + " FROM " + TABLE_ASSIGNED_TO_USER + " al LEFT JOIN " + TABLE_GADGETS_CATEGORY + " go ON al.device = go." + KEY_GADGETS_CATEGORY_NAME;
         Cursor cursor = database.rawQuery(query, null);
         ArrayList<Assigned_to_User_Model> arrayList = new ArrayList<>();
 
@@ -151,9 +163,9 @@ public class DBHelper extends SQLiteOpenHelper {
             assignedToUserModel.status = cursor.getString(8);
             assignedToUserModel.availability = cursor.getString(9);
 
-            // Gadget Image TABLE_GADGETS
+            // Gadget Image TABLE_GADGETS_CATEGORY
             // Get the image from the database and pass it in assignedToUserModel object
-            assignedToUserModel.image = (cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_IMAGE)));
+            assignedToUserModel.image = (cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_IMAGE)));
 
             // Debugging Logs
 //            Log.d("FetchDevice", "Serial Number: " + assignedToUserModel.serial_number);
@@ -261,23 +273,24 @@ public class DBHelper extends SQLiteOpenHelper {
         return allSerialNumbers;
     }
 
-    public long addGadget(String name, byte[] image) {
+    public void addGadgetCategory(String name, byte[] image) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_GADGETS_NAME, name);
-        values.put(KEY_GADGETS_IMAGE, image);
-        return db.insert(TABLE_GADGETS, null, values);
+        values.put(KEY_GADGETS_CATEGORY_NAME, name);
+        values.put(KEY_GADGETS_CATEGORY_IMAGE, image);
+        Log.d("DB", "addGadgetCategory: Called");
+        db.insert(TABLE_GADGETS_CATEGORY, null, values);
     }
 
-    public List<Gadgets> getAllGadgets() {
+    public List<Gadgets> getAllGadgetsCategory() {
         List<Gadgets> gadgetsList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GADGETS, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GADGETS_CATEGORY, null);
         if (cursor.moveToFirst()) {
             do {
-                int id = cursor.getInt(cursor.getColumnIndex(KEY_GADGETS_ID));
-                String name = cursor.getString(cursor.getColumnIndex(KEY_GADGETS_NAME));
-                byte[] image = cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_IMAGE));
+                int id = cursor.getInt(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_ID));
+                String name = cursor.getString(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_NAME));
+                byte[] image = cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_IMAGE));
                 Gadgets gadget = new Gadgets(id, name, image);
                 gadgetsList.add(gadget);
             } while (cursor.moveToNext());
@@ -286,15 +299,16 @@ public class DBHelper extends SQLiteOpenHelper {
         return gadgetsList;
     }
 
-    public void updateGadget(Gadgets gadget, String newName, byte[] newImage) {
+    public void updateGadgetCategory(Gadgets gadget, String newName, byte[] newImage) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_GADGETS_NAME, newName);
-        values.put(KEY_GADGETS_IMAGE, newImage);
+
+        values.put(KEY_GADGETS_CATEGORY_NAME, newName);
+        values.put(KEY_GADGETS_CATEGORY_IMAGE, newImage);
 
         Log.d("DB", "Updating Gadget ID: " + gadget.getId() + " with Name: " + newName + " and Image: " + newImage);
 
-        int rowsAffected = db.update(TABLE_GADGETS, values, KEY_GADGETS_ID + " = ?", new String[]{String.valueOf(gadget.getId())});
+        int rowsAffected = db.update(TABLE_GADGETS_CATEGORY, values, KEY_GADGETS_CATEGORY_ID + " = ?", new String[]{String.valueOf(gadget.getId())});
         if (rowsAffected > 0){
             Log.d("DB", "updateGadget: updated");
         } else {
@@ -302,13 +316,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void deleteGadget(Gadgets gadget) {
+    public void deleteGadgetCategory(Gadgets gadget) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String whereClause = KEY_GADGETS_ID + " = ?";
+        String whereClause = KEY_GADGETS_CATEGORY_ID + " = ?";
 
         Log.d("DB", "Deleting Gadget ID: " + gadget.getId());
 
-        int rowsAffected = db.delete(TABLE_GADGETS, whereClause, new String[]{String.valueOf(gadget.getId())});
+        int rowsAffected = db.delete(TABLE_GADGETS_CATEGORY, whereClause, new String[]{String.valueOf(gadget.getId())});
         if (rowsAffected > 0) {
             Log.d("DB", "deleteGadget: deleted");
         } else {
@@ -318,13 +332,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
 //    public byte[] getGadgetImage(Bitmap gadgetId) {
 //        SQLiteDatabase db = this.getReadableDatabase();
-//        String query = "SELECT " + KEY_GADGETS_IMAGE + " FROM " + TABLE_GADGETS + " WHERE " + KEY_GADGETS_ID + " = ?";
+//        String query = "SELECT " + KEY_GADGETS_CATEGORY_IMAGE + " FROM " + TABLE_GADGETS_CATEGORY + " WHERE " + KEY_GADGETS_CATEGORY_ID + " = ?";
 //        Cursor cursor = db.rawQuery(query, new String[] { String.valueOf(gadgetId) });
 //
 //        byte[] image = null;
 //        if (cursor != null) {
 //            if (cursor.moveToFirst()) {
-//                image = cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_IMAGE));
+//                image = cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_IMAGE));
 //            }
 //            cursor.close();
 //        }
@@ -332,21 +346,70 @@ public class DBHelper extends SQLiteOpenHelper {
 //        return image;
 //    }
 
-    public byte[] getGadgetImageInt(int gadgetIntId) {
+    public byte[] getGadgetCategoryImageInt(int gadgetIntId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT " + KEY_GADGETS_IMAGE + " FROM " + TABLE_GADGETS + " WHERE " + KEY_GADGETS_ID + " = ?";
+        String query = "SELECT " + KEY_GADGETS_CATEGORY_IMAGE + " FROM " + TABLE_GADGETS_CATEGORY + " WHERE " + KEY_GADGETS_CATEGORY_ID + " = ?";
         Cursor cursor = db.rawQuery(query, new String[] { String.valueOf(gadgetIntId) });
 
         byte[] image = null;
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                image = cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_IMAGE));
+                image = cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_IMAGE));
             }
             cursor.close();
         }
         db.close();
         return image;
     }
+
+    public void addDepartmentCategory(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_DEPARTMENT_CATEGORY_NAME, name);
+
+        db.insert(TABLE_DEPARTMENT_CATEGORY, null, values);
+    }
+
+    public void editDepartmentCategory(int id, String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_DEPARTMENT_CATEGORY_NAME, name);
+        db.update(TABLE_DEPARTMENT_CATEGORY, values, KEY_DEPARTMENT_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    public List<Department> getAllDepartmentCategory() {
+        List<Department> departmentList = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        try {
+            db = this.getReadableDatabase();
+            cursor = db.rawQuery("SELECT * FROM " + TABLE_DEPARTMENT_CATEGORY, null);
+            if (cursor.moveToFirst()) {
+                int idIndex = cursor.getColumnIndex(KEY_DEPARTMENT_CATEGORY_ID);
+                int nameIndex = cursor.getColumnIndex(KEY_DEPARTMENT_CATEGORY_NAME);
+                do {
+                    int id = cursor.getInt(idIndex);
+                    String name = cursor.getString(nameIndex);
+                    Department department = new Department(id, name);
+                    departmentList.add(department);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            // Log the exception or handle it as necessary
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+        return departmentList;
+    }
+
+
 }
 
 

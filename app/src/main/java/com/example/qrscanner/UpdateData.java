@@ -36,7 +36,7 @@
     import com.example.qrscanner.adapter.ItemAdapter;
     import com.example.qrscanner.models.Assigned_to_User_Model;
     //    import com.example.qrscanner.options.Data;
-    import com.example.qrscanner.options.Gadgets;
+    import com.example.qrscanner.models.Gadgets;
     import com.example.qrscanner.utils.Utils;
 
     import java.text.ParseException;
@@ -394,7 +394,7 @@
                         } else {
                             newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
                         }
-                        dbHelper.updateGadget(gadgets, newGadgetName, newGadgetImage);
+                        dbHelper.updateGadgetCategory(gadgets, newGadgetName, newGadgetImage);
                         updateGadgetList();
                         deviceChooserDialog.dismiss();
 
@@ -407,7 +407,7 @@
                 public void onClick(View v) {
                     Toast.makeText(UpdateData.this, "Gadget to delete ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
 //                gadgetsAdapter = new GadgetsAdapter(UpdateData.this, getGadgetsFromDatabase());
-                    dbHelper.deleteGadget(gadgets);
+                    dbHelper.deleteGadgetCategory(gadgets);
 //                gadgetsAdapter.notifyDataSetChanged();
                     updateGadgetList();
                     deviceChooserDialog.dismiss();
@@ -473,7 +473,7 @@
                         if (newGadgetImage == null) {
                             newGadgetImage = Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.device_model);
                         }
-                        dbHelper.addGadget(newGadgetName, newGadgetImage);
+                        dbHelper.addGadgetCategory(newGadgetName, newGadgetImage);
                         updateGadgetList();
                         deviceChooserDialog.dismiss();
 
@@ -498,24 +498,24 @@
         }
 
         private List<Gadgets> getGadgetsFromDatabase() {
-            List<Gadgets> gadgetsList = dbHelper.getAllGadgets();
+            List<Gadgets> gadgetsList = dbHelper.getAllGadgetsCategory();
 
             // Add default gadgets if database is empty
             if (gadgetsList.isEmpty()) {
-                dbHelper.addGadget("Unknown", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_unknown_device));
-                dbHelper.addGadget("Laptop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.laptop_icon));
-                dbHelper.addGadget("Phone", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.mobile_phone_2635));
-                dbHelper.addGadget("Tablet", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_tablet));
-                dbHelper.addGadget("Desktop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.pc_computer_6840));
+                dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_unknown_device));
+                dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.laptop_icon));
+                dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.mobile_phone_2635));
+                dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_tablet));
+                dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.pc_computer_6840));
 
-                gadgetsList = dbHelper.getAllGadgets();
+                gadgetsList = dbHelper.getAllGadgetsCategory();
             }
 
             return gadgetsList;
         }
 
         public void displayGadgetImageInt(Context context, ImageView imageView, int gadgetId) {
-            byte[] imageBytes = dbHelper.getGadgetImageInt(gadgetId);
+            byte[] imageBytes = dbHelper.getGadgetCategoryImageInt(gadgetId);
             if (imageBytes != null) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 imageView.setImageBitmap(bitmap);

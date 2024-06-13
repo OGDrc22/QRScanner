@@ -471,7 +471,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // TODO implement exportation of data from SQLite to excel format
     // Add this method to export data
     private void exportDatabaseToExcel(String fileName) {
             Log.d(TAG, "Storage permission granted");

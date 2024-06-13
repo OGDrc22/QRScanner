@@ -134,11 +134,34 @@
                             android:paddingVertical="10dp"
                             android:text="Department: " />
 
-                        <EditText
-                            android:id="@+id/department"
-                            style="@style/textStyle1"
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="42dp"/>
+                            android:layout_height="match_parent">
+
+
+                            <TextView
+                                android:id="@+id/chooserDepartment"
+                                style="@style/textStyle1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="12dp"
+                                android:hint="Choose Dep. -Unknown"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:id="@+id/open_option_2"
+                                style="@style/sizeIC2"
+                                android:layout_gravity="center_vertical"
+                                android:src="@drawable/ic_edit"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                     </LinearLayout>
 
@@ -157,13 +180,6 @@
                             android:paddingVertical="10dp"
                             android:text="Device: " />
 
-
-                        <!--<Spinner
-                            android:id="@+id/spinner"
-                            style="@style/spinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"/>-->
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"

@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.qrscanner.R;
-import com.example.qrscanner.options.Gadgets;
+import com.example.qrscanner.models.Gadgets;
 
 import java.util.List;
 
@@ -42,10 +42,10 @@ public class GadgetsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View rootView = LayoutInflater.from(context).inflate(R.layout.item_gadget_option, parent, false);
+        convertView = LayoutInflater.from(context).inflate(R.layout.item_gadget_option, parent, false);
 
-        TextView tvGadgetName = rootView.findViewById(R.id.name);
-        ImageView ivGadgetImage = rootView.findViewById(R.id.image);
+        TextView tvGadgetName = convertView.findViewById(R.id.name);
+        ImageView ivGadgetImage = convertView.findViewById(R.id.image);
 
         Gadgets gadget = gadgets.get(position);
 
@@ -60,7 +60,7 @@ public class GadgetsAdapter extends BaseAdapter {
 //            ivGadgetImage.setImageResource(R.drawable.device_model); // Use a default image if no image is provided
         //}
 
-        return rootView;
+        return convertView;
     }
 
     public List<Gadgets> getGadgetsList() {
