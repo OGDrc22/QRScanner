@@ -2,27 +2,27 @@ package com.example.qrscanner.models;
 
 public class Department {
 
-    public Department(int departmentId, String departmentName) {
-        this.departmentId = departmentId;
-        this.departmentName = departmentName;
+    public Department(int departmentCategoryId, String departmentCategoryName) {
+        this.departmentCategoryId = departmentCategoryId;
+        this.departmentCategoryName = departmentCategoryName;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public String getDepartmentCategoryName() {
+        return departmentCategoryName;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setDepartmentCategoryName(String departmentCategoryName) {
+        this.departmentCategoryName = departmentCategoryName;
     }
 
-    public int getDepartmentId() {
-        return departmentId;
+    public int getDepartmentCategoryId() {
+        return departmentCategoryId;
     }
 
-    public void setDepartmentId(int departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartmentCategoryId(int departmentCategoryId) {
+        this.departmentCategoryId = departmentCategoryId;
     }
 
-    private int departmentId;
-    private String departmentName;
+    private int departmentCategoryId;
+    private String departmentCategoryName;
 }

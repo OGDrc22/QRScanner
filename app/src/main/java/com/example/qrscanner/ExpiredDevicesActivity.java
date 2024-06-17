@@ -29,6 +29,7 @@ import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class ExpiredDevicesActivity extends AppCompatActivity {
@@ -148,27 +149,6 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
     public void onDeleteClick(int position) {
     }
 
-    private void deleteDataByGadgetName() {
-        // Iterate through the original list and remove items that match the gadget name
-        Iterator<Assigned_to_User_Model> iterator = deviceList.iterator();
-        while (iterator.hasNext()) {
-            Assigned_to_User_Model device = iterator.next();
-            // Assuming getDeviceName() returns the name of the device
-            if (device.getStatus().equals("For Refresh")) {
-                // Remove the item from the list
-                iterator.remove();
-                dbHelper.deleteExpiredDevice(device);
-            }
-        }
-
-        // Update the dataset used by the adapter with the modified list
-        adapter.setDeviceList(deviceList);
-
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
-    }
-
-
 
 
     // For Edit Button and Update RecyclerView
@@ -178,6 +158,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
             // Refresh the UI here, for example, reload data from the database
             loadDataFromDatabase();
+            Collections.reverse(deviceList);
             adapter.notifyDataSetChanged(); // Notify the adapter of dataset changes
         }
     }
@@ -219,6 +200,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
             }
         }
 
+        Collections.reverse(deviceList);
         adapter.setDeviceList(filteredList);
     }
 

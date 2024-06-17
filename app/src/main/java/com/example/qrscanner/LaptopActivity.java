@@ -29,6 +29,7 @@ import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnDeleteClickListener {
@@ -140,26 +141,6 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
     public void onDeleteClick(int position) {
     }
 
-    private void deleteDataByGadgetName() {
-        // Iterate through the original list and remove items that match the gadget name
-        Iterator<Assigned_to_User_Model> iterator = deviceList.iterator();
-        while (iterator.hasNext()) {
-            Assigned_to_User_Model device = iterator.next();
-            // Assuming getDeviceName() returns the name of the device
-            if (device.getDeviceType().equalsIgnoreCase("Laptop")) {
-                // Remove the item from the list
-                iterator.remove();
-                dbHelper.deleteDevice(device);
-            }
-        }
-
-        // Update the dataset used by the adapter with the modified list
-        adapter.setDeviceList(deviceList);
-
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
-    }
-
 
 
 
@@ -170,6 +151,7 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
             // Refresh the UI here, for example, reload data from the database
             loadDataFromDatabase();
+            Collections.reverse(deviceList);
             adapter.notifyDataSetChanged();
         }
     }
@@ -213,6 +195,7 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
             }
         }
 
+        Collections.reverse(deviceList);
         adapter.setDeviceList(filteredList);
     }
 

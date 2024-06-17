@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="marginAllSides_4dp">4dp</dimen>
+    <dimen name="marginStart_">16dp</dimen>
+    <dimen name="fixedWidth_136dp">136dp</dimen>
+    <dimen name="cardCornerRadius_14">14dp</dimen>
+    <dimen name="cardCornerRadius_16">16dp</dimen>
+    <dimen name="cardCornerRadius_20">20dp</dimen>
+
+</resources>

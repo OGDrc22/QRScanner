@@ -28,6 +28,7 @@ import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class MobileActivity extends AppCompatActivity {
@@ -171,6 +172,7 @@ public class MobileActivity extends AppCompatActivity {
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
             // Refresh the UI here, for example, reload data from the database
             loadDataFromDatabase();
+            Collections.reverse(deviceList);
             adapter.notifyDataSetChanged(); // Notify the adapter of dataset changes
         }
     }
@@ -212,6 +214,7 @@ public class MobileActivity extends AppCompatActivity {
             }
         }
 
+        Collections.reverse(deviceList);
         adapter.setDeviceList(filteredList);
     }
 }

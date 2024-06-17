@@ -10,11 +10,9 @@
 
     <ImageView
         android:id="@+id/backBtn"
-        style="@style/sizeIC2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:src="@drawable/baseline_arrow_back_24"
+        style="@style/backBtnIC"
+        android:padding="2dp"
+        android:src="@drawable/arrow_back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

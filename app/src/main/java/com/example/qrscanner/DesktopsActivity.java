@@ -29,6 +29,7 @@ import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class DesktopsActivity extends AppCompatActivity {
@@ -141,26 +142,6 @@ public class DesktopsActivity extends AppCompatActivity {
     public void onDeleteClick(int position) {
     }
 
-    private void deleteDataByGadgetName() {
-        // Iterate through the original list and remove items that match the gadget name
-        Iterator<Assigned_to_User_Model> iterator = deviceList.iterator();
-        while (iterator.hasNext()) {
-            Assigned_to_User_Model device = iterator.next();
-            // Assuming getDeviceName() returns the name of the device
-            if (device.getDeviceType().equalsIgnoreCase("Desktop")) {
-                // Remove the item from the list
-                iterator.remove();
-                dbHelper.deleteDevice(device);
-            }
-        }
-
-        // Update the dataset used by the adapter with the modified list
-        adapter.setDeviceList(deviceList);
-
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
-    }
-
 
 
 
@@ -171,6 +152,7 @@ public class DesktopsActivity extends AppCompatActivity {
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
             // Refresh the UI here, for example, reload data from the database
             loadDataFromDatabase();
+            Collections.reverse(filteredList);
             adapter.notifyDataSetChanged(); // Notify the adapter of dataset changes
         }
     }
@@ -178,6 +160,7 @@ public class DesktopsActivity extends AppCompatActivity {
     private void loadDataFromDatabase() {
         deviceList.clear();
         deviceList.addAll(dbHelper.fetchDevice());
+        Collections.reverse(deviceList);
         filterDeviceList();
         adapter.notifyDataSetChanged();
 
@@ -212,6 +195,7 @@ public class DesktopsActivity extends AppCompatActivity {
             }
         }
 
+        Collections.reverse(filteredList);
         adapter.setDeviceList(filteredList);
     }
 

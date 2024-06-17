@@ -60,22 +60,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import android.os.Handler;
 
 
 public class ScanQR extends AppCompatActivity {
 
     private EditText assignedTo, deviceModel, datePurchased;
-    private TextView qrText, dateExpired, status, availability, chooser, chooserDepartment;
+    private TextView qrText, dateExpired, status, availability, chooser, chooserDepartment, titleText;
     private GadgetsAdapter gadgetsAdapter;
     private DepartmentAdapter departmentAdapter;
     private CardView saveBtn;
     private PreviewView cameraPreview;
     private ListenableFuture<ProcessCameraProvider> cameraProviderListenableFuture;
-    private String scannedData, gadgetName;
+    private String scannedData, gadgetCategoryName, departmentCategoryName;
     private ImageView settings, backBtn, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewGadget;
 
     private Gadgets gadgetPosition;
+    private Department departmentPosition;
 
     private ListView listView;
     ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
@@ -143,9 +143,13 @@ public class ScanQR extends AppCompatActivity {
         saveBtn = findViewById(R.id.saveBtn);
         qrText = findViewById(R.id.qrText);
         cameraPreview = findViewById(R.id.cameraPreview);
+
+        titleText = findViewById(R.id.titleTextView);
         settings = findViewById(R.id.settingsIcon);
         backBtn = findViewById(R.id.backBtn);
         currentActivity = findViewById(R.id.currentActivity);
+
+        titleText.setText("Scan QR Code");
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,10 +265,11 @@ public class ScanQR extends AppCompatActivity {
                 if (assignedTo.getText().toString().isEmpty() || !assignedTo.getText().toString().isEmpty()) {
                     // Proceed with saving data
 
-                    if (gadgetName == null) {
-                       gadgetName = "Unknown";
+                    if (gadgetCategoryName == null) {
+                       gadgetCategoryName = "Unknown";
                     }
-                    dbHelper.addDevice(scannedData, assignedTo.getText().toString(), chooserDepartment.getText().toString(), gadgetName, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
+
+                    dbHelper.addDevice(scannedData, assignedTo.getText().toString(), chooserDepartment.getText().toString(), gadgetCategoryName, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
 
 
                     // Reset other fields
@@ -377,15 +382,15 @@ public class ScanQR extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
                 if (gadgetPosition != null) {
-                    gadgetName = gadgetPosition.getGadgetName();
+                    gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                     itemDialogGadgetsCategory.dismiss();
-                    chooser.setText(gadgetName);
+                    chooser.setText(gadgetCategoryName);
                         int positionNew = position+1;
                         displayGadgetImageInt(ScanQR.this, imageViewGadget, positionNew);
 
-                    Toast.makeText(ScanQR.this, "Selected " + gadgetName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ScanQR.this, "Selected " + gadgetCategoryName, Toast.LENGTH_SHORT).show();
                 } else {
-                    gadgetName = "Unknown";
+                    gadgetCategoryName = "Unknown";
                     Toast.makeText(ScanQR.this, "Null pos", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -395,8 +400,8 @@ public class ScanQR extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
                 showEditDialog(gadgetPosition);
-                gadgetName = gadgetPosition.getGadgetName();
-                Toast.makeText(ScanQR.this, gadgetName, Toast.LENGTH_SHORT).show();
+                gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
+                Toast.makeText(ScanQR.this, gadgetCategoryName, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -409,8 +414,8 @@ public class ScanQR extends AppCompatActivity {
 
         // Set up the input
         final EditText input = view.findViewById(R.id.editText);
-        gadgetName = gadgetPosition.getGadgetName();
-        input.setText(gadgetName);
+        gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
+        input.setText(gadgetCategoryName);
         final Button actionOK = view.findViewById(R.id.actionOK);
         final Button actionCancel = view.findViewById(R.id.actionCancel);
         final Button actionDelete = view.findViewById(R.id.actionDelete);
@@ -451,12 +456,12 @@ public class ScanQR extends AppCompatActivity {
         actionOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newGadgetName = input.getText().toString();
+                String newgadgetCategoryName = input.getText().toString();
                 byte[] newGadgetImage = Utils.imageViewToByte(ScanQR.this, iconICPick);
 
 //                Toast.makeText(ScanQR.this, "Gadget to ic_edit ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
 
-                if (newGadgetName.isEmpty()) {
+                if (newgadgetCategoryName.isEmpty()) {
                     Toast.makeText(ScanQR.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                 } else {
                     if (newGadgetImage == null) {
@@ -466,7 +471,7 @@ public class ScanQR extends AppCompatActivity {
                     } else {
                         newGadgetImage = Utils.imageViewToByte(ScanQR.this, iconICPick);
                     }
-                    dbHelper.updateGadgetCategory(gadgets, newGadgetName, newGadgetImage);
+                    dbHelper.updateGadgetCategory(gadgets, newgadgetCategoryName, newGadgetImage);
                     updateGadgetList();
                     deviceChooserDialog.dismiss();
 
@@ -533,17 +538,17 @@ public class ScanQR extends AppCompatActivity {
         actionOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newGadgetName = input.getText().toString();
+                String newGadgetCategoryName = input.getText().toString();
                 byte[] newGadgetImage = Utils.imageViewToByte(ScanQR.this, iconICPick);
                 
-                if (newGadgetName.isEmpty()) {
+                if (newGadgetCategoryName.isEmpty()) {
                     Toast.makeText(ScanQR.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                 } else {
 
                     if (newGadgetImage == null) {
                      newGadgetImage = Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.device_model);
                     }
-                    dbHelper.addGadgetCategory(newGadgetName, newGadgetImage);
+                    dbHelper.addGadgetCategory(newGadgetCategoryName, newGadgetImage);
                     updateGadgetList();
                     deviceChooserDialog.dismiss();
 
@@ -603,6 +608,9 @@ public class ScanQR extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(ScanQR.this, R.style.AlertDialogTheme);
         View customView = LayoutInflater.from(ScanQR.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
 
+        TextView titleText = customView.findViewById(R.id.titleText);
+        titleText.setText("Select Department");
+
         // Find the ListView in your custom layout
         listView = customView.findViewById(R.id.list_item_option);
 
@@ -634,17 +642,15 @@ public class ScanQR extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
-                if (gadgetPosition != null) {
-                    gadgetName = gadgetPosition.getGadgetName();
+                departmentPosition = (Department) parent.getItemAtPosition(position);
+                if (departmentPosition != null) {
+                    departmentCategoryName = departmentPosition.getDepartmentCategoryName();
                     itemDialogGadgetsCategory.dismiss();
-                    chooserDepartment.setText(gadgetName);
-                    int positionNew = position+1;
-                    displayGadgetImageInt(ScanQR.this, imageViewGadget, positionNew);
+                    chooserDepartment.setText(departmentCategoryName);
 
-                    Toast.makeText(ScanQR.this, "Selected " + gadgetName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ScanQR.this, "Selected " + departmentCategoryName, Toast.LENGTH_SHORT).show();
                 } else {
-                    gadgetName = "Unknown";
+                    departmentCategoryName = "Unknown";
                     Toast.makeText(ScanQR.this, "Null pos", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -652,10 +658,10 @@ public class ScanQR extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
-                showEditDialog(gadgetPosition);
-                gadgetName = gadgetPosition.getGadgetName();
-                Toast.makeText(ScanQR.this, gadgetName, Toast.LENGTH_SHORT).show();
+                departmentPosition = (Department) parent.getItemAtPosition(position);
+                showEditDepartmentCategoryDialog(departmentPosition);
+                gadgetCategoryName = departmentPosition.getDepartmentCategoryName();
+                Toast.makeText(ScanQR.this, departmentCategoryName, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -698,7 +704,6 @@ public class ScanQR extends AppCompatActivity {
         final Button actionCancel = view.findViewById(R.id.actionCancel);
         final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
         ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
-
         iconICPick.setVisibility(View.GONE);
         imageViewCurrent.setVisibility(View.GONE);
 
@@ -713,13 +718,13 @@ public class ScanQR extends AppCompatActivity {
         actionOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newGadgetName = input.getText().toString();
+                String newDepartmentCategoryName = input.getText().toString();
 
-                if (newGadgetName.isEmpty()) {
+                if (newDepartmentCategoryName.isEmpty()) {
                     Toast.makeText(ScanQR.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    dbHelper.addDepartmentCategory(newGadgetName);
+                    dbHelper.addDepartmentCategory(newDepartmentCategoryName);
                     updateDepartmentList();
                     deviceChooserDialog.dismiss();
 
@@ -731,6 +736,78 @@ public class ScanQR extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deviceChooserDialog.dismiss();
+            }
+        });
+    }
+
+
+    private void showEditDepartmentCategoryDialog(final Department department) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ScanQR.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ScanQR.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+        builder.setView(view);
+
+        // Set up the input
+        final EditText input = view.findViewById(R.id.editText);
+        departmentCategoryName = departmentPosition.getDepartmentCategoryName();
+        input.setText(departmentCategoryName);
+        final Button actionOK = view.findViewById(R.id.actionOK);
+        final Button actionCancel = view.findViewById(R.id.actionCancel);
+        final Button actionDelete = view.findViewById(R.id.actionDelete);
+        final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+        ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
+        iconICPick.setVisibility(View.GONE);
+        imageViewCurrent.setVisibility(View.GONE);
+
+
+        final AlertDialog departmentChooserDialog = builder.create();
+        if (departmentChooserDialog.getWindow() != null) {
+            departmentChooserDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        departmentChooserDialog.show();
+
+        iconICPick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+            }
+        });
+
+        // Set up the buttons
+        actionOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int departmentId = departmentPosition.getDepartmentCategoryId();
+                String newDepartmentCategoryName = input.getText().toString();
+
+                if (newDepartmentCategoryName.isEmpty()) {
+                    Toast.makeText(ScanQR.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    dbHelper.editDepartmentCategory(departmentId, newDepartmentCategoryName);
+                    updateDepartmentList();
+                    departmentChooserDialog.dismiss();
+
+                }
+            }
+        });
+
+        actionDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ScanQR.this, "Gadget to delete ID:" + department.getDepartmentCategoryId(), Toast.LENGTH_SHORT).show();
+                dbHelper.deleteDepartmentCategory(department);
+                updateDepartmentList();
+                departmentChooserDialog.dismiss();
+                Toast.makeText(ScanQR.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        actionCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                departmentChooserDialog.dismiss();
             }
         });
     }

@@ -48,7 +48,7 @@ public class DepartmentAdapter extends BaseAdapter {
         ImageView dptImage = convertView.findViewById(R.id.image);
         dptImage.setVisibility(View.GONE);
 
-        dptName.setText(departmentList.get(position).getDepartmentName());
+        dptName.setText(departmentList.get(position).getDepartmentCategoryName());
         return convertView;
     }
 }

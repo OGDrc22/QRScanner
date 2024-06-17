@@ -378,6 +378,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update(TABLE_DEPARTMENT_CATEGORY, values, KEY_DEPARTMENT_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)});
     }
 
+    public void deleteDepartmentCategory(Department department) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_DEPARTMENT_CATEGORY, KEY_DEPARTMENT_CATEGORY_ID + " = ?", new String[]{String.valueOf(department.getDepartmentCategoryId())});
+        db.close();
+    }
+
     public List<Department> getAllDepartmentCategory() {
         List<Department> departmentList = new ArrayList<>();
         SQLiteDatabase db = null;

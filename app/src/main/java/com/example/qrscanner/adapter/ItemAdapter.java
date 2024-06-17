@@ -182,6 +182,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 if (editClickListener != null) {
 //                    editClickListener.onEditClick(position);
                     editItem(context, position);
+
                 }
             }
         });
@@ -237,30 +238,35 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             super(itemView);
 
             dbHelper = new DBHelper(context);
+
+            // TEXT VIEWS
             serialNum_id = itemView.findViewById(R.id.sn);
             assignedTo_id = itemView.findViewById(R.id.at);
             department_id = itemView.findViewById(R.id.dep);
-            deviceIC = itemView.findViewById(R.id.deviceIC);
             textViewDM = itemView.findViewById(R.id.textDM);
-            deviceIC2 = itemView.findViewById(R.id.deviceIC2);
             deviceModel_id = itemView.findViewById(R.id.dm);
             datePurchased_id = itemView.findViewById(R.id.dp);
             dateExpire_id = itemView.findViewById(R.id.de);
             status_id = itemView.findViewById(R.id.sts);
             availability_id = itemView.findViewById(R.id.avl);
+
+            // ICONS
+            imgScan = itemView.findViewById(R.id.imageViewScan);
+            leftIndicator = itemView.findViewById(R.id.leftIndicator);
+            userIndicator = itemView.findViewById(R.id.userIndicator);
+            expiration = itemView.findViewById(R.id.expirationIndicator);
+            hasUser = itemView.findViewById(R.id.hasUser);
+            deviceIC = itemView.findViewById(R.id.deviceIC);
+            deviceIC2 = itemView.findViewById(R.id.deviceIC2);
+
             editBtn =  itemView.findViewById(R.id.editBtn);
             deleteBtn =  itemView.findViewById(R.id.deleteBtn);
 
             otherInfo = itemView.findViewById(R.id.otherInfo);
             actions = itemView.findViewById(R.id.actions);
 
-            imgScan = itemView.findViewById(R.id.imageViewScan);
             // Get the layout parameters of the view
             layoutParams = (ViewGroup.MarginLayoutParams) imgScan.getLayoutParams();
-            leftIndicator = itemView.findViewById(R.id.leftIndicator);
-            userIndicator = itemView.findViewById(R.id.userIndicator);
-            hasUser = itemView.findViewById(R.id.hasUser);
-            expiration = itemView.findViewById(R.id.expirationIndicator);
 
             sts2 = itemView.findViewById(R.id.sts2);
 

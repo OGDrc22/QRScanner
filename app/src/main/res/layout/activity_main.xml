@@ -32,25 +32,13 @@
         app:queryBackground="@android:color/transparent"
         app:queryHint="Search here..."/>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainerView"
-        android:name="com.example.qrscanner.SearchFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_bar"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="@dimen/padding_16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,65 +64,62 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0">
 
-            <GridLayout
-                android:id="@+id/gridLayoutMainOption"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:columnCount="2"
-                android:rowCount="5"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/addBtn"
+                style="@style/cardViewBtnAdd"
+                android:layout_margin="@dimen/marginAllSides_4dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/actions"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/laptopBtn">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/addBtn"
-                    style="@style/cardViewBtnAdd"
-                    android:layout_rowSpan="1"
-                    android:layout_margin="4dp"
-                    android:layout_marginBottom="16dp">
+                <LinearLayout style="@style/linearlayoutstyle">
 
-                    <LinearLayout style="@style/linearlayoutstyle">
+                    <ImageView
+                        android:id="@+id/imageViewAdd"
+                        style="@style/icConstantColor2"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_scan" />
 
-                        <ImageView
-                            android:id="@+id/imageViewAdd"
-                            style="@style/icConstantColor2"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:layout_marginEnd="8dp"
-                            android:src="@drawable/ic_scan" />
+                    <TextView
+                        android:id="@+id/textAdd"
+                        style="@style/cardBtnTxtStyle2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Scan Device" />
 
-                        <TextView
-                            android:id="@+id/textAdd"
-                            style="@style/cardBtnTxtStyle2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Scan Device" />
+                </LinearLayout>
 
-                    </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                </androidx.cardview.widget.CardView>
 
-                <GridLayout
-                    android:id="@+id/gridLayoutA"
-                    android:layout_rowSpan="1"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="fill"
-                    android:layout_margin="4dp"
-                    android:layout_marginBottom="16dp"
-                    android:columnCount="1"
-                    android:orientation="vertical"
-                    android:rowCount="2">
+            <LinearLayout
+                android:id="@+id/actions"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/addBtn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tabletBtn">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/importBtn"
                         style="@style/cardViewBtnUn"
-                        android:layout_rowWeight="1"
-                        android:layout_columnWeight="1"
-                        android:layout_marginTop="0dp"
-                        android:layout_marginBottom="3dp">
+                        android:layout_marginBottom="2dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/exportBtn">
 
                         <LinearLayout style="@style/linearlayoutstyle2">
 
@@ -156,10 +141,11 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/exportBtn"
                         style="@style/cardViewBtnUn"
-                        android:layout_rowWeight="1"
-                        android:layout_columnWeight="1"
-                        android:layout_marginTop="3dp"
-                        android:layout_marginBottom="0dp">
+                        android:layout_marginTop="2dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/importBtn"
+                        app:layout_constraintStart_toStartOf="@+id/importBtn"
+                        app:layout_constraintTop_toBottomOf="@+id/importBtn">
 
                         <LinearLayout style="@style/linearlayoutstyle2">
 
@@ -178,198 +164,235 @@
 
                     </androidx.cardview.widget.CardView>
 
-                </GridLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/laptopBtn"
-                    style="@style/cardViewBtn1"
-                    android:layout_margin="4dp">
-
-                    <LinearLayout style="@style/linearlayoutstyle">
-
-                        <ImageView
-                            android:id="@+id/imageView"
-                            style="@style/sizeIC2M"
-                            android:src="@drawable/laptop_icon" />
-
-                        <TextView
-                            android:id="@+id/textLaptop"
-                            style="@style/cardBtnTxtStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Laptops" />
-
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/tabletBtn"
-                    style="@style/cardViewBtn2"
-                    android:layout_margin="4dp">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/laptopBtn"
+                style="@style/cardViewBtn1"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintEnd_toStartOf="@+id/tabletBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/addBtn"
+                app:layout_constraintBottom_toTopOf="@+id/phoneBtn">
 
-                    <LinearLayout style="@style/linearlayoutstyle">
+                <LinearLayout style="@style/linearlayoutstyle">
 
-                        <ImageView
-                            android:id="@+id/tabletIc"
-                            style="@style/sizeIC2M"
-                            android:src="@drawable/ic_tablet" />
+                    <ImageView
+                        android:id="@+id/imageView"
+                        style="@style/sizeIC2M"
+                        android:src="@drawable/laptop_icon" />
 
-                        <TextView
-                            android:id="@+id/textTablet"
-                            style="@style/cardBtnTxtStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tablets" />
+                    <TextView
+                        android:id="@+id/textLaptop"
+                        style="@style/cardBtnTxtStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Laptops" />
 
-                    </LinearLayout>
+                </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tabletBtn"
+                style="@style/cardViewBtn2"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintBottom_toTopOf="@+id/pcBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/laptopBtn"
+                app:layout_constraintTop_toBottomOf="@+id/actions">
+
+                <LinearLayout style="@style/linearlayoutstyle">
+
+                    <ImageView
+                        android:id="@+id/tabletIc"
+                        style="@style/sizeIC2M"
+                        android:src="@drawable/ic_tablet" />
+
+                    <TextView
+                        android:id="@+id/textTablet"
+                        style="@style/cardBtnTxtStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tablets" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/phoneBtn"
-                    style="@style/cardViewBtn3"
-                    android:layout_margin="4dp">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/phoneBtn"
+                style="@style/cardViewBtn3"
+                android:layout_margin="@dimen/marginAllSides_4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/laptopBtn"
+                app:layout_constraintEnd_toStartOf="@+id/pcBtn"
+                app:layout_constraintBottom_toTopOf="@+id/unknownUserBtn">
 
-                    <LinearLayout style="@style/linearlayoutstyle">
+                <LinearLayout style="@style/linearlayoutstyle">
 
-                        <ImageView
-                            android:id="@+id/cellphoneIc"
-                            style="@style/sizeIC2M"
-                            android:src="@drawable/mobile_phone_2635" />
+                    <ImageView
+                        android:id="@+id/cellphoneIc"
+                        style="@style/sizeIC2M"
+                        android:src="@drawable/mobile_phone_2635" />
 
-                        <TextView
-                            android:id="@+id/textCellphone"
-                            style="@style/cardBtnTxtStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Phones" />
+                    <TextView
+                        android:id="@+id/textCellphone"
+                        style="@style/cardBtnTxtStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Phones" />
 
-                    </LinearLayout>
+                </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/pcBtn"
-                    style="@style/cardViewBtn4"
-                    android:layout_margin="4dp">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/pcBtn"
+                style="@style/cardViewBtn4"
+                android:layout_margin="@dimen/marginAllSides_4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/phoneBtn"
+                app:layout_constraintTop_toBottomOf="@+id/tabletBtn"
+                app:layout_constraintBottom_toTopOf="@+id/expiredDevices">
 
-                    <LinearLayout style="@style/linearlayoutstyle">
+                <LinearLayout style="@style/linearlayoutstyle">
 
-                        <ImageView
-                            android:id="@+id/pcIc"
-                            style="@style/sizeIC2M"
-                            android:layout_marginEnd="4dp"
-                            android:src="@drawable/pc_computer_6840" />
+                    <ImageView
+                        android:id="@+id/pcIc"
+                        style="@style/sizeIC2M"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/pc_computer_6840" />
 
-                        <TextView
-                            android:id="@+id/textPC"
-                            style="@style/cardBtnTxtStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Desktops" />
+                    <TextView
+                        android:id="@+id/textPC"
+                        style="@style/cardBtnTxtStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Desktops" />
 
-                    </LinearLayout>
+                </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/unknownUserBtn"
-                    style="@style/cardViewBtn5"
-                    android:layout_margin="4dp">
 
-                    <LinearLayout style="@style/linearlayoutstyle">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/unknownUserBtn"
+                style="@style/cardViewBtn5"
+                android:layout_margin="@dimen/marginAllSides_4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/phoneBtn"
+                app:layout_constraintEnd_toStartOf="@+id/expiredDevices"
+                app:layout_constraintBottom_toTopOf="@+id/allBtn">
 
-                        <ImageView
-                            android:id="@+id/uUIC"
-                            style="@style/hasUserIC"
-                            android:layout_margin="4dp" />
+                <LinearLayout style="@style/linearlayoutstyle">
 
-                        <TextView
-                            android:id="@+id/uUText"
-                            style="@style/cardBtnTxtStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Unknown User" />
+                    <ImageView
+                        android:id="@+id/uUIC"
+                        style="@style/hasUserIC"
+                        android:layout_margin="4dp" />
 
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/uUText"
+                        style="@style/cardBtnTxtStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Unknown User" />
 
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/expiredDevices"
-                    style="@style/cardViewBtn6"
-                    android:layout_margin="4dp">
+            </androidx.cardview.widget.CardView>
 
-                    <LinearLayout style="@style/linearlayoutstyle">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/expiredDevices"
+                style="@style/cardViewBtn6"
+                android:layout_margin="@dimen/marginAllSides_4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/unknownUserBtn"
+                app:layout_constraintTop_toBottomOf="@+id/pcBtn"
+                app:layout_constraintBottom_toTopOf="@+id/unknownBtn">
 
-                        <ImageView
-                            android:id="@+id/expiredIC"
-                            style="@style/expiredIC"
-                            android:layout_margin="4dp" />
+                <LinearLayout style="@style/linearlayoutstyle">
 
-                        <TextView
-                            android:id="@+id/expiredText"
-                            style="@style/cardBtnTxtStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Expired Device" />
+                    <ImageView
+                        android:id="@+id/expiredIC"
+                        style="@style/expiredIC"
+                        android:layout_margin="4dp" />
 
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/expiredText"
+                        style="@style/cardBtnTxtStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Expired Device" />
 
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/allBtn"
-                    style="@style/cardViewBtn7"
-                    android:layout_margin="4dp">
+            </androidx.cardview.widget.CardView>
 
-                    <LinearLayout style="@style/linearlayoutstyle">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/allBtn"
+                style="@style/cardViewBtn7"
+                android:layout_margin="@dimen/marginAllSides_4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/unknownBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/unknownUserBtn">
 
-                        <ImageView
-                            android:id="@+id/allIC"
-                            style="@style/sizeIC2M"
-                            android:layout_margin="4dp"
-                            android:src="@drawable/device_model" />
+                <LinearLayout style="@style/linearlayoutstyle">
 
-                        <TextView
-                            android:id="@+id/allText"
-                            style="@style/cardBtnTxtStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="All Device" />
+                    <ImageView
+                        android:id="@+id/allIC"
+                        style="@style/sizeIC2M"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/device_model" />
 
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/allText"
+                        style="@style/cardBtnTxtStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All Device" />
 
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/unknownBtn"
-                    style="@style/cardViewBtn8"
-                    android:layout_margin="4dp">
+            </androidx.cardview.widget.CardView>
 
-                    <LinearLayout style="@style/linearlayoutstyle">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/unknownBtn"
+                style="@style/cardViewBtn8"
+                android:layout_margin="@dimen/marginAllSides_4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/allBtn"
+                app:layout_constraintTop_toBottomOf="@+id/expiredDevices">
 
-                        <ImageView
-                            android:id="@+id/unknownIC"
-                            style="@style/unknownDeviceIC"
-                            android:layout_margin="4dp" />
+                <LinearLayout style="@style/linearlayoutstyle">
 
-                        <TextView
-                            android:id="@+id/unknownText"
-                            style="@style/cardBtnTxtStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Unknown" />
+                    <ImageView
+                        android:id="@+id/unknownIC"
+                        style="@style/unknownDeviceIC"
+                        android:layout_margin="4dp" />
 
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/unknownText"
+                        style="@style/cardBtnTxtStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Unknown" />
 
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-            </GridLayout>
+            </androidx.cardview.widget.CardView>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

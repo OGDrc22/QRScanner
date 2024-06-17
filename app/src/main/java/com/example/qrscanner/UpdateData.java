@@ -32,30 +32,37 @@
     import androidx.core.view.WindowInsetsCompat;
 
     import com.example.qrscanner.DB.DBHelper;
+    import com.example.qrscanner.adapter.DepartmentAdapter;
     import com.example.qrscanner.adapter.GadgetsAdapter;
     import com.example.qrscanner.adapter.ItemAdapter;
     import com.example.qrscanner.models.Assigned_to_User_Model;
     //    import com.example.qrscanner.options.Data;
+    import com.example.qrscanner.models.Department;
     import com.example.qrscanner.models.Gadgets;
     import com.example.qrscanner.utils.Utils;
 
     import java.text.ParseException;
     import java.text.SimpleDateFormat;
     import java.util.ArrayList;
+    import java.util.Collections;
     import java.util.Date;
     import java.util.List;
 
     public class UpdateData extends AppCompatActivity {
 
-        private EditText assignedTo, department, deviceModel, datePurchased;
-        private TextView qrText, dateExpired, status, availability, titleTextView, chooser;
+        private EditText assignedTo, deviceModel, datePurchased;
+        private TextView qrText, dateExpired, status, availability, titleTextView, chooser, chooserDepartment;
         private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewGadget;
         private CardView saveBtn, cancelBtn;
         private GadgetsAdapter gadgetsAdapter;
-        private String gadget, gadgetName;
+        private DepartmentAdapter departmentAdapter;
+        private String gadgetCategoryName, departmentCategoryName;
         private ArrayList<String> serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
         private DBHelper dbHelper;
         private static final String pattern = "MM/dd/yy";
+
+
+        private Department departmentPosition;
 
         private ItemAdapter itemAdapter;
         private Gadgets gadgetPosition;
@@ -157,7 +164,7 @@
 
 
             assignedTo = findViewById(R.id.assignedTo);
-            department = findViewById(R.id.department);
+            chooserDepartment = findViewById(R.id.chooserDepartment);
             deviceModel = findViewById(R.id.deviceModel);
             datePurchased = findViewById(R.id.textDatePurchased);
             dateExpired = findViewById(R.id.textDateExpired);
@@ -184,7 +191,7 @@
             // Get Value from intent
             qrText.setText(getIntent().getStringExtra("serialNumber"));
             assignedTo.setText(getIntent().getStringExtra("name"));
-            department.setText(getIntent().getStringExtra("department"));
+            chooserDepartment.setText(getIntent().getStringExtra("department"));
 
             chooser.setText(getIntent().getStringExtra("device"));
             deviceModel.setText(getIntent().getStringExtra("deviceModel"));
@@ -204,6 +211,19 @@
             chooser.setOnClickListener(v -> {
                 clickOptionDevice();
                 chooser.setText(getIntent().getStringExtra("device"));
+            });
+
+            chooserDepartment.setOnClickListener(v -> {
+                clickDepartmentCategory();
+                Log.d("TAG", "onCreate: Call clickDepCatMethod");
+                int itemCount = departmentAdapter.getCount();
+                int itemCount2 = getDepartmentCategoryFromDatabase().size();
+
+                Log.d("TAG", "department adapter item count " + itemCount);
+                Log.d("TAG", "department db item count " + itemCount2);
+                if (itemCount > 0) {
+                    Log.d("TAG", "department item count " + itemCount);
+                }
             });
 
             //Icon picker for ic_edit gadget items
@@ -257,7 +277,7 @@
                         Assigned_to_User_Model assigned = new Assigned_to_User_Model();
 
                         // Proceed with saving data
-                        dbHelper.editDevice(getIntent().getStringExtra("serialNumber"),  assignedTo.getText().toString(), department.getText().toString(), gadgetName, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
+                        dbHelper.editDevice(getIntent().getStringExtra("serialNumber"),  assignedTo.getText().toString(), chooserDepartment.getText().toString(), gadgetCategoryName, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
 
                         Log.d("Saved?", "onCreate: " + deviceModel.getText().toString());
                         deviceList.add(assigned);
@@ -286,7 +306,7 @@
             listView = customView.findViewById(R.id.list_item_option);
 
             // Set the adapter for the ListView
-            listView.setAdapter(new GadgetsAdapter(UpdateData.this, getGadgetsFromDatabase()));
+            listView.setAdapter(new GadgetsAdapter(UpdateData.this, getGadgetsCategoryFromDatabase()));
 
             // Set the custom view to the AlertDialog.Builder
             builder.setView(customView);
@@ -312,16 +332,16 @@
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
                     if (gadgetPosition != null) {
-                        gadgetName = gadgetPosition.getGadgetName();
+                        gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                         itemDialog.dismiss();
-                        chooser.setText(gadgetName);
+                        chooser.setText(gadgetCategoryName);
                         int positionNew = position+1;
                         displayGadgetImageInt(UpdateData.this, imageViewGadget, positionNew);
 
-                        Toast.makeText(UpdateData.this, "Selected " + gadgetName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateData.this, "Selected " + gadgetCategoryName, Toast.LENGTH_SHORT).show();
                     } else {
                         //TODO fix this
-                        gadgetName = "Unknown";
+                        gadgetCategoryName = "Unknown";
                         Toast.makeText(UpdateData.this, "Null pos", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -331,8 +351,8 @@
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                     gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
                     showEditDialog(gadgetPosition);
-                    gadgetName = gadgetPosition.getGadgetName();
-                    Toast.makeText(UpdateData.this, gadgetName, Toast.LENGTH_SHORT).show();
+                    gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
+                    Toast.makeText(UpdateData.this, gadgetCategoryName, Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -345,8 +365,8 @@
 
             // Set up the input
             final EditText input = view.findViewById(R.id.editText);
-            gadgetName = gadgetPosition.getGadgetName();
-            input.setText(gadgetName);
+            gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
+            input.setText(gadgetCategoryName);
             final Button actionOK = view.findViewById(R.id.actionOK);
             final Button actionCancel = view.findViewById(R.id.actionCancel);
             final Button actionDelete = view.findViewById(R.id.actionDelete);
@@ -379,12 +399,12 @@
             actionOK.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String newGadgetName = input.getText().toString();
+                    String newGadgetCategoryName = input.getText().toString();
                     byte[] newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
 
 //                Toast.makeText(UpdateData.this, "Gadget to ic_edit ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
 
-                    if (newGadgetName.isEmpty()) {
+                    if (newGadgetCategoryName.isEmpty()) {
                         Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                     } else {
                         if (newGadgetImage == null) {
@@ -394,7 +414,7 @@
                         } else {
                             newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
                         }
-                        dbHelper.updateGadgetCategory(gadgets, newGadgetName, newGadgetImage);
+                        dbHelper.updateGadgetCategory(gadgets, newGadgetCategoryName, newGadgetImage);
                         updateGadgetList();
                         deviceChooserDialog.dismiss();
 
@@ -463,17 +483,17 @@
             actionOK.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String newGadgetName = input.getText().toString();
+                    String newGadgetCategoryName = input.getText().toString();
                     byte[] newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
 
-                    if (newGadgetName.isEmpty()) {
+                    if (newGadgetCategoryName.isEmpty()) {
                         Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                     } else {
 
                         if (newGadgetImage == null) {
                             newGadgetImage = Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.device_model);
                         }
-                        dbHelper.addGadgetCategory(newGadgetName, newGadgetImage);
+                        dbHelper.addGadgetCategory(newGadgetCategoryName, newGadgetImage);
                         updateGadgetList();
                         deviceChooserDialog.dismiss();
 
@@ -491,13 +511,13 @@
 
 
         private void updateGadgetList() {
-            List<Gadgets> gadgetsList = getGadgetsFromDatabase();
+            List<Gadgets> gadgetsList = getGadgetsCategoryFromDatabase();
             gadgetsAdapter = new GadgetsAdapter(UpdateData.this, gadgetsList);
             listView.setAdapter(gadgetsAdapter);
             gadgetsAdapter.notifyDataSetChanged();
         }
 
-        private List<Gadgets> getGadgetsFromDatabase() {
+        private List<Gadgets> getGadgetsCategoryFromDatabase() {
             List<Gadgets> gadgetsList = dbHelper.getAllGadgetsCategory();
 
             // Add default gadgets if database is empty
@@ -523,6 +543,216 @@
                 // Set a default image if no image is found
                 imageView.setImageResource(R.drawable.device_model);
             }
+        }
+        // END GADGETS CHOOSER
+
+        private void clickDepartmentCategory() {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
+            View customView = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+
+            TextView titleText = customView.findViewById(R.id.titleText);
+            titleText.setText("Select Department");
+
+            // Find the ListView in your custom layout
+            listView = customView.findViewById(R.id.list_item_option);
+
+            // Set the adapter for the ListView
+            List<Department> departmentList = getDepartmentCategoryFromDatabase();
+            departmentAdapter = new DepartmentAdapter(UpdateData.this, departmentList);
+            listView.setAdapter(departmentAdapter);
+
+            // Set the custom view to the AlertDialog.Builder
+            builder.setView(customView);
+
+            // Create and show the AlertDialog
+            AlertDialog itemDialogGadgetsCategory = builder.create();
+            if (itemDialogGadgetsCategory.getWindow() != null) {
+                itemDialogGadgetsCategory.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            }
+            itemDialogGadgetsCategory.show();
+
+
+            add_newGadget = customView.findViewById(R.id.addGadgetBtn);
+            add_newGadget.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("TAG", "onClick: clicked on add in department");
+                    showAddNewDepartmentDialog();
+                }
+            });
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    departmentPosition = (Department) parent.getItemAtPosition(position);
+                    if (departmentPosition != null) {
+                        departmentCategoryName = departmentPosition.getDepartmentCategoryName();
+                        itemDialogGadgetsCategory.dismiss();
+                        chooserDepartment.setText(departmentCategoryName);
+
+                        Toast.makeText(UpdateData.this, "Selected " + departmentCategoryName, Toast.LENGTH_SHORT).show();
+                    } else {
+                        departmentCategoryName = "Unknown";
+                        Toast.makeText(UpdateData.this, "Null pos", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    departmentPosition = (Department) parent.getItemAtPosition(position);
+                    showEditDepartmentCategoryDialog(departmentPosition);
+                    gadgetCategoryName = departmentPosition.getDepartmentCategoryName();
+                    Toast.makeText(UpdateData.this, departmentCategoryName, Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+        }
+
+        private List<Department> getDepartmentCategoryFromDatabase() {
+            List<Department> departmentList = dbHelper.getAllDepartmentCategory();
+
+            // Add default departments if the list is empty
+            if (departmentList.isEmpty()) {
+                dbHelper.addDepartmentCategory("HR");
+                dbHelper.addDepartmentCategory("Finance");
+                dbHelper.addDepartmentCategory("IT");
+                dbHelper.addDepartmentCategory("Operations");
+                departmentList = dbHelper.getAllDepartmentCategory();
+            }
+
+            return departmentList;
+        }
+
+
+        private void updateDepartmentList() {
+            List<Department> departmentList = getDepartmentCategoryFromDatabase();
+            departmentAdapter = new DepartmentAdapter(UpdateData.this, departmentList);
+            listView.setAdapter(departmentAdapter);
+            departmentAdapter.notifyDataSetChanged();
+        }
+
+
+        private void showAddNewDepartmentDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
+            View view = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_add_new_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            builder.setView(view);
+
+            final ImageView imageView = view.findViewById(R.id.warning);
+            imageView.setImageResource(R.drawable.add_icon);
+            // Set up the input
+            final EditText input = view.findViewById(R.id.editText);
+            final Button actionOK = view.findViewById(R.id.actionOK);
+            final Button actionCancel = view.findViewById(R.id.actionCancel);
+            final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+            ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
+            iconICPick.setVisibility(View.GONE);
+            imageViewCurrent.setVisibility(View.GONE);
+
+            final AlertDialog deviceChooserDialog = builder.create();
+            if (deviceChooserDialog.getWindow() != null) {
+                deviceChooserDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            }
+            deviceChooserDialog.show();
+
+
+            // Set up the buttons
+            actionOK.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String newDepartmentCategoryName = input.getText().toString();
+
+                    if (newDepartmentCategoryName.isEmpty()) {
+                        Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        dbHelper.addDepartmentCategory(newDepartmentCategoryName);
+                        updateDepartmentList();
+                        deviceChooserDialog.dismiss();
+
+                    }
+                }
+            });
+
+            actionCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deviceChooserDialog.dismiss();
+                }
+            });
+        }
+
+
+        private void showEditDepartmentCategoryDialog(final Department department) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
+            View view = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            builder.setView(view);
+
+            // Set up the input
+            final EditText input = view.findViewById(R.id.editText);
+            departmentCategoryName = departmentPosition.getDepartmentCategoryName();
+            input.setText(departmentCategoryName);
+            final Button actionOK = view.findViewById(R.id.actionOK);
+            final Button actionCancel = view.findViewById(R.id.actionCancel);
+            final Button actionDelete = view.findViewById(R.id.actionDelete);
+            final ImageView iconICPick = view.findViewById(R.id.addIconGadget);
+            ImageView imageViewCurrent = view.findViewById(R.id.currentIconA);
+            iconICPick.setVisibility(View.GONE);
+            imageViewCurrent.setVisibility(View.GONE);
+
+
+            final AlertDialog departmentChooserDialog = builder.create();
+            if (departmentChooserDialog.getWindow() != null) {
+                departmentChooserDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            }
+            departmentChooserDialog.show();
+
+            iconICPick.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pickMedia.launch(new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                            .build());
+                }
+            });
+
+            // Set up the buttons
+            actionOK.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int departmentId = departmentPosition.getDepartmentCategoryId();
+                    String newDepartmentCategoryName = input.getText().toString();
+
+                    if (newDepartmentCategoryName.isEmpty()) {
+                        Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        dbHelper.editDepartmentCategory(departmentId, newDepartmentCategoryName);
+                        updateDepartmentList();
+                        departmentChooserDialog.dismiss();
+
+                    }
+                }
+            });
+
+            actionDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(UpdateData.this, "Gadget to delete ID:" + department.getDepartmentCategoryId(), Toast.LENGTH_SHORT).show();
+                    dbHelper.deleteDepartmentCategory(department);
+                    updateDepartmentList();
+                    departmentChooserDialog.dismiss();
+                    Toast.makeText(UpdateData.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            actionCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    departmentChooserDialog.dismiss();
+                }
+            });
         }
 
     }

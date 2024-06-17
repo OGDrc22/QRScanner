@@ -50,7 +50,7 @@ public class GadgetsAdapter extends BaseAdapter {
         Gadgets gadget = gadgets.get(position);
 
         //Convert byte array to Bitmap/int
-        tvGadgetName.setText(gadget.getGadgetName());
+        tvGadgetName.setText(gadget.getGadgetCategoryName());
         byte[] imageBytes = gadget.getImage();
 
         if (imageBytes != null) {

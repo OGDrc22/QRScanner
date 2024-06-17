@@ -194,6 +194,7 @@ public class allDevice extends AppCompatActivity {
     private void loadDataFromDatabase() {
         deviceList.clear();
         deviceList.addAll(dbHelper.fetchDevice());
+        Collections.reverse(deviceList);
         adapter.notifyDataSetChanged();
 
     }

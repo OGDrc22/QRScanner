@@ -15,7 +15,7 @@ public class Gadgets {
     // getters and setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-    public String getGadgetName() { return gadgetName; }
+    public String getGadgetCategoryName() { return gadgetName; }
     public void setGadgetName(String gadgetName) { this.gadgetName = gadgetName; }
     public byte[] getImage() { return image; }
     public void setImage(byte[] image) { this.image = image; }

@@ -133,27 +133,27 @@
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
         <item name="android:backgroundTint">@color/primary</item>
     </style>
     <style name="btnStyleCancel">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
         <item name="android:backgroundTint">@color/secondary</item>
     </style>
     <style name="deleteBtnStyle">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/clDelete</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
         <item name="android:backgroundTint">@color/secondary</item>
     </style>
     <style name="editBtnStyle">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/textOffWhite</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
         <item name="android:fontFamily">@font/space_grotesk_medium</item>
         <item name="android:backgroundTint">@color/primary</item>
     </style>
@@ -163,32 +163,35 @@
 
     <style name="cardViewOptions">
         <item name="cardBackgroundColor">@color/defaultStatus</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
 
 
     <!-- CARD VIEW BTN -->
     <style name="cardViewBtnAdd">
         <item name="maxHeight">160dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/cl1</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
     <style name="cardViewBtnUn">
         <item name="maxHeight">160dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/cl2</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
 
     <style name="linearlayoutstyle">
         <item name="android:orientation">horizontal</item>
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingVertical">48dp</item>
@@ -220,73 +223,85 @@
 
 
     <style name="cardViewBtn1">
-        <item name="maxHeight">160dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/secondary</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
     <style name="cardViewBtn2">
-        <item name="maxHeight">160dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/secondary</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
     <style name="cardViewBtn3">
-        <item name="maxHeight">160dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/cl3</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
     <style name="cardViewBtn4">
-        <item name="maxHeight">160dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/cl3</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
     <style name="cardViewBtn5">
-        <item name="maxHeight">160dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/primary</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
     <style name="cardViewBtn6">
-        <item name="maxHeight">160dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/primary</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
     <style name="cardViewBtn7">
-        <item name="maxHeight">160dp</item>
         <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/cl4</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
     <style name="cardViewBtn8">
-        <item name="maxHeight">160dp</item>
         <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_rowWeight">1</item>
         <item name="android:layout_gravity">fill</item>
         <item name="cardBackgroundColor">@color/cl4</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
 
     <!-- ICONS SIZE -->
+
+    <style name="backBtnIC">
+        <item name="tint">@color/black</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+    </style>
     <style name="sizeIC">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
@@ -351,7 +366,7 @@
 
     <style name="cardViewBtnGeneral">
         <item name="cardBackgroundColor">@color/secondary</item>
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
 
     <!---CUSTOM ICONS-->

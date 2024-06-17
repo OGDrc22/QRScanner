@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +33,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -105,16 +107,7 @@ public class MainActivity extends AppCompatActivity {
         backBtn.setVisibility(View.GONE);
 
         settings = findViewById(R.id.settingsIcon);
-        mainOption = findViewById(R.id.gridLayoutMainOption);
-
-
-        searchView = findViewById(R.id.search_bar);
-        searchView.clearFocus();
-
-        constraintLayout = findViewById(R.id.constraintLayoutOp);
-
-        recyclerView = findViewById(R.id.recyclerViewSearch);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        mainOption = findViewById(R.id.gridLayoutMainOption);
 
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,19 +118,49 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        searchView = findViewById(R.id.search_bar);
+        searchView.clearFocus();
+
+        constraintLayout = findViewById(R.id.constraintLayoutOp);
+
+        recyclerView = findViewById(R.id.recyclerViewSearch);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+
+            TextView titleTextView = findViewById(R.id.titleTextView);
+            ImageView currentActivity = findViewById(R.id.currentActivity);
+
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     recyclerView.setVisibility(View.VISIBLE);
                     constraintLayout.setVisibility(View.GONE);
-                } else {
-                    recyclerView.setVisibility(View.GONE);
-                    constraintLayout.setVisibility(View.VISIBLE);
-//                    recreate(); // Temporary solution
+
+                    ImageView backBtn = findViewById(R.id.backBtn);
+                    titleTextView.setText("Search");
+                    currentActivity.setVisibility(View.GONE);
+
+                    backBtn.setVisibility(View.VISIBLE);
+                    backBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            searchView.clearFocus();
+                            recyclerView.setVisibility(View.GONE);
+                            constraintLayout.setVisibility(View.VISIBLE);
+                        }
+                    });
+
+
+                } else { //  Clear Focus
+                    backBtn.setVisibility(View.GONE);
+                    titleTextView.setText("QR Scanner");
                 }
             }
         });
+
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -167,8 +190,57 @@ public class MainActivity extends AppCompatActivity {
         status_id = new ArrayList<>();
         availability_id = new ArrayList<>();
         adapter = new ItemAdapter(R.layout.info_layout, this, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, this::onDeleteClick, this::onEditClick);
+
         recyclerView.setAdapter(adapter);
 
+        if (recyclerView.getVisibility() == View.GONE) {
+            backBtn.setVisibility(View.GONE);
+        } else {
+            backBtn.setVisibility(View.VISIBLE);
+        }
+        setUpButtons();
+    }
+
+    public void filterList(@NonNull String text) {
+
+        ArrayList<Assigned_to_User_Model> filteredList = new ArrayList<>();
+
+        String searchText = text.toLowerCase();
+
+        ArrayList<Assigned_to_User_Model> dataLists = dbHelper.fetchDevice();
+        Collections.reverse(dataLists);
+
+//        for (int i = 0; i < filteredList.size(); i++) {
+//            filteredList.get(i).setOriginalPosition(i);
+//        }
+
+        // Iterate through the original list and add items that match the search text to the filtered list
+        if (searchText.isEmpty()) {
+            // If the search query is empty, clear the filtered list
+            filteredList.clear();
+        } else {
+            // Iterate through the original list and add items that match the search text to the filtered list
+            for (Assigned_to_User_Model item : dataLists) {
+                int serialNum = item.getSerialNumber();
+                String serialNumString = String.valueOf(serialNum);
+                // Perform case-insensitive search by converting both text and item data to lowercase
+                if (serialNumString.toLowerCase().contains(searchText)
+                        || item.getName().toLowerCase().contains(searchText) || item.getName().toLowerCase().contains(".")
+                        || item.getDepartment().contains(searchText) || item.getDepartment().contains(".")
+                        || item.getDeviceBrand().contains(searchText) || item.getDatePurchased().contains(searchText) || item.getDateExpired().contains(searchText)) {
+
+                    filteredList.add(item);
+                }
+            }
+        }
+        // Update the dataset used by the adapter with the filtered results
+        adapter.setDeviceList(filteredList);
+
+        // Notify the adapter of dataset changes
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setUpButtons() {
         addBtn = findViewById(R.id.addBtn);
 
         importBtn = findViewById(R.id.importBtn);
@@ -278,45 +350,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void filterList(@NonNull String text) {
-
-        ArrayList<Assigned_to_User_Model> filteredList = new ArrayList<>();
-
-        String searchText = text.toLowerCase();
-
-        ArrayList<Assigned_to_User_Model> dataLists = dbHelper.fetchDevice();
-        Collections.reverse(dataLists);
-
-        for (int i = 0; i < filteredList.size(); i++) {
-            filteredList.get(i).setOriginalPosition(i);
-        }
-
-        // Iterate through the original list and add items that match the search text to the filtered list
-        if (searchText.isEmpty()) {
-            // If the search query is empty, clear the filtered list
-            filteredList.clear();
-        } else {
-            // Iterate through the original list and add items that match the search text to the filtered list
-            for (Assigned_to_User_Model item : dataLists) {
-                int serialNum = item.getSerialNumber();
-                String serialNumString = String.valueOf(serialNum);
-                // Perform case-insensitive search by converting both text and item data to lowercase
-                if (serialNumString.toLowerCase().contains(searchText)
-                        || item.getName().toLowerCase().contains(searchText) || item.getName().toLowerCase().contains(".")
-                        || item.getDepartment().contains(searchText) || item.getDepartment().contains(".")
-                        || item.getDeviceBrand().contains(searchText) || item.getDatePurchased().contains(searchText) || item.getDateExpired().contains(searchText)) {
-
-                    filteredList.add(item);
-                }
-            }
-        }
-        // Update the dataset used by the adapter with the filtered results
-        adapter.setDeviceList(filteredList);
-
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
     }
 
     private void openFileChooser() {
