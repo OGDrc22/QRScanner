@@ -191,7 +191,6 @@
         <item name="android:orientation">horizontal</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingVertical">48dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
     </style>
@@ -199,8 +198,6 @@
         <item name="android:orientation">horizontal</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingVertical">14dp</item>
-        <item name="android:paddingHorizontal">30dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
     </style>
@@ -208,13 +205,33 @@
 
 
     <style name="cardBtnTxtStyle">
-        <item name="android:textSize">14dp</item>
+        <item name="android:textSize">@dimen/text_18dp</item>
+        <item name="android:textColor">@color/light1</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+    </style>
+    <style name="cardBtnTxtStyle_small">
+        <item name="android:textSize">@dimen/text_14dp</item>
         <item name="android:textColor">@color/light1</item>
         <item name="android:fontFamily">@font/space_grotesk_bold</item>
     </style>
     <style name="cardBtnTxtStyle2">
-        <item name="android:textSize">18dp</item>
+        <item name="android:textSize">@dimen/text_18dp</item>
         <item name="android:textColor">@color/textL</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+    </style>
+    <style name="cardBtnTxtStyle2_small">
+        <item name="android:textSize">@dimen/text_16dp</item>
+        <item name="android:textColor">@color/textL</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+    </style>
+    <style name="cardBtnTxtStyle3">
+        <item name="android:textSize">@dimen/text_14dp</item>
+        <item name="android:textColor">@color/light1</item>
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+    </style>
+    <style name="cardBtnTxtStyle3_small">
+        <item name="android:textSize">@dimen/text_12dp</item>
+        <item name="android:textColor">@color/light1</item>
         <item name="android:fontFamily">@font/space_grotesk_bold</item>
     </style>
 
