@@ -1,6 +1,9 @@
 package com.example.qrscanner.utils;
 
-import android.app.Activity;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,23 +12,25 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
-import android.util.Log;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
-import com.example.qrscanner.allDevice;
 import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -92,6 +97,35 @@ public class Utils {
             return getBitmapFromVectorDrawable(context, drawableId);
         }
         return null;
+    }
+
+    public static void displayGadgetImageInt(Context context, DBHelper dbHelper, TextInputLayout textInputLayout, int gadgetId, int parentHeight) {
+        byte[] imageBytes = dbHelper.getGadgetCategoryImageInt(gadgetId);
+        if (imageBytes != null) {
+            // ImageView To Bitmap
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            textInputLayout.setStartIconDrawable(new BitmapDrawable(context.getResources(), resizeBitmap(bitmap, parentHeight)));
+        } else {
+            // Set a default image if no image is found
+            textInputLayout.setStartIconDrawable(R.drawable.device_model);
+
+        }
+    }
+
+    public static Bitmap resizeBitmap(Bitmap originalBitmap, int parentHeight) {
+        int originalWidth = originalBitmap.getWidth();
+        int originalHeight = originalBitmap.getHeight();
+
+        // Calculate the new height (half of the parent view's height)
+        double newHeight = (double) parentHeight / 1;
+        int intNewHeight = (int) newHeight;
+
+        // Calculate the proportional width based on the original aspect ratio
+        float aspectRatio = (float) originalWidth / originalHeight;
+        int newWidth = (int) (newHeight * aspectRatio);
+
+        // Resize the Bitmap
+        return Bitmap.createScaledBitmap(originalBitmap, newWidth, intNewHeight, true);
     }
 
 
@@ -164,5 +198,100 @@ public class Utils {
         } else {
             status.setText("Fresh");
         }
+    }
+
+
+    // Check Availability
+    public static void updateAvailabilityStatus(EditText wantToCheck, TextView textResultHolder) {
+        if (!wantToCheck.getText().toString().isEmpty()) {
+            textResultHolder.setText("In Use");
+        } else {
+            textResultHolder.setText("In Stock");
+        }
+    }
+
+    public static void rotateUp(ImageView icon) {
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(icon, "rotation", 0f, 180f);
+        objectAnimator.setDuration(500);
+        objectAnimator.start();
+
+    }
+    public static void rotateDown(ImageView icon) {
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(icon, "rotation", 180f, 0f);
+        objectAnimator.setDuration(500);
+        objectAnimator.start();
+
+    }
+
+    public static void smoothHideAndReveal(ViewGroup viewGroup, int animationDuration) {
+        TransitionManager.beginDelayedTransition(viewGroup, new AutoTransition().setDuration(animationDuration));
+    }
+
+    public static void expandCardView(final CardView cardView, int duration) {
+
+        int newHeight = getWrapContentHeight(cardView);
+
+        ValueAnimator animator = ValueAnimator.ofInt(0, newHeight);
+        animator.addUpdateListener(animation -> {
+            cardView.getLayoutParams().height = (int) animation.getAnimatedValue();
+            cardView.requestLayout();
+        });
+
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(duration);
+        animator.start();
+    }
+
+    public static void collapseCardView(final CardView cardView, CardView originalHeight, int duration) {
+        final int initialHeight = cardView.getMeasuredHeight();
+
+        ValueAnimator animator = ValueAnimator.ofInt(initialHeight, getWrapContentHeight(originalHeight));
+        animator.addUpdateListener(animation -> {
+            cardView.getLayoutParams().height = (int) animation.getAnimatedValue();
+            cardView.requestLayout();
+        });
+
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(duration);
+        animator.start();
+    }
+
+    public static void expandCardViewItemAdapter(final CardView cardView, int duration) {
+
+        final int initialHeight = cardView.getHeight();
+        int newHeight = getWrapContentHeight(cardView) - initialHeight - 34;
+
+        ValueAnimator animator = ValueAnimator.ofInt(cardView.getHeight(), newHeight);
+        animator.addUpdateListener(animation -> {
+            cardView.getLayoutParams().height = (int) animation.getAnimatedValue();
+            cardView.requestLayout();
+        });
+
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(duration);
+        animator.start();
+    }
+
+    public static void collapseCardViewItemAdapter(final CardView cardView, CardView originalHeight, int duration) {
+        final int initialHeight = cardView.getMeasuredHeight();
+
+        ValueAnimator animator = ValueAnimator.ofInt(initialHeight, getWrapContentHeight(originalHeight));
+        animator.addUpdateListener(animation -> {
+            cardView.getLayoutParams().height = (int) animation.getAnimatedValue();
+            cardView.requestLayout();
+        });
+
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(duration);
+        animator.start();
+    }
+
+    public static int getWrapContentHeight(CardView cardView) {
+        // Measure the CardView
+        cardView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+        // Get the measured height
+        return cardView.getMeasuredHeight();
     }
 }

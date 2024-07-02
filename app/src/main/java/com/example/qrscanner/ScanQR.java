@@ -20,17 +20,23 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,6 +54,13 @@ import com.example.qrscanner.models.Department;
 import com.example.qrscanner.models.Gadgets;
 import com.example.qrscanner.utils.Utils;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -59,20 +72,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 
 public class ScanQR extends AppCompatActivity {
 
-    private EditText assignedTo, deviceModel, datePurchased;
-    private TextView qrText, dateExpired, status, availability, chooser, chooserDepartment, titleText;
+    private EditText deviceModel;
+    private TextInputEditText qrText, assignedTo,chooserDepartment, chooserDevice, datePurchased, dateExpired, status, availability;
+    private TextInputLayout textInputLayoutQRText, textInputLayoutAssignedTo, textInputLayoutDep, textInputLayoutDevice, textInputLayoutDeviceModel, textInputLayoutDatePurchased, textInputLayoutExpired, textInputLayoutStatus;
+    private BottomSheetDialog bottomSheetDialog;
+    private TextView titleText;
     private GadgetsAdapter gadgetsAdapter;
     private DepartmentAdapter departmentAdapter;
     private CardView saveBtn;
     private PreviewView cameraPreview;
     private ListenableFuture<ProcessCameraProvider> cameraProviderListenableFuture;
     private String scannedData, gadgetCategoryName, departmentCategoryName;
-    private ImageView settings, backBtn, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewGadget;
+    private ImageView settings, backBtn, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewSave;
 
     private Gadgets gadgetPosition;
     private Department departmentPosition;
@@ -83,15 +100,7 @@ public class ScanQR extends AppCompatActivity {
     private DBHelper dbHelper;
     private static final String pattern = "MM/dd/yy";
 
-    private void updateAvailabilityStatus() {
-        if (!assignedTo.getText().toString().isEmpty()) {
-            availability.setText("In Use");
-        } else {
-            availability.setText("In Stock");
-        }
-    }
-
-    TextWatcher textWatcher = new TextWatcher() {
+    TextWatcher textWatcherAssignedTo = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -105,27 +114,41 @@ public class ScanQR extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
 
-            updateSaveButtonState();
-            updateAvailabilityStatus();
+            if (!assignedTo.getText().toString().isEmpty()) {
+                textInputLayoutAssignedTo.setEndIconDrawable(R.drawable.ic_cancel_24);
+            } else if (assignedTo.getText().toString().isEmpty()){
+                textInputLayoutAssignedTo.setEndIconDrawable(R.drawable.ic_edit);
+            }
 
-
+            Utils.updateAvailabilityStatus(assignedTo, availability);
         }
 
     };
 
-    // Function to update the state of the save button
-    private void updateSaveButtonState() {
-        if ((scannedData != null) && !deviceModel.getText().toString().isEmpty() && !datePurchased.getText().toString().isEmpty()) {
-            if (assignedTo.getText().toString().isEmpty() || !assignedTo.getText().toString().isEmpty()) {
-                saveBtn.setEnabled(true);
-            } else {
-                saveBtn.setEnabled(true);
-            }
-        } else {
-            saveBtn.setEnabled(false);
-        }
-    }
+    TextWatcher textWatcherDeviceModel = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (!deviceModel.getText().toString().isEmpty()) {
+                textInputLayoutDeviceModel.setEndIconDrawable(R.drawable.ic_cancel_24);
+                textInputLayoutDeviceModel.setError(null);
+            } else if (deviceModel.getText().toString().isEmpty()){
+                textInputLayoutDeviceModel.setEndIconDrawable(R.drawable.ic_edit);
+                textInputLayoutDeviceModel.setHelperText("Required*");
+            }
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+
+    };
 
 
     @Override
@@ -133,16 +156,11 @@ public class ScanQR extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_qr);
 
-        assignedTo = findViewById(R.id.assignedTo);
-        chooserDepartment = findViewById(R.id.chooserDepartment);
-        deviceModel = findViewById(R.id.deviceModel);
-        datePurchased = findViewById(R.id.textDatePurchased);
-        dateExpired = findViewById(R.id.textdateExpired);
-        status = findViewById(R.id.status);
-        availability = findViewById(R.id.availability);
-        saveBtn = findViewById(R.id.saveBtn);
-        qrText = findViewById(R.id.qrText);
+
         cameraPreview = findViewById(R.id.cameraPreview);
+
+        bottomSheetDialog = new BottomSheetDialog(ScanQR.this);
+
 
         titleText = findViewById(R.id.titleTextView);
         settings = findViewById(R.id.settingsIcon);
@@ -158,15 +176,14 @@ public class ScanQR extends AppCompatActivity {
             }
         });
 
-//            For Debugging
-//            getBtn = findViewById(R.id.getBtn);
-//            device1 = findViewById(R.id.device1);
-//            getBtn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    device1.setText(gadget);
-//                }
-//            });
+        Button btnShowBottom = findViewById(R.id.showB);
+        btnShowBottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openBottomSheetDialog();
+                bottomSheetDialog.show();
+            }
+        });
 
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,54 +204,10 @@ public class ScanQR extends AppCompatActivity {
             ActivityCompat.requestPermissions(ScanQR.this, new String[]{Manifest.permission.CAMERA}, 101);
         }
 
-        updateAvailabilityStatus();
 
         dbHelper = new DBHelper(this);
 
-        assignedTo.addTextChangedListener(textWatcher);
-        deviceModel.addTextChangedListener(textWatcher);
-        datePurchased.addTextChangedListener(textWatcher);
-        dateExpired.addTextChangedListener(textWatcher);
-        status.addTextChangedListener(textWatcher);
 
-        datePurchased.setOnFocusChangeListener((view, hasFocus) -> {
-            if (!hasFocus) {
-                // Parse the input date
-                SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-                Date inputDate;
-
-                try {
-                    inputDate = dateFormat.parse(datePurchased.getText().toString());
-                } catch (ParseException e) {
-                    Toast.makeText(ScanQR.this, "Invalid date format. " + pattern, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Calculate expiration date and set status
-                Utils.calculateExpirationAndStatus(inputDate, dateExpired, status);
-            }
-        });
-
-
-        imageViewGadget = findViewById(R.id.imageViewGadget);
-        chooser = findViewById(R.id.chooser);
-        chooser.setOnClickListener(v -> {
-            clickOptionGadgetCategory();
-            chooser.setText("Unknown");
-        });
-
-        chooserDepartment.setOnClickListener(v -> {
-            clickDepartmentCategory();
-            Log.d("TAG", "onCreate: Call clickDepCatMethod");
-            int itemCount = departmentAdapter.getCount();
-            int itemCount2 = getDepartmentCategoryFromDatabase().size();
-
-            Log.d("TAG", "department adapter item count " + itemCount);
-            Log.d("TAG", "department db item count " + itemCount2);
-            if (itemCount > 0) {
-                Log.d("TAG", "department item count " + itemCount);
-            }
-        });
 
         // What?
 //        List<Gadgets> gadgetList1 = getGadgetsFromDatabase();
@@ -252,39 +225,6 @@ public class ScanQR extends AppCompatActivity {
                 Log.d("PhotoPicker", "Selected URI: " + uri);
             } else {
                 Log.d("PhotoPicker", "No media selected");
-            }
-        });
-
-
-
-        // Save Button
-        saveBtn.setOnClickListener(v -> {
-//            Toast.makeText(ScanQR.this, "Null pos", Toast.LENGTH_SHORT).show();
-            // Check if all fields are filled
-            if ((scannedData != null) && !deviceModel.getText().toString().isEmpty() && !datePurchased.getText().toString().isEmpty()) {
-                if (assignedTo.getText().toString().isEmpty() || !assignedTo.getText().toString().isEmpty()) {
-                    // Proceed with saving data
-
-                    if (gadgetCategoryName == null) {
-                       gadgetCategoryName = "Unknown";
-                    }
-
-                    dbHelper.addDevice(scannedData, assignedTo.getText().toString(), chooserDepartment.getText().toString(), gadgetCategoryName, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
-
-
-                    // Reset other fields
-                    scannedData = null;
-                    qrText.setText("");
-                    assignedTo.setText("");
-                    deviceModel.setText("");
-                    datePurchased.setText("");
-
-
-                    // Toast Saved Success
-                    finish();
-                }
-            } else {
-                // Toast "Save Failed", "Please fill up all fields"
             }
         });
     }
@@ -329,8 +269,17 @@ public class ScanQR extends AppCompatActivity {
                 Task<List<Barcode>> result = scanner.process(image2);
                 result.addOnSuccessListener(barcodes -> {
                     for (Barcode barcode : barcodes) {
+                        openBottomSheetDialog();
+                        bottomSheetDialog.show();
                         scannedData = barcode.getRawValue();
                         qrText.setText(scannedData);
+
+                        if (!qrText.getText().toString().isEmpty()) {
+                            textInputLayoutQRText.setHelperTextEnabled(false);
+                        } else {
+                            textInputLayoutQRText.setHelperTextEnabled(true);
+                        }
+
                     }
 
                     ArrayList<Assigned_to_User_Model> data = dbHelper.fetchDevice();
@@ -346,8 +295,259 @@ public class ScanQR extends AppCompatActivity {
         processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
     }
 
+
+
+
+
+
+
+
+    private void openBottomSheetDialog() {
+        View view = getLayoutInflater().inflate(R.layout.layout_bottom_sheet, null);
+        qrText = view.findViewById(R.id.qrText);
+        assignedTo = view.findViewById(R.id.assignedTo);
+        chooserDepartment = view.findViewById(R.id.chooserDepartment);
+        chooserDevice = view.findViewById(R.id.chooserDevice);
+        deviceModel = view.findViewById(R.id.deviceModel);
+        datePurchased = view.findViewById(R.id.textDatePurchased);
+        dateExpired = view.findViewById(R.id.textdateExpired);
+        status = view.findViewById(R.id.status);
+        availability = view.findViewById(R.id.availability);
+        saveBtn = view.findViewById(R.id.saveBtn);
+
+        imageViewSave = view.findViewById(R.id.saveIC);
+
+
+        textInputLayoutQRText = view.findViewById(R.id.TIL_QRText);
+        textInputLayoutAssignedTo = view.findViewById(R.id.TIL_AssignedTo);
+        textInputLayoutDep = view.findViewById(R.id.TIl_Department);
+        textInputLayoutDevice = view.findViewById(R.id.TIL_Device);
+        textInputLayoutDeviceModel = view.findViewById(R.id.TIL_Device_Model);
+        textInputLayoutDatePurchased = view.findViewById(R.id.TIL_DatePurchased);
+        textInputLayoutExpired = view.findViewById(R.id.TIL_Expiration);
+        textInputLayoutStatus = view.findViewById(R.id.TIL_Status);
+
+
+        assignedTo.addTextChangedListener(textWatcherAssignedTo);
+        textInputLayoutAssignedTo.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                assignedTo.setText("");
+            }
+        });
+
+        Utils.updateAvailabilityStatus(assignedTo, availability);
+
+
+
+
+        deviceModel.addTextChangedListener(textWatcherDeviceModel);
+
+
+        textInputLayoutDeviceModel.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deviceModel.setText("");
+            }
+        });
+
+
+
+        Drawable drawable = textInputLayoutDevice.getStartIconDrawable();
+        int parentH = drawable.getMinimumHeight();
+
+        chooserDevice.setOnClickListener(v -> {
+            clickOptionGadgetCategory(parentH);
+            textInputLayoutDevice.setError(null);
+            chooserDevice.setText("Unknown");
+            textInputLayoutDevice.setStartIconDrawable(R.drawable.ic_unknown_device);
+
+
+            textInputLayoutAssignedTo.clearFocus();
+            textInputLayoutDeviceModel.clearFocus();
+
+        });
+
+
+
+        chooserDepartment.setOnClickListener(v -> {
+            clickDepartmentCategory();
+
+
+            textInputLayoutAssignedTo.clearFocus();
+            textInputLayoutDeviceModel.clearFocus();
+
+        });
+
+
+
+
+
+        datePurchased.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                textInputLayoutAssignedTo.clearFocus();
+                textInputLayoutDeviceModel.clearFocus();
+
+                MaterialDatePicker<Long> materialDatePicker = MaterialDatePicker.Builder.datePicker()
+                        .setTitleText("Select Date")
+                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                        .setTheme(R.style.AppDatePicker)
+                        .build();
+                materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
+                    @Override
+                    public void onPositiveButtonClick(Long selection) {
+                        String date = new SimpleDateFormat(pattern, Locale.getDefault()).format(new Date(selection));
+                        datePurchased.setText(date);
+                        textInputLayoutDatePurchased.setError(null);
+                        Date selectedDate = new Date(selection);
+                        Utils.calculateExpirationAndStatus(selectedDate, dateExpired, status);
+                    }
+                });
+                materialDatePicker.show(getSupportFragmentManager(), "date");
+            }
+        });
+
+
+        // Save Button
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                deviceModel.clearFocus();
+                textInputLayoutDeviceModel.clearFocus();
+
+                boolean allFieldsFilled = true;
+
+                if (qrText.getText().toString().isEmpty()) {
+                    textInputLayoutQRText.setError("Please fill up");
+                    allFieldsFilled = false;
+                }
+
+//                if (assignedTo.getText().toString().isEmpty()) {
+//                    textInputLayoutAssignedTo.setError("Please fill up");
+//                    textInputLayoutAssignedTo.setErrorEnabled(true);
+//                    allFieldsFilled = false;
+//                }
+
+                if (chooserDepartment.getText().toString().isEmpty()) {
+                    textInputLayoutDep.setError("Please fill up");
+                    allFieldsFilled = false;
+                }
+
+                if (chooserDevice.getText().toString().isEmpty()) {
+                    textInputLayoutDevice.setError("Please pick \"Unknown\", if you don't know what type of device is.");
+                    allFieldsFilled = false;
+                }
+
+                if (deviceModel.getText().toString().isEmpty()) {
+                    textInputLayoutDeviceModel.setError("Please fill up");
+                    allFieldsFilled = false;
+                } else {
+                    textInputLayoutDeviceModel.setError(null);
+                }
+
+                if (datePurchased.getText().toString().isEmpty()) {
+                    textInputLayoutDatePurchased.setError("Please fill up");
+                    allFieldsFilled = false;
+                }
+
+//                if (dateExpired.getText().toString().isEmpty()) {
+//                    textInputLayoutExpired.setError("Please fill up");
+//                    allFieldsFilled = false;
+//                }
+//
+//                if (status.getText().toString().isEmpty()) {
+//                    textInputLayoutStatus.setError("Please fill up");
+//                    allFieldsFilled = false;
+//                }
+
+                if (allFieldsFilled) {
+                    // Proceed with saving data
+                    dbHelper.addDevice(
+                            qrText.getText().toString(),
+                            assignedTo.getText().toString(),
+                            chooserDepartment.getText().toString(),
+                            chooserDevice.getText().toString(),
+                            deviceModel.getText().toString(),
+                            datePurchased.getText().toString(),
+                            dateExpired.getText().toString(),
+                            status.getText().toString(),
+                            availability.getText().toString()
+                    );
+
+                    // Reset other fields
+                    qrText.setText(null);
+                    assignedTo.setText(null);
+                    deviceModel.setText(null);
+                    datePurchased.setText(null);
+                    dateExpired.setText(null);
+                    status.setText(null);
+                    availability.setText(null);
+
+
+
+                    Drawable[] layers = new Drawable[] {
+                            imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
+                    };
+                    TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+                    imageViewSave.setImageDrawable(transitionDrawable);
+                    transitionDrawable.startTransition(700);
+
+
+                    new Handler().postDelayed(() -> {
+                        bottomSheetDialog.dismiss();
+                    }, 1000);
+                } else {
+                    Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Debug
+        boolean check = textInputLayoutAssignedTo.getErrorIconDrawable() != null;
+        MaterialCardView debug = view.findViewById(R.id.cancelButton);
+        debug.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ScanQR.this, "Error Icon Visible: " + check, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        bottomSheetDialog.setContentView(view);
+
+        // Ensure the BottomSheetDialog's height adjusts to the content's height
+        View parent = (View) view.getParent();
+        BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(parent);
+        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        behavior.setPeekHeight(view.getMeasuredHeight());
+
+        parent.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        parent.requestLayout();
+    }
+
+
+
+
+//    private void afterTextChanged(TextInputLayout textInputLayout, TextInputEditText textInputEditText) {
+//        while (true){
+//            if (textInputEditText.getText().toString().isEmpty()) {
+//                textInputLayout.setEndIconDrawable(R.drawable.ic_cancel_24);
+//            } else {
+//                textInputLayout.setEndIconDrawable(R.drawable.ic_edit);
+//            }
+//        }
+//    }
+
+
+
+
+
+
+
     //GADGET CHOOSER
-    private void clickOptionGadgetCategory() {
+    private void clickOptionGadgetCategory(int parentHeight) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ScanQR.this, R.style.AlertDialogTheme);
         View customView = LayoutInflater.from(ScanQR.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
@@ -384,9 +584,9 @@ public class ScanQR extends AppCompatActivity {
                 if (gadgetPosition != null) {
                     gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                     itemDialogGadgetsCategory.dismiss();
-                    chooser.setText(gadgetCategoryName);
+                    chooserDevice.setText(gadgetCategoryName);
                         int positionNew = position+1;
-                        displayGadgetImageInt(ScanQR.this, imageViewGadget, positionNew);
+                        Utils.displayGadgetImageInt(ScanQR.this, dbHelper, textInputLayoutDevice, positionNew, parentHeight);
 
                     Toast.makeText(ScanQR.this, "Selected " + gadgetCategoryName, Toast.LENGTH_SHORT).show();
                 } else {
@@ -579,9 +779,9 @@ public class ScanQR extends AppCompatActivity {
             dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_unknown_device));
             Log.d("TAG", "getGadgetsCategoryFromDatabase: Add Item 1");
             dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.laptop_icon));
-            dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.mobile_phone_2635));
+            dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_mobile_phone));
             dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_tablet));
-            dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.pc_computer_6840));
+            dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_pc_computer));
 
             gadgetsList = dbHelper.getAllGadgetsCategory();
         }
@@ -589,17 +789,8 @@ public class ScanQR extends AppCompatActivity {
         return gadgetsList;
     }
 
-    public void displayGadgetImageInt(Context context, ImageView imageView, int gadgetId) {
-        byte[] imageBytes = dbHelper.getGadgetCategoryImageInt(gadgetId);
-        if (imageBytes != null) {
-            // ImageView To Bitmap
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            imageView.setImageBitmap(bitmap);
-        } else {
-            // Set a default image if no image is found
-            imageView.setImageResource(R.drawable.device_model);
-        }
-    }
+
+
     //END GADGET CHOOSER
 
 
@@ -642,6 +833,9 @@ public class ScanQR extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                textInputLayoutDep.setError(null);
+
                 departmentPosition = (Department) parent.getItemAtPosition(position);
                 if (departmentPosition != null) {
                     departmentCategoryName = departmentPosition.getDepartmentCategoryName();
@@ -700,6 +894,7 @@ public class ScanQR extends AppCompatActivity {
         imageView.setImageResource(R.drawable.add_icon);
         // Set up the input
         final EditText input = view.findViewById(R.id.editText);
+        input.setHint("Department Name");
         final Button actionOK = view.findViewById(R.id.actionOK);
         final Button actionCancel = view.findViewById(R.id.actionCancel);
         final ImageView iconICPick = view.findViewById(R.id.addIconGadget);

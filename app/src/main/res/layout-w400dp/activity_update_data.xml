@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    style="@style/ScreenBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UpdateData">
+
+    <include
+        android:id="@+id/navBar"
+        layout="@layout/nav_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/navBar">
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/padding_2"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TIL_QRText"
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Scanned QR"
+                app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Required*"
+                app:helperTextTextColor="@color/clDelete"
+                app:startIconDrawable="@drawable/baseline_qr_code_scanner_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/qrText"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TIL_AssignedTo"
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Assigned to"
+                app:endIconDrawable="@drawable/ic_edit"
+                app:endIconMode="custom"
+                app:startIconDrawable="@drawable/ic_user">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/assignedTo"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TIl_Department"
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Department"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@drawable/warning_sign"
+                app:startIconDrawable="@drawable/ic_department">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/chooserDepartment"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusableInTouchMode="false"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TIL_Device"
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Device"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@drawable/warning_sign"
+                app:startIconDrawable="@drawable/device_model">
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/chooserDevice"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusableInTouchMode="false"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TIL_Device_Model"
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Device Model"
+                app:endIconDrawable="@drawable/ic_edit"
+                app:endIconMode="custom"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Required*"
+                app:helperTextTextColor="@color/clDelete"
+                app:startIconDrawable="@drawable/device_model">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/deviceModel"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TIL_DatePurchased"
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pick Date"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Required*"
+                app:helperTextTextColor="@color/clDelete"
+                app:startIconDrawable="@drawable/ic_calendar">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textDatePurchased"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TIL_Expiration"
+                style="@style/TextInputLayoutAuto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Expiration Date"
+                app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Auto Compute —5 years"
+                app:startIconDrawable="@drawable/expiration">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textDateExpired"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TIL_Status"
+                style="@style/TextInputLayoutAuto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Status"
+                app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Autogenerated"
+                app:startIconDrawable="@drawable/ic_reload">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/status"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputLayoutAuto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="availabilty"
+                app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Autogenerated"
+                android:textSize="4sp"
+                app:startIconDrawable="@drawable/ic_stocks">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/availability"
+                    style="@style/TextInputEditText_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/padding_8"
+            android:layout_marginHorizontal="@dimen/padding_8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/saveBtn"
+                style="@style/btnStyleSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cancelBtn"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="40dp"
+                    android:paddingVertical="@dimen/padding_12">
+
+                    <ImageView
+                        style="@style/sizeIC"
+                        android:layout_marginEnd="12dp"
+                        android:src="@drawable/save" />
+
+                    <TextView
+                        style="@style/SaveText_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cancelBtn"
+                style="@style/btnStyleCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/saveBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="40dp"
+                    android:paddingVertical="18dp">
+
+                    <TextView
+                        style="@style/CancelBTNTextStyle_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

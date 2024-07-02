@@ -1,11 +1,16 @@
     package com.example.qrscanner;
 
+    import static com.example.qrscanner.adapter.ItemAdapter.EXTRA_POSITION;
+
     import android.content.Context;
     import android.content.Intent;
     import android.graphics.Bitmap;
     import android.graphics.BitmapFactory;
     import android.graphics.drawable.ColorDrawable;
+    import android.graphics.drawable.Drawable;
+    import android.graphics.drawable.TransitionDrawable;
     import android.os.Bundle;
+    import android.os.Handler;
     import android.text.Editable;
     import android.text.TextWatcher;
     import android.util.Log;
@@ -40,19 +45,25 @@
     import com.example.qrscanner.models.Department;
     import com.example.qrscanner.models.Gadgets;
     import com.example.qrscanner.utils.Utils;
+    import com.google.android.material.datepicker.MaterialDatePicker;
+    import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+    import com.google.android.material.textfield.TextInputEditText;
+    import com.google.android.material.textfield.TextInputLayout;
 
     import java.text.ParseException;
     import java.text.SimpleDateFormat;
     import java.util.ArrayList;
-    import java.util.Collections;
     import java.util.Date;
     import java.util.List;
+    import java.util.Locale;
 
     public class UpdateData extends AppCompatActivity {
 
         private EditText assignedTo, deviceModel, datePurchased;
-        private TextView qrText, dateExpired, status, availability, titleTextView, chooser, chooserDepartment;
-        private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewGadget;
+        private TextView titleTextView;
+        private TextInputEditText qrText, dateExpired, status, availability, chooserDevice, chooserDepartment;
+        private TextInputLayout textInputLayoutQRText, textInputLayoutAssignedTo, textInputLayoutDep, textInputLayoutDevice, textInputLayoutDeviceModel, textInputLayoutDatePurchased, textInputLayoutExpired, textInputLayoutStatus;
+        private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewSave;
         private CardView saveBtn, cancelBtn;
         private GadgetsAdapter gadgetsAdapter;
         private DepartmentAdapter departmentAdapter;
@@ -68,14 +79,6 @@
         private Gadgets gadgetPosition;
         private ListView listView;
         private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
-
-        private void updateAvailabilityStatus() {
-            if (!assignedTo.getText().toString().isEmpty()) {
-                availability.setText("In Use");
-            } else {
-                availability.setText("In Stock");
-            }
-        }
 
         // Constructor to accept ItemAdapter reference
         public UpdateData() {
@@ -97,34 +100,18 @@
             @Override
             public void afterTextChanged(Editable s) {
 
-                updateSaveButtonState();
-                updateAvailabilityStatus();
-
+                Utils.updateAvailabilityStatus(assignedTo, availability);
 
             }
 
         };
 
-        private void updateSaveButtonState() {
-            if (!deviceModel.getText().toString().isEmpty() && !datePurchased.getText().toString().isEmpty()) {
-                if (assignedTo.getText().toString().isEmpty()) {
-                    saveBtn.setEnabled(true);
-                } else {
-                    saveBtn.setEnabled(true);
-                }
-            } else {
-                saveBtn.setEnabled(false);
-            }
-        }
 
 
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             EdgeToEdge.enable(this);
             setContentView(R.layout.activity_update_data);
-//            LayoutInflater inflater = LayoutInflater.from(this);;
-//            ViewGroup parentViewGroup = findViewById(R.id.main);
-//            View infoLayout = inflater.inflate(R.layout.info_layout, parentViewGroup, false);
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -161,8 +148,6 @@
             dbHelper = new DBHelper(this);
 
             qrText = findViewById(R.id.qrText);
-
-
             assignedTo = findViewById(R.id.assignedTo);
             chooserDepartment = findViewById(R.id.chooserDepartment);
             deviceModel = findViewById(R.id.deviceModel);
@@ -170,10 +155,25 @@
             dateExpired = findViewById(R.id.textDateExpired);
             status = findViewById(R.id.status);
             availability = findViewById(R.id.availability);
-            saveBtn = findViewById(R.id.saveBtn);
 
-            imageViewGadget = findViewById(R.id.imageViewGadget);
-            chooser = findViewById(R.id.chooser);
+//            imageViewGadget = findViewById(R.id.imageViewGadget);
+            chooserDevice = findViewById(R.id.chooserDevice);
+
+
+            textInputLayoutQRText = findViewById(R.id.TIL_QRText);
+            textInputLayoutAssignedTo = findViewById(R.id.TIL_AssignedTo);
+            textInputLayoutDep = findViewById(R.id.TIl_Department);
+            textInputLayoutDevice = findViewById(R.id.TIL_Device);
+            textInputLayoutDeviceModel = findViewById(R.id.TIL_Device_Model);
+            textInputLayoutDatePurchased = findViewById(R.id.TIL_DatePurchased);
+            textInputLayoutExpired = findViewById(R.id.TIL_Expiration);
+            textInputLayoutStatus = findViewById(R.id.TIL_Status);
+
+
+            saveBtn = findViewById(R.id.saveBtn);
+            imageViewSave = findViewById(R.id.imageViewSave);
+
+
 
             ArrayList<Assigned_to_User_Model> deviceList = new ArrayList<>();
             serialNum_id = new ArrayList<>();
@@ -193,13 +193,13 @@
             assignedTo.setText(getIntent().getStringExtra("name"));
             chooserDepartment.setText(getIntent().getStringExtra("department"));
 
-            chooser.setText(getIntent().getStringExtra("device"));
+            chooserDevice.setText(getIntent().getStringExtra("device"));
             deviceModel.setText(getIntent().getStringExtra("deviceModel"));
             datePurchased.setText(getIntent().getStringExtra("datePurchased"));
             dateExpired.setText(getIntent().getStringExtra("dateExpired"));
             status.setText(getIntent().getStringExtra("status"));
             availability.setText(getIntent().getStringExtra("availability"));
-            updateAvailabilityStatus();
+            Utils.updateAvailabilityStatus(assignedTo, availability);
 
             assignedTo.addTextChangedListener(textWatcher);
             deviceModel.addTextChangedListener(textWatcher);
@@ -208,23 +208,52 @@
             status.addTextChangedListener(textWatcher);
 
             // Add chooser here
-            chooser.setOnClickListener(v -> {
-                clickOptionDevice();
-                chooser.setText(getIntent().getStringExtra("device"));
+            Drawable drawable = textInputLayoutDevice.getStartIconDrawable();
+            int parentH = drawable.getMinimumHeight();
+            chooserDevice.setOnClickListener(v -> {
+                clickOptionGadgetCategory(parentH);
+                chooserDevice.setText(getIntent().getStringExtra("device"));
             });
 
             chooserDepartment.setOnClickListener(v -> {
                 clickDepartmentCategory();
-                Log.d("TAG", "onCreate: Call clickDepCatMethod");
-                int itemCount = departmentAdapter.getCount();
-                int itemCount2 = getDepartmentCategoryFromDatabase().size();
 
-                Log.d("TAG", "department adapter item count " + itemCount);
-                Log.d("TAG", "department db item count " + itemCount2);
-                if (itemCount > 0) {
-                    Log.d("TAG", "department item count " + itemCount);
+//                debugging
+//                Log.d("TAG", "onCreate: Call clickDepCatMethod");
+//                int itemCount = departmentAdapter.getCount();
+//                int itemCount2 = getDepartmentCategoryFromDatabase().size();
+//
+//                Log.d("TAG", "department adapter item count " + itemCount);
+//                Log.d("TAG", "department db item count " + itemCount2);
+//                if (itemCount > 0) {
+//                    Log.d("TAG", "department item count " + itemCount);
+//                }
+            });
+
+
+            //Date Picker
+            datePurchased.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MaterialDatePicker<Long> materialDatePicker = MaterialDatePicker.Builder.datePicker()
+                            .setTitleText("Select Date")
+                            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                            .setTheme(R.style.AppDatePicker)
+                            .build();
+                    materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
+                        @Override
+                        public void onPositiveButtonClick(Long selection) {
+                            String date = new SimpleDateFormat(pattern, Locale.getDefault()).format(new Date(selection));
+                            datePurchased.setText(date);
+                            textInputLayoutDatePurchased.setError(null);
+                            Date selectedDate = new Date(selection);
+                            Utils.calculateExpirationAndStatus(selectedDate, dateExpired, status);
+                        }
+                    });
+                    materialDatePicker.show(getSupportFragmentManager(), "date");
                 }
             });
+
 
             //Icon picker for ic_edit gadget items
             pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -249,55 +278,115 @@
             });
 
 
-            datePurchased.setOnFocusChangeListener((view, hasFocus) -> {
-                if (!hasFocus) {
-                    // Parse the input date
-                    SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-                    Date inputDate;
+//            Date inputDate = (Date) datePurchased.getText();
+//            Utils.calculateExpirationAndStatus(inputDate, dateExpired, status);
 
-                    try {
-                        inputDate = dateFormat.parse(datePurchased.getText().toString());
-                    } catch (ParseException e) {
-                        // Toast "Invalid date format. "
-                        return;
+
+            // Save Button
+            saveBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    deviceModel.clearFocus();
+                    textInputLayoutDeviceModel.clearFocus();
+
+                    boolean allFieldsFilled = true;
+
+                    if (qrText.getText().toString().isEmpty()) {
+                        textInputLayoutQRText.setError("Please fill up");
+                        allFieldsFilled = false;
                     }
 
-                    // Calculate expiration date and set status
-                    Utils.calculateExpirationAndStatus(inputDate, dateExpired, status);
-                    itemAdapter.notifyDataSetChanged();
-                }
-            });
+//                if (assignedTo.getText().toString().isEmpty()) {
+//                    textInputLayoutAssignedTo.setError("Please fill up");
+//                    textInputLayoutAssignedTo.setErrorEnabled(true);
+//                    allFieldsFilled = false;
+//                }
 
+                    if (chooserDepartment.getText().toString().isEmpty()) {
+                        textInputLayoutDep.setError("Please fill up");
+                        allFieldsFilled = false;
+                    }
 
-            //SAVE BUTTON
-            saveBtn.setOnClickListener(v -> {
-                Intent intent = new Intent();
-                if (!deviceModel.getText().toString().isEmpty() && !datePurchased.getText().toString().isEmpty()) {
-                    if (assignedTo.getText().toString().isEmpty() || !assignedTo.getText().toString().isEmpty()) {
-                        Assigned_to_User_Model assigned = new Assigned_to_User_Model();
+                    if (chooserDevice.getText().toString().isEmpty()) {
+                        textInputLayoutDevice.setError("Please pick \"Unknown\", if you don't know what type of device is.");
+                        allFieldsFilled = false;
+                    }
 
+                    if (deviceModel.getText().toString().isEmpty()) {
+                        textInputLayoutDeviceModel.setError("Please fill up");
+                        allFieldsFilled = false;
+                    } else {
+                        textInputLayoutDeviceModel.setError(null);
+                    }
+
+                    if (datePurchased.getText().toString().isEmpty()) {
+                        textInputLayoutDatePurchased.setError("Please fill up");
+                        allFieldsFilled = false;
+                    }
+
+//                if (dateExpired.getText().toString().isEmpty()) {
+//                    textInputLayoutExpired.setError("Please fill up");
+//                    allFieldsFilled = false;
+//                }
+//
+//                if (status.getText().toString().isEmpty()) {
+//                    textInputLayoutStatus.setError("Please fill up");
+//                    allFieldsFilled = false;
+//                }
+
+                    if (allFieldsFilled) {
                         // Proceed with saving data
-                        dbHelper.editDevice(getIntent().getStringExtra("serialNumber"),  assignedTo.getText().toString(), chooserDepartment.getText().toString(), gadgetCategoryName, deviceModel.getText().toString(), datePurchased.getText().toString(), dateExpired.getText().toString(), status.getText().toString(), availability.getText().toString());
+                        dbHelper.editDevice(
+                                qrText.getText().toString(),
+                                assignedTo.getText().toString(),
+                                chooserDepartment.getText().toString(),
+                                chooserDevice.getText().toString(),
+                                deviceModel.getText().toString(),
+                                datePurchased.getText().toString(),
+                                dateExpired.getText().toString(),
+                                status.getText().toString(),
+                                availability.getText().toString()
+                        );
 
-                        Log.d("Saved?", "onCreate: " + deviceModel.getText().toString());
-                        deviceList.add(assigned);
+                        // Reset other fields
+                        qrText.setText(null);
+                        assignedTo.setText(null);
+                        chooserDepartment.setText(null);
+                        chooserDevice.setText(null);
+                        deviceModel.setText(null);
+                        datePurchased.setText(null);
+                        dateExpired.setText(null);
+                        status.setText(null);
+                        availability.setText(null);
 
+
+                        Drawable[] layers = new Drawable[] {
+                                imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
+                        };
+                        TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+                        imageViewSave.setImageDrawable(transitionDrawable);
+                        transitionDrawable.startTransition(700);
+
+
+                        Intent intent = new Intent();
                         intent.putExtra("dataRefreshed", true);
                         setResult(RESULT_OK, intent);
-                        finish();
-//                        Toast toast = Toast.makeText(UpdateData.this, "Saved Success", Toast.LENGTH_SHORT);
-//                        toast.setGravity(Gravity.CENTER, 0, 0);
-//                        toast.show();
-
-
+                        new Handler().postDelayed(() -> {
+                            finish();
+                        }, 1000);
+                    } else {
+                        Toast.makeText(UpdateData.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    // Toast "Save Failed", "Please fill up all fields"
                 }
-
             });
+
         }
-        private void clickOptionDevice() {
+
+
+
+
+        private void clickOptionGadgetCategory(int parentHeight) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
             View customView = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
@@ -334,9 +423,9 @@
                     if (gadgetPosition != null) {
                         gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                         itemDialog.dismiss();
-                        chooser.setText(gadgetCategoryName);
+                        chooserDevice.setText(gadgetCategoryName);
                         int positionNew = position+1;
-                        displayGadgetImageInt(UpdateData.this, imageViewGadget, positionNew);
+                        Utils.displayGadgetImageInt(UpdateData.this, dbHelper, textInputLayoutDevice, positionNew, parentHeight);
 
                         Toast.makeText(UpdateData.this, "Selected " + gadgetCategoryName, Toast.LENGTH_SHORT).show();
                     } else {
@@ -524,9 +613,9 @@
             if (gadgetsList.isEmpty()) {
                 dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_unknown_device));
                 dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.laptop_icon));
-                dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.mobile_phone_2635));
+                dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_mobile_phone));
                 dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_tablet));
-                dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.pc_computer_6840));
+                dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_pc_computer));
 
                 gadgetsList = dbHelper.getAllGadgetsCategory();
             }
@@ -643,6 +732,7 @@
             imageView.setImageResource(R.drawable.add_icon);
             // Set up the input
             final EditText input = view.findViewById(R.id.editText);
+            input.setHint("Department Name");
             final Button actionOK = view.findViewById(R.id.actionOK);
             final Button actionCancel = view.findViewById(R.id.actionCancel);
             final ImageView iconICPick = view.findViewById(R.id.addIconGadget);

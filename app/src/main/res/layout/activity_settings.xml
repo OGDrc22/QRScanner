@@ -27,7 +27,7 @@
       android:padding="16dp">
 
     <androidx.cardview.widget.CardView
-        style="@style/itemBG"
+        style="@style/cardViewOptions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="56dp"
@@ -40,7 +40,7 @@
 
             <TextView
                 android:id="@+id/textView2"
-                style="@style/textStyle1"
+                style="@style/textStyleConstantColor2Opaque"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

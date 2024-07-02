@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
     private CardView cardView_options;
     private ImageView currentActivity, currentActivity2, settingsIcon, backBtn;
     private ConstraintLayout constraintLayoutDeleteAll;
+    private LinearLayout cardViewContent;
 
 
 
@@ -66,6 +68,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         settingsIcon.setImageResource(R.drawable.drop_down);
         backBtn = findViewById(R.id.backBtn);
         cardView_options = findViewById(R.id.cardView_options);
+        cardViewContent = findViewById(R.id.cardViewContent);
         textViewNoData = findViewById(R.id.textViewNoData);
         textViewItemCount = findViewById(R.id.textViewItemCount);
 
@@ -79,16 +82,22 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         settingsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cardView_options.getVisibility() == View.GONE) {
-                    cardView_options.setVisibility(View.VISIBLE);
+                final int initialHeight = cardView_options.getHeight();
+                int duration = 300;
+                Utils.smoothHideAndReveal(cardView_options, duration);
+                if (cardViewContent.getVisibility() == View.GONE) {
+                    Utils.rotateUp(settingsIcon);
+                    cardViewContent.setVisibility(View.VISIBLE);
                     textViewItemCount.setVisibility(View.VISIBLE);
+                    Utils.expandCardView(cardView_options, duration);
                 } else {
-                    cardView_options.setVisibility(View.GONE);
+                    Utils.rotateDown(settingsIcon);
+                    cardViewContent.setVisibility(View.GONE);
                     textViewItemCount.setVisibility(View.GONE);
+                    Utils.collapseCardView(cardView_options, cardView_options, duration);
                 }
             }
         });
-
 
 
         dbHelper = new DBHelper(this);
@@ -116,9 +125,9 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         currentActivity2 = findViewById(R.id.currentActivity2);
         currentActivity2.setVisibility(View.VISIBLE);
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            currentActivity2.setImageResource(R.drawable.expiration_light);
+            currentActivity2.setImageResource(R.drawable.ic_expiration_light); // TODO FIX
         } else {
-            currentActivity2.setImageResource(R.drawable.expiration);
+            currentActivity2.setImageResource(R.drawable.ic_expiration);
         }
 
         constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);

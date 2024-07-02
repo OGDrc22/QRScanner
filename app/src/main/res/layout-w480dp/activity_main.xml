@@ -21,10 +21,11 @@
         android:id="@+id/search_bar"
         style="@style/searchbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="42dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/searchbar_bg"
+        android:textAppearance="@style/CancelBTNTextStyle"
         app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,6 +69,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/addBtn"
                 style="@style/cardViewBtnAdd"
+                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/actions"
@@ -79,15 +81,15 @@
 
                     <ImageView
                         android:id="@+id/imageViewAdd"
-                        style="@style/icConstantColor2"
+                        style="@style/sizeICScan"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_scan" />
+                        android:src="@drawable/qr_icon_24" />
 
                     <TextView
                         android:id="@+id/textAdd"
-                        style="@style/cardBtnTxtStyle2"
+                        style="@style/cardBtnTxtStyleScan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Scan Device" />
@@ -115,6 +117,7 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/importBtn"
                         style="@style/cardViewBtnUn"
+                        app:cardElevation="0dp"
                         android:layout_marginBottom="2dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -129,7 +132,7 @@
                                 android:src="@drawable/ic_import" />
 
                             <TextView
-                                style="@style/cardBtnTxtStyle"
+                                style="@style/cardBtnTxtStyle3"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Import" />
@@ -141,6 +144,7 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/exportBtn"
                         style="@style/cardViewBtnUn"
+                        app:cardElevation="0dp"
                         android:layout_marginTop="2dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -155,7 +159,7 @@
                                 android:src="@drawable/ic_export" />
 
                             <TextView
-                                style="@style/cardBtnTxtStyle"
+                                style="@style/cardBtnTxtStyle3"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Export" />
@@ -172,6 +176,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/laptopBtn"
                 style="@style/cardViewBtn1"
+                app:cardElevation="0dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
@@ -200,7 +205,8 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/tabletBtn"
-                style="@style/cardViewBtn2"
+                style="@style/cardViewBtn1"
+                app:cardElevation="0dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
@@ -230,7 +236,8 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/phoneBtn"
-                style="@style/cardViewBtn3"
+                style="@style/cardViewBtn1"
+                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/laptopBtn"
@@ -242,7 +249,7 @@
                     <ImageView
                         android:id="@+id/cellphoneIc"
                         style="@style/sizeIC2M"
-                        android:src="@drawable/mobile_phone_2635" />
+                        android:src="@drawable/ic_mobile_phone" />
 
                     <TextView
                         android:id="@+id/textCellphone"
@@ -258,7 +265,8 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/pcBtn"
-                style="@style/cardViewBtn4"
+                style="@style/cardViewBtn1"
+                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/phoneBtn"
@@ -271,7 +279,7 @@
                         android:id="@+id/pcIc"
                         style="@style/sizeIC2M"
                         android:layout_marginEnd="4dp"
-                        android:src="@drawable/pc_computer_6840" />
+                        android:src="@drawable/ic_pc_computer" />
 
                     <TextView
                         android:id="@+id/textPC"
@@ -287,7 +295,8 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/unknownUserBtn"
-                style="@style/cardViewBtn5"
+                style="@style/cardViewBtn1"
+                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/phoneBtn"
@@ -314,7 +323,8 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/expiredDevices"
-                style="@style/cardViewBtn6"
+                style="@style/cardViewBtn1"
+                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/unknownUserBtn"
@@ -341,7 +351,8 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/allBtn"
-                style="@style/cardViewBtn7"
+                style="@style/cardViewBtn1"
+                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/unknownBtn"
@@ -369,7 +380,8 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/unknownBtn"
-                style="@style/cardViewBtn8"
+                style="@style/cardViewBtn1"
+                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

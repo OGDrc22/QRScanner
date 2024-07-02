@@ -1,5 +1,6 @@
 package com.example.qrscanner.adapter;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,9 +9,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qrscanner.models.Assigned_to_User_Model;
@@ -27,6 +31,9 @@ import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.UpdateData;
 import com.example.qrscanner.utils.Utils;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +44,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     public static final String EXTRA_POSITION = "com.example.qrscanner.adapter.EXTRA_POSITION";
     private static final int YOUR_REQUEST_CODE = 1;
+    private static final Logger log = LogManager.getLogger(ItemAdapter.class);
     private int itemLayoutId;
     private Context context;
     private ArrayList<Assigned_to_User_Model> originalData;
@@ -46,7 +54,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     private ArrayList<Assigned_to_User_Model> deviceList;
 
-//    public ImageView hasUser, leftIndicator, rightIndicator, imgScan;
+    //    public ImageView hasUser, leftIndicator, rightIndicator, imgScan;
     private ViewGroup.MarginLayoutParams layoutParams;
 
     private int position;
@@ -57,6 +65,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     Date inputDate;
 
     private DBHelper dbHelper;
+
+    private int animationDuration = 300;
 
 
     // Define an interface for delete action
@@ -118,6 +128,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         data = deviceList.get(position);
+
         holder.serialNum_id.setText(String.valueOf(data.getSerialNumber()));
         holder.assignedTo_id.setText(String.valueOf(data.getName()));
         holder.department_id.setText(String.valueOf(data.getDepartment()));
@@ -126,10 +137,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.deviceModel_id.setText(String.valueOf(data.getDeviceBrand()));
         holder.datePurchased_id.setText(String.valueOf(data.getDatePurchased()));
 
-        if (data.getStatus() != null) {
-            holder.sts2.setText(String.valueOf(data.getStatus()));
+        holder.suHeader.setText(data.getSerialNumber());
+
+        if (data.getName().isEmpty()) {
+            holder.imgScan.setImageResource(R.drawable.qr_icon_48);
+            holder.suHeader.setVisibility(View.GONE);
         } else {
-            holder.sts2.setText("null");
+            holder.imgScan.setImageResource(R.drawable.user_bulk_48);
+            holder.serialNum_id.setText(data.getName());
         }
 
         // Call calculateExpirationAndStatus method
@@ -144,10 +159,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             String status = holder.status_id.getText().toString();
 
             // Set visibility of indicator based on status
+            int clExpired = ContextCompat.getColor(context, R.color.clExpired);
+            int clLight = ContextCompat.getColor(context, R.color.itemBg);
+            int clDark = ContextCompat.getColor(context, R.color.itemBg2);
             if (status.equals("For Refresh")) {
                 holder.leftIndicator.setVisibility(View.VISIBLE);
+                holder.cardViewMain.setCardBackgroundColor(clExpired);
+//                holder.cardViewExpanded.setCardBackgroundColor(clExpired);
             } else {
                 holder.leftIndicator.setVisibility(View.GONE);
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                    holder.cardViewMain.setCardBackgroundColor(clDark);
+                } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                    holder.cardViewMain.setCardBackgroundColor(clLight);
+                }
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -190,9 +215,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         if (String.valueOf(data.getDeviceType()).equals("Laptop")) {
             holder.deviceIC.setImageResource(R.drawable.laptop_icon);
         } else if (String.valueOf(data.getDeviceType()).equals("Desktop")) {
-            holder.deviceIC.setImageResource(R.drawable.pc_computer_6840);
+            holder.deviceIC.setImageResource(R.drawable.ic_pc_computer);
         } else if (String.valueOf(data.getDeviceType()).equals("Phone")) {
-            holder.deviceIC.setImageResource(R.drawable.mobile_phone_2635);
+            holder.deviceIC.setImageResource(R.drawable.ic_mobile_phone);
         } else if (String.valueOf(data.getDeviceType()).equals("Tablet")) {
             holder.deviceIC.setImageResource(R.drawable.ic_tablet);
         } else if (String.valueOf(data.getDeviceType()).equals(data.getDeviceType())) {
@@ -216,6 +241,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             }
         }
 
+
+        Utils.smoothHideAndReveal(holder.otherInfo, animationDuration);
+        Utils.smoothHideAndReveal(holder.actions, animationDuration);
+        Utils.smoothHideAndReveal(holder.linearLayout2, animationDuration);
+        Utils.smoothHideAndReveal(holder.linearLayoutIndicators, animationDuration);
+        Utils.smoothHideAndReveal(holder.dummy, animationDuration);
+
+
     }
 
     @Override
@@ -229,15 +262,24 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        LinearLayout linearLayout2, linearLayout2Alter;
-        TextView serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, sts2, textViewDM;
+        LinearLayout linearLayout2, linearLayoutIndicators, dummy;
+        TextView txtSN, serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, textViewDM, suHeader;
         ConstraintLayout otherInfo, actions;
-        ImageView hasUser, leftIndicator, imgScan, expiration, userIndicator, deviceIC, deviceIC2;
-        CardView editBtn, deleteBtn;
+        ImageView hasUser, leftIndicator, imgScan, expiration, userIndicator, deviceIC, deviceIC2, dropDownArrow;
+        CardView editBtn, deleteBtn, cardViewMain;
+
+        int paddingTopIndicators;
+        int paddingStartIndicators;
+        int paddingEndIndicators;
+        int paddingBottomIndicators;
+
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             dbHelper = new DBHelper(context);
+
+            cardViewMain = itemView.findViewById(R.id.cardViewMain);
 
             // TEXT VIEWS
             serialNum_id = itemView.findViewById(R.id.sn);
@@ -250,6 +292,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             status_id = itemView.findViewById(R.id.sts);
             availability_id = itemView.findViewById(R.id.avl);
 
+            txtSN = itemView.findViewById(R.id.textSN);
+
+            suHeader = itemView.findViewById(R.id.subHeader);
+
             // ICONS
             imgScan = itemView.findViewById(R.id.imageViewScan);
             leftIndicator = itemView.findViewById(R.id.leftIndicator);
@@ -258,6 +304,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             hasUser = itemView.findViewById(R.id.hasUser);
             deviceIC = itemView.findViewById(R.id.deviceIC);
             deviceIC2 = itemView.findViewById(R.id.deviceIC2);
+            dropDownArrow = itemView.findViewById(R.id.dropDownArrow);
 
             editBtn =  itemView.findViewById(R.id.editBtn);
             deleteBtn =  itemView.findViewById(R.id.deleteBtn);
@@ -268,7 +315,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             // Get the layout parameters of the view
             layoutParams = (ViewGroup.MarginLayoutParams) imgScan.getLayoutParams();
 
-            sts2 = itemView.findViewById(R.id.sts2);
+            linearLayout2 = itemView.findViewById(R.id.linearLayoutShown2);
+            linearLayoutIndicators = itemView.findViewById(R.id.linearLayoutIndicators);
+            dummy = itemView.findViewById(R.id.dummy);
+
+            paddingTopIndicators = linearLayoutIndicators.getPaddingTop();
+            paddingStartIndicators = linearLayoutIndicators.getPaddingStart();
+            paddingEndIndicators = linearLayoutIndicators.getPaddingEnd();
+            paddingBottomIndicators = linearLayoutIndicators.getPaddingBottom();
 
             itemView.setOnClickListener(this);
 
@@ -277,22 +331,42 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         @Override
         public void onClick(View v) {
 
-            Log.d("ItemAdapter", "onClick triggered");
-            Log.d("ItemAdapter", "getName: " + data.getName());
+            // Debugging
+//            Log.d("ItemAdapter", "onClick triggered");
+//            Log.d("ItemAdapter", "getName: " + data.getName());
+
             position = getAdapterPosition();
             data = deviceList.get(position);
-            Log.d("ItemAdapter", "getSerial: " + data.getSerialNumber());
-            Log.d("ItemAdapter", "getPosition: " + position);
+
+            // Debugging
+//            Log.d("ItemAdapter", "getSerial: " + data.getSerialNumber());
+//            Log.d("ItemAdapter", "getPosition: " + position);
 
             if (otherInfo != null) {
+
+                Utils.smoothHideAndReveal(otherInfo, animationDuration);
+                Utils.smoothHideAndReveal(actions, animationDuration);
+                Utils.smoothHideAndReveal(linearLayout2, animationDuration);
+                Utils.smoothHideAndReveal(linearLayoutIndicators, animationDuration);
+                Utils.smoothHideAndReveal(dummy, animationDuration);
+
                 if (otherInfo.getVisibility() == View.GONE) {
                     Log.d("ItemAdapter", "otherInfo is VISIBLE");
-                    // otherInfo is closed
+
+
+                    linearLayout2.setGravity(Gravity.TOP);
+                    linearLayoutIndicators.setPadding(paddingStartIndicators, 16, paddingEndIndicators,  paddingBottomIndicators);
+
                     otherInfo.setVisibility(View.VISIBLE); // Set otherInfo to VISIBLE
                     actions.setVisibility(View.VISIBLE); // Set ic_edit and delete to VISIBLE
+                    dummy.setVisibility(View.VISIBLE);
+
+                    Utils.rotateUp(dropDownArrow);
 
                     hasUser.setVisibility(View.GONE);
                     leftIndicator.setVisibility(View.GONE);
+
+                    serialNum_id.setText(data.getSerialNumber());
 
                     if (!data.getName().isEmpty()) {
                         // otherInfo is finally visible and getName is not null and expiration is not expire
@@ -301,6 +375,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         // otherInfo is finally visible and getName is null  and expiration is expired
                         userIndicator.setVisibility(View.VISIBLE);
                     }
+
+                    imgScan.setImageResource(R.drawable.qr_icon_24);
+                    suHeader.setVisibility(View.GONE);
+
+                    txtSN.setVisibility(View.VISIBLE);
 
                     try {
                         dateFormat = new SimpleDateFormat("MM/dd/yy");
@@ -322,19 +401,41 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         e.printStackTrace();
                     }
 
+                    Utils.expandCardViewItemAdapter(cardViewMain, animationDuration);
 
                 } else {
 
 
+                    linearLayout2.setGravity(Gravity.CENTER_VERTICAL);
+                    linearLayoutIndicators.setPadding(paddingStartIndicators, paddingTopIndicators, paddingEndIndicators,  paddingBottomIndicators);
+
                     // otherInfo is visible
                     otherInfo.setVisibility(View.GONE); // Set otherInfo to GONE
                     actions.setVisibility(View.GONE); // Set ic_edit and delete to GONE
+                    dummy.setVisibility(View.GONE);
+
+                    Utils.rotateDown(dropDownArrow);
                     if (!data.getName().isEmpty()) {
                         // otherInfo is finally GONE and getName is not null
                         hasUser.setVisibility(View.GONE);
                     } else {
                         // otherInfo is finally GONE and getName is null
                         hasUser.setVisibility(View.VISIBLE);
+                    }
+
+
+                    imgScan.setImageResource(R.drawable.qr_icon_48);
+                    suHeader.setVisibility(View.VISIBLE);
+
+
+                    txtSN.setVisibility(View.GONE);
+
+                    if (data.getName().isEmpty()) {
+                        imgScan.setImageResource(R.drawable.qr_icon_48);
+                        suHeader.setVisibility(View.GONE);
+                    } else {
+                        imgScan.setImageResource(R.drawable.user_bulk_48);
+                        serialNum_id.setText(data.getName());
                     }
 
                     try {
@@ -354,6 +455,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
+
+                    Utils.collapseCardViewItemAdapter(cardViewMain, cardViewMain, animationDuration);
+
                 }
 
 
@@ -381,6 +485,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         }
 
     }
+
 
 
     public void showDeleteDialog(Context context, int position) {

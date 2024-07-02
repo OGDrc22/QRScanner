@@ -17,6 +17,8 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Assigned_to_User_Model> deviceList;
     private ArrayList<String>  serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
 
-    private int intSerial;
+    private String serialCode;
 
     private DBHelper dbHelper;
 
@@ -222,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Iterate through the original list and add items that match the search text to the filtered list
             for (Assigned_to_User_Model item : dataLists) {
-                int serialNum = item.getSerialNumber();
+                String serialNum = item.getSerialNumber();
                 String serialNumString = String.valueOf(serialNum);
                 // Perform case-insensitive search by converting both text and item data to lowercase
                 if (serialNumString.toLowerCase().contains(searchText)
@@ -262,7 +264,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(MainActivity.this, ScanQR.class);
                 startActivity(intent);
-                Log.d("TAG", "Clicked Success");
 
             }
         });
@@ -364,7 +365,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(MainActivity.this, "Data exported successfully", Toast.LENGTH_LONG).show();
         if (requestCode == CREATE_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             selectedFileUri = data.getData();
             exportDatabaseToExcel(fileNameToExport);
@@ -384,20 +384,23 @@ public class MainActivity extends AppCompatActivity {
 
                 for (Row row : sheet) {
 //                    double serialNum = row.getCell(0).getNumericCellValue();
-                    double serialNum;
+                    String serialNum;
                     Cell serialNumCell = row.getCell(0);
-                    if (serialNumCell != null && serialNumCell.getCellType() == CellType.NUMERIC) {
-                        serialNum = serialNumCell.getNumericCellValue();
-                    } else if (serialNumCell == null) {
-                        serialNum = 0; // Or any default value you want to use
+                    if (serialNumCell != null) {
+                        if (serialNumCell.getCellType() == CellType.STRING) {
+                            serialNum = serialNumCell.getStringCellValue();
+                        } else if (serialNumCell.getCellType() == CellType.NUMERIC) {
+                            serialNum = String.valueOf((int) serialNumCell.getNumericCellValue());
+                        } else {
+                            continue; // Skip if it's neither STRING nor NUMERIC
+                        }
                     } else {
-                        // Handle empty or non-numeric cell
-                        continue;
+                        continue; // Skip if the cell is null
                     }
 
-                    intSerial = (int) serialNum;
-
-                    if (dbHelper.getAllSerialNumbers().contains(String.valueOf(intSerial))) {
+                    serialCode = serialNum;
+                    // Handel Duplicates Serial Number in importing data, in case the data already exist in database
+                    if (dbHelper.getAllSerialNumbers().contains(serialCode)) {
                         continue;
                     }
 
@@ -408,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
                         name = nameCell.getStringCellValue();
                     } else {
                         // Handle empty or non-string cell
-                        name = ""; // Or any default value you want to use
+                        name = null; // Or any default value you want to use
                     }
 
 //                    String department = row.getCell(2).getStringCellValue();
@@ -418,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
                         department = departmentCell.getStringCellValue();
                     } else {
                         // Handle empty or non-string cell
-                        department = ""; // Or any default value you want to use
+                        department = null; // Or any default value you want to use
                     }
 
 //                    String device = row.getCell(3).getStringCellValue();
@@ -438,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
                         deviceModel = deviceModelCell.getStringCellValue();
                     } else {
                         // Handle empty or non-string cell
-                        deviceModel = ""; // Or any default value you want to use
+                        deviceModel = null; // Or any default value you want to use
                     }
 
 
@@ -449,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
                         datePurchased = datePurchasedCell.getStringCellValue();
                     } else {
                         // Handle empty or non-string cell
-                        datePurchased = ""; // Or any default value you want to use
+                        datePurchased = null; // Or any default value you want to use
                     }
 
 //                    String dateExpired = row.getCell(5).getStringCellValue();
@@ -459,7 +462,7 @@ public class MainActivity extends AppCompatActivity {
                         dateExpired = dateExpiredCell.getStringCellValue();
                     } else {
                         // Handle empty or non-string cell
-                        dateExpired = ""; // Or any default value you want to use
+                        dateExpired = null; // Or any default value you want to use
                     }
 
 //                    String status = row.getCell(6).getStringCellValue();
@@ -469,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
                         status = statusCell.getStringCellValue();
                     } else {
                         // Handle empty or non-string cell
-                        status = ""; // Or any default value you want to use
+                        status = null; // Or any default value you want to use
                     }
 
 //                    String availability = row.getCell(7).getStringCellValue();
@@ -485,10 +488,10 @@ public class MainActivity extends AppCompatActivity {
                     dbHelper.addDevice(String.valueOf(serialNum), name, department, device, deviceModel, datePurchased, dateExpired, status, availability);
 
                     Log.d("TAG", "Existing Serials: " + dbHelper.getAllSerialNumbers());
-                    Log.d("TAG", "From Import: " + intSerial);
+                    Log.d("TAG", "From Import: " + serialCode);
                 }
 
-                if (!dbHelper.getAllSerialNumbers().contains(String.valueOf(intSerial)) && dbHelper.getAllSerialNumbers().contains(String.valueOf(intSerial))) {
+                if (!dbHelper.getAllSerialNumbers().contains(serialCode) && dbHelper.getAllSerialNumbers().contains(serialCode)) {
                     // Toast "Success", "Successfully imported some of the data"
                 } else {
                     // Toast "Success", "Data Imported successfully"

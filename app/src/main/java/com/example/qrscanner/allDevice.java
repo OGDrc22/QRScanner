@@ -1,18 +1,15 @@
 package com.example.qrscanner;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -23,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qrscanner.DB.DBHelper;
-import com.example.qrscanner.adapter.GadgetsAdapter;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.utils.Utils;
@@ -45,10 +41,7 @@ public class allDevice extends AppCompatActivity {
     private CardView cardView_options;
     private ImageView currentActivity, settingsIcon, backBtn;
     private ConstraintLayout constraintLayoutDeleteAll;
-
-    private GadgetsAdapter gadgetsAdapter;
-
-
+    private LinearLayout cardViewContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +58,7 @@ public class allDevice extends AppCompatActivity {
         settingsIcon.setImageResource(R.drawable.drop_down);
         backBtn = findViewById(R.id.backBtn);
         cardView_options = findViewById(R.id.cardView_options);
+        cardViewContent = findViewById(R.id.cardViewContent);
         textViewNoData = findViewById(R.id.textViewNoData);
         textViewItemCount = findViewById(R.id.textViewItemCount);
 
@@ -80,16 +74,22 @@ public class allDevice extends AppCompatActivity {
         settingsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cardView_options.getVisibility() == View.GONE) {
-                    cardView_options.setVisibility(View.VISIBLE);
+                final int initialHeight = cardView_options.getHeight();
+                int duration = 300;
+                Utils.smoothHideAndReveal(cardView_options, duration);
+                if (cardViewContent.getVisibility() == View.GONE) {
+                    Utils.rotateUp(settingsIcon);
+                    cardViewContent.setVisibility(View.VISIBLE);
                     textViewItemCount.setVisibility(View.VISIBLE);
+                    Utils.expandCardView(cardView_options, duration);
                 } else {
-                    cardView_options.setVisibility(View.GONE);
+                    Utils.rotateDown(settingsIcon);
+                    cardViewContent.setVisibility(View.GONE);
                     textViewItemCount.setVisibility(View.GONE);
+                    Utils.collapseCardView(cardView_options, cardView_options, duration);
                 }
             }
         });
-
 
 
 

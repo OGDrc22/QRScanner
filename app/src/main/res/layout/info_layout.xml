@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="16dp"
     android:layout_marginVertical="4dp"
     style="@style/itemBG"
+    android:id="@+id/cardViewMain"
     android:elevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,11 +16,12 @@
 
 
         <LinearLayout
-            android:id="@+id/linearLayoutShown"
+            android:id="@+id/linearLayoutIndicators"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="36dp"
-            android:gravity="end"
+            android:layout_marginTop="@dimen/padding_4"
+            android:layout_marginEnd="@dimen/padding_16"
+            android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayoutShown2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,14 +30,27 @@
 
             <ImageView
                 android:id="@+id/leftIndicator"
-                style="@style/expiredIC"
-                android:layout_marginStart="8dp" />
+                style="@style/sizeIC"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_expiration" />
 
             <ImageView
                 android:id="@+id/hasUser"
-                style="@style/hasUserIC"
+                style="@style/sizeIC"
                 android:layout_marginStart="8dp"
+                android:src="@drawable/user_unknown_bulk"
                 android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/dropDownArrow"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding_8"
+                android:scaleType="center"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                android:src="@drawable/drop_down" />
 
         </LinearLayout>
 
@@ -44,444 +58,394 @@
             android:id="@+id/linearLayoutShown2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="19dp"
+            android:layout_marginStart="@dimen/padding_16"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="36dp"
+            android:paddingVertical="@dimen/padding_16"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="visible">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imageViewScan"
-                style="@style/sizeICMono"
-                android:scaleType="fitCenter"
-                android:scaleX="0.7"
-                android:scaleY="0.7"
-                android:src="@drawable/ic_scan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/qr_icon_48"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textSN"
-                style="@style/textStyle1"
+                style="@style/textStyleConstantColor2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="Serial number"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/imageViewScan"
                 app:layout_constraintStart_toEndOf="@+id/imageViewScan"
                 app:layout_constraintTop_toTopOf="@+id/imageViewScan" />
 
 
-            <TextView
-                android:id="@+id/sn"
-                style="@style/textStyle1"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="26dp"
-                android:hint="Serial num"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/padding_16"
                 app:layout_constraintBottom_toBottomOf="@+id/textSN"
                 app:layout_constraintStart_toEndOf="@+id/textSN"
-                app:layout_constraintTop_toTopOf="@+id/textSN" />
+                app:layout_constraintTop_toTopOf="@+id/textSN">
+
+                <TextView
+                    android:id="@+id/sn"
+                    style="@style/TitleStyleConstantColor_18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Header" />
+
+                <TextView
+                    android:id="@+id/subHeader"
+                    style="@style/SubTitleConstantColor_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sub Header"
+                    android:visibility="visible" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <!--Alternative-->
         <LinearLayout
-            android:id="@+id/linearLayoutShown2Alter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="19dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="36dp"
+            android:id="@+id/dummy"
+            style="@style/sizeIC"
+            android:layout_marginStart="@dimen/padding_16"
+            android:layout_marginTop="@dimen/padding_16"
+            android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/imageViewScan2"
-                style="@style/sizeICMono"
-                android:scaleType="fitCenter"
-                android:scaleX="0.7"
-                android:scaleY="0.7"
-                android:src="@drawable/ic_scan"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textSN2"
-                style="@style/textStyle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:hint="Serial number"
-                app:layout_constraintBottom_toBottomOf="@+id/imageViewScan2"
-                app:layout_constraintStart_toEndOf="@+id/imageViewScan2"
-                app:layout_constraintTop_toTopOf="@+id/imageViewScan2" />
-
-
-            <TextView
-                android:id="@+id/sn2"
-                style="@style/textStyle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="26dp"
-                android:hint="Name"
-                app:layout_constraintBottom_toBottomOf="@+id/textSN2"
-                app:layout_constraintStart_toEndOf="@+id/textSN2"
-                app:layout_constraintTop_toTopOf="@+id/textSN2" />
-
-        </LinearLayout>
-
-
-
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!--OTHER INFO CONTAINER-->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/otherInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="12dp"
-            style="@style/itemBG"
-            app:cardElevation="0dp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutShown2">
+            app:layout_constraintTop_toBottomOf="@+id/dummy"><!--*************  VISIBILITY FOR OTHER INFO CONTAINER  *************-->
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/otherInfo"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/connector"
+                style="@style/sizeIC"
+                android:layout_marginStart="@dimen/padding_16"
+                android:src="@drawable/ic_vertical_lines"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/userIndicator"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="12dp"
-                android:visibility="gone"><!--*************  VISIBILITY FOR OTHER INFO CONTAINER  *************-->
+                android:layout_marginEnd="@dimen/padding_16"
+                android:src="@drawable/user_unknown_bulk"
+                android:transitionName="hasUser"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+
+            <ImageView
+                android:id="@+id/imageView3"
+                style="@style/sizeIC"
+                android:src="@drawable/user_bulk_48"
+                app:layout_constraintEnd_toEndOf="@+id/connector"
+                app:layout_constraintStart_toStartOf="@+id/connector"
+                app:layout_constraintTop_toBottomOf="@+id/connector" />
+
+            <TextView
+                android:id="@+id/textAT"
+                style="@style/textStyleConstantColor2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Assigned To"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                app:layout_constraintStart_toEndOf="@+id/imageView3"
+                app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+            <TextView
+                android:id="@+id/at"
+                style="@style/textStyleConstantColor2Opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxEms="11"
+                android:text="Unassigned"
+                app:layout_constraintBottom_toBottomOf="@+id/textAT"
+                app:layout_constraintStart_toEndOf="@+id/textAT"
+                app:layout_constraintTop_toTopOf="@+id/textAT" />
+
+            <ImageView
+                android:id="@+id/connector2"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_vertical_lines"
+                app:layout_constraintEnd_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toStartOf="@+id/imageView3"
+                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+
+            <ImageView
+                android:id="@+id/imageViewDep"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_department"
+                app:layout_constraintEnd_toEndOf="@+id/connector2"
+                app:layout_constraintStart_toStartOf="@+id/connector2"
+                app:layout_constraintTop_toBottomOf="@+id/connector2" />
+
+            <ImageView
+                android:id="@+id/connector3"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_vertical_lines"
+                app:layout_constraintEnd_toEndOf="@+id/imageViewDep"
+                app:layout_constraintStart_toStartOf="@+id/imageViewDep"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewDep" />
+
+
+            <TextView
+                android:id="@+id/textDep"
+                style="@style/textStyleConstantColor2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Department"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewDep"
+                app:layout_constraintStart_toStartOf="@+id/textAT"
+                app:layout_constraintTop_toTopOf="@+id/imageViewDep" />
+
+            <TextView
+                android:id="@+id/dep"
+                style="@style/textStyleConstantColor2Opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Department"
+                app:layout_constraintBottom_toBottomOf="@+id/textDep"
+                app:layout_constraintStart_toStartOf="@+id/at"
+                app:layout_constraintTop_toTopOf="@+id/textDep" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="@+id/connector3"
+                app:layout_constraintStart_toStartOf="@+id/connector3"
+                app:layout_constraintTop_toBottomOf="@+id/connector3">
 
                 <ImageView
-                    android:id="@+id/connector"
-                    android:src="@drawable/ic_vertical_lines"
-                    style="@style/sizeICMono"
-                    android:layout_marginStart="36dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:id="@+id/deviceIC"
+                    style="@style/sizeIC"
+                    android:src="@drawable/device_model"
+                    android:visibility="visible" />
 
                 <ImageView
-                    android:id="@+id/userIndicator"
-                    style="@style/hasUserIC"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="10dp"
-                    app:layout_constraintTop_toTopOf="@+id/imageView3"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView3" />
+                    android:id="@+id/deviceIC2"
+                    style="@style/sizeIC"
+                    android:layout_height="22dp"
+                    android:src="@drawable/device_model"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/connector4"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_vertical_lines"
+                app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+                app:layout_constraintStart_toStartOf="@+id/linearLayout"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 
-                <ImageView
-                    android:id="@+id/imageView3"
-                    style="@style/sizeICMono"
-                    android:src="@drawable/ic_user"
-                    app:layout_constraintEnd_toEndOf="@+id/connector"
-                    app:layout_constraintStart_toStartOf="@+id/connector"
-                    app:layout_constraintTop_toBottomOf="@+id/connector" />
+            <TextView
+                android:id="@+id/textDM"
+                style="@style/textStyleConstantColor2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Device Model"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout" />
 
-                <TextView
-                    android:id="@+id/textAT"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Assigned To"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-                    app:layout_constraintStart_toEndOf="@+id/imageView3"
-                    app:layout_constraintTop_toTopOf="@+id/imageView3" />
-
-                <TextView
-                    android:id="@+id/at"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Unassigned"
-                    android:layout_marginStart="40dp"
-                    android:layout_weight="1"
-                    android:maxEms="11"
-                    android:ellipsize="end"
-                    app:layout_constraintBottom_toBottomOf="@+id/textAT"
-                    app:layout_constraintStart_toEndOf="@+id/textAT"
-                    app:layout_constraintTop_toTopOf="@+id/textAT" />
-
-                <ImageView
-                    android:id="@+id/connector2"
-                    android:src="@drawable/ic_vertical_lines"
-                    style="@style/sizeICMono"
-                    app:layout_constraintEnd_toEndOf="@+id/imageView3"
-                    app:layout_constraintStart_toStartOf="@+id/imageView3"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+            <TextView
+                android:id="@+id/dm"
+                style="@style/textStyleConstantColor2Opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device Model"
+                app:layout_constraintBottom_toBottomOf="@+id/textDM"
+                app:layout_constraintStart_toStartOf="@+id/dep"
+                app:layout_constraintTop_toTopOf="@+id/textDM" />
 
 
-                <ImageView
-                    android:id="@+id/imageViewDep"
-                    style="@style/sizeICMono"
-                    android:src="@drawable/ic_department"
-                    app:layout_constraintEnd_toEndOf="@+id/connector2"
-                    app:layout_constraintStart_toStartOf="@+id/connector2"
-                    app:layout_constraintTop_toBottomOf="@+id/connector2" />
+            <ImageView
+                android:id="@+id/imageView6"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_calendar"
+                app:layout_constraintEnd_toEndOf="@+id/connector4"
+                app:layout_constraintStart_toStartOf="@+id/connector4"
+                app:layout_constraintTop_toBottomOf="@+id/connector4" />
 
-                <ImageView
-                    android:id="@+id/connector3"
-                    android:src="@drawable/ic_vertical_lines"
-                    style="@style/sizeICMono"
-                    app:layout_constraintEnd_toEndOf="@+id/imageViewDep"
-                    app:layout_constraintStart_toStartOf="@+id/imageViewDep"
-                    app:layout_constraintTop_toBottomOf="@+id/imageViewDep" />
-
-
-                <TextView
-                    android:id="@+id/textDep"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Department"
-                    app:layout_constraintStart_toStartOf="@+id/textAT"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageViewDep"
-                    app:layout_constraintTop_toTopOf="@+id/imageViewDep" />
-
-                <TextView
-                    android:id="@+id/dep"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Department"
-                    app:layout_constraintBottom_toBottomOf="@+id/textDep"
-                    app:layout_constraintStart_toStartOf="@+id/at"
-                    app:layout_constraintTop_toTopOf="@+id/textDep" />
-
-                <LinearLayout
-                    android:id="@+id/linearLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="@+id/connector3"
-                    app:layout_constraintStart_toStartOf="@+id/connector3"
-                    app:layout_constraintTop_toBottomOf="@+id/connector3">
-
-                    <ImageView
-                        android:id="@+id/deviceIC"
-                        style="@style/sizeICMono"
-                        android:src="@drawable/device_model"
-                        android:visibility="visible"/>
-
-                    <ImageView
-                        android:id="@+id/deviceIC2"
-                        style="@style/sizeIC"
-                        android:layout_height="22dp"
-                        android:src="@drawable/device_model"
-                        android:visibility="gone" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/connector4"
-                    android:src="@drawable/ic_vertical_lines"
-                    style="@style/sizeICMono"
-                    app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-                    app:layout_constraintStart_toStartOf="@+id/linearLayout"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            <ImageView
+                android:id="@+id/connector5"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_vertical_lines"
+                app:layout_constraintEnd_toEndOf="@+id/imageView6"
+                app:layout_constraintStart_toStartOf="@+id/imageView6"
+                app:layout_constraintTop_toBottomOf="@+id/imageView6" />
 
 
-                <TextView
-                    android:id="@+id/textDM"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Device Model"
-                    app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-                    app:layout_constraintStart_toEndOf="@+id/linearLayout"
-                    app:layout_constraintTop_toTopOf="@+id/linearLayout" />
+            <TextView
+                android:id="@+id/textDP"
+                style="@style/textStyleConstantColor2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Date Purchased"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                app:layout_constraintStart_toEndOf="@+id/imageView6"
+                app:layout_constraintTop_toTopOf="@+id/imageView6" />
 
-                <TextView
-                    android:id="@+id/dm"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Device Model"
-                    app:layout_constraintBottom_toBottomOf="@+id/textDM"
-                    app:layout_constraintStart_toStartOf="@+id/dep"
-                    app:layout_constraintTop_toTopOf="@+id/textDM" />
-
-
-                <ImageView
-                    android:id="@+id/imageView6"
-                    style="@style/sizeICMono"
-                    android:src="@drawable/ic_calendar"
-                    app:layout_constraintEnd_toEndOf="@+id/connector4"
-                    app:layout_constraintStart_toStartOf="@+id/connector4"
-                    app:layout_constraintTop_toBottomOf="@+id/connector4" />
-
-                <ImageView
-                    android:id="@+id/connector5"
-                    android:src="@drawable/ic_vertical_lines"
-                    style="@style/sizeICMono"
-                    app:layout_constraintEnd_toEndOf="@+id/imageView6"
-                    app:layout_constraintStart_toStartOf="@+id/imageView6"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView6" />
+            <TextView
+                android:id="@+id/dp"
+                style="@style/textStyleConstantColor2Opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date Purchased"
+                app:layout_constraintBottom_toBottomOf="@+id/textDP"
+                app:layout_constraintStart_toStartOf="@+id/dm"
+                app:layout_constraintTop_toTopOf="@+id/textDP" />
 
 
-                <TextView
-                    android:id="@+id/textDP"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Date Purchased"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView6"
-                    app:layout_constraintStart_toEndOf="@+id/imageView6"
-                    app:layout_constraintTop_toTopOf="@+id/imageView6" />
+            <ImageView
+                android:id="@+id/expirationIndicator"
+                style="@style/sizeIC"
+                android:layout_marginEnd="@dimen/padding_16"
+                android:src="@drawable/warning_sign"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connector5" />
 
-                <TextView
-                    android:id="@+id/dp"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Date Purchased"
-                    app:layout_constraintBottom_toBottomOf="@+id/textDP"
-                    app:layout_constraintStart_toStartOf="@+id/dm"
-                    app:layout_constraintTop_toTopOf="@+id/textDP" />
+            <ImageView
+                android:id="@+id/imageView5"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_expiration"
+                app:layout_constraintEnd_toEndOf="@+id/connector5"
+                app:layout_constraintStart_toStartOf="@+id/connector5"
+                app:layout_constraintTop_toBottomOf="@+id/connector5" />
 
-
-
-                <ImageView
-                    android:id="@+id/expirationIndicator"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="10dp"
-                    android:src="@drawable/warning_sign"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/connector5" />
-
-                <ImageView
-                    android:id="@+id/imageView5"
-                    style="@style/expiredIC"
-                    app:layout_constraintEnd_toEndOf="@+id/connector5"
-                    app:layout_constraintStart_toStartOf="@+id/connector5"
-                    app:layout_constraintTop_toBottomOf="@+id/connector5" />
-
-                <ImageView
-                    android:id="@+id/connector6"
-                    android:src="@drawable/ic_vertical_lines"
-                    style="@style/sizeICMono"
-                    app:layout_constraintEnd_toEndOf="@+id/imageView5"
-                    app:layout_constraintStart_toStartOf="@+id/imageView5"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+            <ImageView
+                android:id="@+id/connector6"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_vertical_lines"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
 
-                <TextView
-                    android:id="@+id/textDE"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Expiration"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView5"
-                    app:layout_constraintStart_toEndOf="@+id/imageView5"
-                    app:layout_constraintTop_toTopOf="@+id/imageView5" />
+            <TextView
+                android:id="@+id/textDE"
+                style="@style/textStyleConstantColor2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Expiration"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintStart_toEndOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5" />
 
-                <TextView
-                    android:id="@+id/de"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Expiration"
-                    app:layout_constraintBottom_toBottomOf="@+id/textDE"
-                    app:layout_constraintStart_toStartOf="@+id/dp"
-                    app:layout_constraintTop_toTopOf="@+id/textDE" />
-
-
-                <ImageView
-                    android:id="@+id/imageView10"
-                    style="@style/sizeICMono"
-                    android:src="@drawable/ic_reload"
-                    app:layout_constraintEnd_toEndOf="@+id/connector6"
-                    app:layout_constraintStart_toStartOf="@+id/connector6"
-                    app:layout_constraintTop_toBottomOf="@+id/connector6" />
-
-                <ImageView
-                    android:id="@+id/connector7"
-                    android:src="@drawable/ic_vertical_lines"
-                    style="@style/sizeICMono"
-                    app:layout_constraintEnd_toEndOf="@+id/imageView10"
-                    app:layout_constraintStart_toStartOf="@+id/imageView10"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+            <TextView
+                android:id="@+id/de"
+                style="@style/textStyleConstantColor2Opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expiration"
+                app:layout_constraintBottom_toBottomOf="@+id/textDE"
+                app:layout_constraintStart_toStartOf="@+id/dp"
+                app:layout_constraintTop_toTopOf="@+id/textDE" />
 
 
-                <TextView
-                    android:id="@+id/textSTS"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Status"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView10"
-                    app:layout_constraintStart_toEndOf="@+id/imageView10"
-                    app:layout_constraintTop_toTopOf="@+id/imageView10" />
+            <ImageView
+                android:id="@+id/imageView10"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_reload"
+                app:layout_constraintEnd_toEndOf="@+id/connector6"
+                app:layout_constraintStart_toStartOf="@+id/connector6"
+                app:layout_constraintTop_toBottomOf="@+id/connector6" />
 
-                <TextView
-                    android:id="@+id/sts"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Status"
-                    app:layout_constraintBottom_toBottomOf="@+id/textSTS"
-                    app:layout_constraintStart_toStartOf="@+id/de"
-                    app:layout_constraintTop_toTopOf="@+id/textSTS" />
-
-                <TextView
-                    android:id="@+id/sts2"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Status2"
-                    app:layout_constraintBottom_toBottomOf="@+id/textSTS"
-                    app:layout_constraintStart_toEndOf="@+id/sts"
-                    app:layout_constraintTop_toTopOf="@+id/textSTS" />
+            <ImageView
+                android:id="@+id/connector7"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_vertical_lines"
+                app:layout_constraintEnd_toEndOf="@+id/imageView10"
+                app:layout_constraintStart_toStartOf="@+id/imageView10"
+                app:layout_constraintTop_toBottomOf="@+id/imageView10" />
 
 
+            <TextView
+                android:id="@+id/textSTS"
+                style="@style/textStyleConstantColor2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Status"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView10"
+                app:layout_constraintStart_toEndOf="@+id/imageView10"
+                app:layout_constraintTop_toTopOf="@+id/imageView10" />
+
+            <TextView
+                android:id="@+id/sts"
+                style="@style/textStyleConstantColor2Opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                app:layout_constraintBottom_toBottomOf="@+id/textSTS"
+                app:layout_constraintStart_toStartOf="@+id/de"
+                app:layout_constraintTop_toTopOf="@+id/textSTS" />
 
 
-                <ImageView
-                    android:id="@+id/imageView11"
-                    style="@style/sizeICMono"
-                    android:src="@drawable/stocks"
-                    app:layout_constraintEnd_toEndOf="@+id/connector7"
-                    app:layout_constraintStart_toStartOf="@+id/connector7"
-                    app:layout_constraintTop_toBottomOf="@+id/connector7" />
+            <ImageView
+                android:id="@+id/imageView11"
+                style="@style/sizeIC"
+                android:src="@drawable/ic_stocks"
+                app:layout_constraintEnd_toEndOf="@+id/connector7"
+                app:layout_constraintStart_toStartOf="@+id/connector7"
+                app:layout_constraintTop_toBottomOf="@+id/connector7" />
 
-                <TextView
-                    android:id="@+id/textAVL"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Availability"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView11"
-                    app:layout_constraintStart_toEndOf="@+id/imageView11"
-                    app:layout_constraintTop_toTopOf="@+id/imageView11" />
+            <TextView
+                android:id="@+id/textAVL"
+                style="@style/textStyleConstantColor2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Availability"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView11"
+                app:layout_constraintStart_toEndOf="@+id/imageView11"
+                app:layout_constraintTop_toTopOf="@+id/imageView11" />
 
-                <TextView
-                    android:id="@+id/avl"
-                    style="@style/textStyle1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Availability"
-                    app:layout_constraintBottom_toBottomOf="@+id/textAVL"
-                    app:layout_constraintStart_toStartOf="@+id/sts"
-                    app:layout_constraintTop_toTopOf="@+id/textAVL" />
+            <TextView
+                android:id="@+id/avl"
+                style="@style/textStyleConstantColor2Opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Availability"
+                app:layout_constraintBottom_toBottomOf="@+id/textAVL"
+                app:layout_constraintStart_toStartOf="@+id/sts"
+                app:layout_constraintTop_toTopOf="@+id/textAVL" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.cardview.widget.CardView>
-
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -489,17 +453,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardView"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/otherInfo">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/editBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
                 android:layout_marginHorizontal="16dp"
+                android:backgroundTint="@android:color/transparent"
                 android:visibility="visible"
                 app:cardElevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -516,11 +480,11 @@
                     android:paddingVertical="20dp">
 
                     <ImageView
-                        style="@style/sizeIC2"
+                        style="@style/sizeIC"
                         android:src="@drawable/ic_edit" />
 
                     <TextView
-                        style="@style/textStyle1"
+                        style="@style/SaveText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Edit" />
@@ -531,12 +495,11 @@
             </androidx.cardview.widget.CardView>
 
 
-
             <View
                 android:id="@+id/view"
+                style="@style/divider"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                style="@style/divider"
                 app:layout_constraintBottom_toTopOf="@+id/view2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -544,9 +507,9 @@
 
             <View
                 android:id="@+id/view2"
+                style="@style/divider"
                 android:layout_width="2dp"
                 android:layout_height="0dp"
-                style="@style/divider"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -555,10 +518,10 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/deleteBtn"
-                android:backgroundTint="@android:color/transparent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
+                android:backgroundTint="@android:color/transparent"
                 android:clickable="true"
                 android:visibility="visible"
                 app:cardElevation="0dp"
@@ -580,7 +543,7 @@
                         android:src="@drawable/trash_can_10416" />
 
                     <TextView
-                        style="@style/deleteBtnStyle"
+                        style="@style/deleteTextStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Delete" />

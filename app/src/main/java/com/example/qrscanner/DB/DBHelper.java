@@ -57,7 +57,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // TABLE FOR ASSIGNED TO USER
         db.execSQL("CREATE TABLE " + TABLE_ASSIGNED_TO_USER + "("
                 + KEY_ID +" INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + KEY_SERIAL_NUMBER + " INTEGER, "
+                + KEY_SERIAL_NUMBER + " TEXT, "
                 + KEY_NAME + " TEXT, "
                 + KEY_DEPARTMENT + " TEXT, "
                 + KEY_DEVICE + " TEXT, "
@@ -153,7 +153,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             // TABLE_ASSIGNED_TO_USER TABLE_ASSIGNED_TO_USER
             assignedToUserModel.id = cursor.getInt(0);
-            assignedToUserModel.serial_number = cursor.getInt(1);
+            assignedToUserModel.serial_number = cursor.getString(1);
             assignedToUserModel.name = cursor.getString(2);
             assignedToUserModel.department = cursor.getString(3);
             assignedToUserModel.device = cursor.getString(4);

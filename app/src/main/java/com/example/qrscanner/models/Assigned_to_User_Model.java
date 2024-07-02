@@ -3,8 +3,9 @@ package com.example.qrscanner.models;
 public class Assigned_to_User_Model {
 
 
+    public String serial_number;
     private int originalPosition;
-    public int id, serial_number;
+    public int id;
     public byte[] image;
     public String name;
     public String department;
@@ -20,7 +21,7 @@ public class Assigned_to_User_Model {
         return id;
     }
 
-    public int getSerialNumber() {
+    public String getSerialNumber() {
         return serial_number;
     }
 
@@ -63,7 +64,7 @@ public class Assigned_to_User_Model {
         this.id = id;
     }
 
-    public void setSerial_number(int serial_number) {
+    public void setSerial_number(String serial_number) {
         this.serial_number = serial_number;
     }
 
