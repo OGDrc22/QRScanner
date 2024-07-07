@@ -1,7 +1,5 @@
 package com.example.qrscanner.utils;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -14,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,7 +136,7 @@ public class Utils {
 
         deviceList = dbHelper.fetchDevice();
 
-        AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.layout_delete_dialog, null);
         builder.setView(view);
@@ -200,6 +199,26 @@ public class Utils {
         }
     }
 
+    public static boolean calculateExpiration(Date inputDate, String filterKey) {
+        // Calculate expiration date
+        Calendar expirationDate = Calendar.getInstance();
+        expirationDate.setTime(inputDate);
+        expirationDate.add(Calendar.YEAR, 5); // Add 5 years
+
+        Calendar currentDate = Calendar.getInstance();
+
+        boolean result = false;
+        if (filterKey.equals("For Refresh")) {
+            if (currentDate.after(expirationDate)) {
+                result = true;
+            } else {
+                result = false;
+            }
+        }
+        
+        return result;
+    }
+
 
     // Check Availability
     public static void updateAvailabilityStatus(EditText wantToCheck, TextView textResultHolder) {
@@ -256,10 +275,10 @@ public class Utils {
         animator.start();
     }
 
-    public static void expandCardViewItemAdapter(final CardView cardView, int duration) {
+    public static void expandCardViewItemAdapter(Context context, final CardView cardView, int duration) {
 
-        final int initialHeight = cardView.getHeight();
-        int newHeight = getWrapContentHeight(cardView) - initialHeight - 34;
+        final int initialHeight = cardView.getMeasuredHeight();
+        int newHeight = getWrapContentHeight(cardView) - initialHeight - dpToPxOrDirectPx(context,24);
 
         ValueAnimator animator = ValueAnimator.ofInt(cardView.getHeight(), newHeight);
         animator.addUpdateListener(animation -> {
@@ -293,5 +312,19 @@ public class Utils {
 
         // Get the measured height
         return cardView.getMeasuredHeight();
+    }
+
+    public static int dpToPxOrDirectPx(Context context, float valueInDp) {
+        if (valueInDp >= 0) {
+            // If the value is positive or zero, treat it as dp
+            return (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    valueInDp,
+                    context.getResources().getDisplayMetrics()
+            );
+        } else {
+            // If the value is negative, treat it as a direct pixel value
+            return (int) valueInDp;
+        }
     }
 }

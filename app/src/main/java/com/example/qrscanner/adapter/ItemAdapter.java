@@ -1,6 +1,5 @@
 package com.example.qrscanner.adapter;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,14 +7,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,7 +56,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     private ArrayList<Assigned_to_User_Model> deviceList;
 
-    //    public ImageView hasUser, leftIndicator, rightIndicator, imgScan;
+    //    public ImageView topUser, rightExpiration, rightIndicator, imgScan;
     private ViewGroup.MarginLayoutParams layoutParams;
 
     private int position;
@@ -67,6 +69,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private DBHelper dbHelper;
 
     private int animationDuration = 300;
+
+    int topPadding;
+    int startPadding;
+    int endPadding;
+    int bottomPadding;
+
+    int noUserMarginTop = 12;
 
 
     // Define an interface for delete action
@@ -132,22 +141,30 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.serialNum_id.setText(String.valueOf(data.getSerialNumber()));
         holder.assignedTo_id.setText(String.valueOf(data.getName()));
         holder.department_id.setText(String.valueOf(data.getDepartment()));
-//        holder.device_id.setText(String.valueOf(data.getDevice()));
-        holder.textViewDM.setText(data.getDeviceType()); // TODO FIX
+        holder.textViewDM.setText(data.getDeviceType());
         holder.deviceModel_id.setText(String.valueOf(data.getDeviceBrand()));
         holder.datePurchased_id.setText(String.valueOf(data.getDatePurchased()));
 
         holder.suHeader.setText(data.getSerialNumber());
 
+        topPadding = holder.linearLayout2.getPaddingTop();
+        startPadding = holder.linearLayout2.getPaddingStart();
+        endPadding = holder.linearLayout2.getPaddingEnd();
+        bottomPadding = holder.linearLayout2.getPaddingBottom();
+
         if (data.getName().isEmpty()) {
             holder.imgScan.setImageResource(R.drawable.qr_icon_48);
             holder.suHeader.setVisibility(View.GONE);
+            holder.linearLayout2.setPadding(holder.linearLayout2.getPaddingStart(), Utils.dpToPxOrDirectPx(context, noUserMarginTop), endPadding, bottomPadding);
+            holder.topUserF.setVisibility(View.VISIBLE);
         } else {
             holder.imgScan.setImageResource(R.drawable.user_bulk_48);
             holder.serialNum_id.setText(data.getName());
+            holder.linearLayout2.setPadding(startPadding, topPadding, endPadding, bottomPadding);
+            holder.topUserF.setVisibility(View.GONE);
         }
 
-        // Call calculateExpirationAndStatus method
+        // Call calculate ExpirationAndStatus method
         try {
 //            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
 ////            Date inputDate = dateFormat.parse(data.getDatePurchased());
@@ -163,11 +180,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             int clLight = ContextCompat.getColor(context, R.color.itemBg);
             int clDark = ContextCompat.getColor(context, R.color.itemBg2);
             if (status.equals("For Refresh")) {
-                holder.leftIndicator.setVisibility(View.VISIBLE);
+                holder.topExpiration.setVisibility(View.VISIBLE);
                 holder.cardViewMain.setCardBackgroundColor(clExpired);
 //                holder.cardViewExpanded.setCardBackgroundColor(clExpired);
             } else {
-                holder.leftIndicator.setVisibility(View.GONE);
+                holder.topExpiration.setVisibility(View.GONE);
                 if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
                     holder.cardViewMain.setCardBackgroundColor(clDark);
                 } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
@@ -180,13 +197,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         holder.availability_id.setText(String.valueOf(data.getAvailability()));
 
-        // Set the Visibility of thee "hasUser" Icon indicator based on the data
-        if (data != null && data.getName() != null && !data.getName().isEmpty()) {
-
-            holder.hasUser.setVisibility(View.GONE);
-        } else {
-            holder.hasUser.setVisibility(View.VISIBLE);
-        }
+        // Set the Visibility of thee "topUser" Icon indicator based on the data
+//        if (data != null && data.getName() != null && !data.getName().isEmpty()) {
+//
+//            holder.topUser.setVisibility(View.GONE);
+//        } else {
+//            holder.topUser.setVisibility(View.VISIBLE);
+//        }
 
 //        Delete Button
         holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
@@ -227,7 +244,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 holder.deviceIC.setImageBitmap(bitmap);
             } else {
-                Toast.makeText(context, "Null Image wtf", Toast.LENGTH_SHORT).show();
+                Log.d("ItemAdapter", "onBindViewHolder: Null Image");
             }
         } else {
             if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
@@ -245,7 +262,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         Utils.smoothHideAndReveal(holder.otherInfo, animationDuration);
         Utils.smoothHideAndReveal(holder.actions, animationDuration);
         Utils.smoothHideAndReveal(holder.linearLayout2, animationDuration);
-        Utils.smoothHideAndReveal(holder.linearLayoutIndicators, animationDuration);
+//        Utils.smoothHideAndReveal(holder.linearLayoutIndicators, animationDuration);
         Utils.smoothHideAndReveal(holder.dummy, animationDuration);
 
 
@@ -262,17 +279,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        LinearLayout linearLayout2, linearLayoutIndicators, dummy;
-        TextView txtSN, serialNum_id, assignedTo_id, department_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, textViewDM, suHeader;
-        ConstraintLayout otherInfo, actions;
-        ImageView hasUser, leftIndicator, imgScan, expiration, userIndicator, deviceIC, deviceIC2, dropDownArrow;
+        ConstraintLayout constraintHolder, sub;
+        LinearLayout linearLayout2, linearLayoutIndicators, dummy, linearLayout01, linearLayout06;
+        TextView txtSN, serialNum_id, assignedTo_id, assignedTo_Text, department_id, deviceModel_id, datePurchased_id, dateExpire_id, dateExpire_Text, status_id, availability_id, textViewDM, suHeader;
+        ConstraintLayout otherInfo, otherInfo2, actions;
+        ImageView topUser, imgScan, topExpiration, userIndicator, deviceIC, deviceIC2, dropDownArrow, connector, connector5, imageView3, imageView5;
         CardView editBtn, deleteBtn, cardViewMain;
 
-        int paddingTopIndicators;
-        int paddingStartIndicators;
-        int paddingEndIndicators;
-        int paddingBottomIndicators;
-
+        FrameLayout topUserF, topExpirationF;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -284,13 +298,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             // TEXT VIEWS
             serialNum_id = itemView.findViewById(R.id.sn);
             assignedTo_id = itemView.findViewById(R.id.at);
+            assignedTo_Text = itemView.findViewById(R.id.textAT);
             department_id = itemView.findViewById(R.id.dep);
             textViewDM = itemView.findViewById(R.id.textDM);
             deviceModel_id = itemView.findViewById(R.id.dm);
             datePurchased_id = itemView.findViewById(R.id.dp);
             dateExpire_id = itemView.findViewById(R.id.de);
+            dateExpire_Text = itemView.findViewById(R.id.textDE);
             status_id = itemView.findViewById(R.id.sts);
             availability_id = itemView.findViewById(R.id.avl);
+            connector = itemView.findViewById(R.id.connector);
+            connector5 = itemView.findViewById(R.id.connector5);
+            imageView3 = itemView.findViewById(R.id.imageView3);
+            imageView5 = itemView.findViewById(R.id.imageView5);
 
             txtSN = itemView.findViewById(R.id.textSN);
 
@@ -298,10 +318,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
             // ICONS
             imgScan = itemView.findViewById(R.id.imageViewScan);
-            leftIndicator = itemView.findViewById(R.id.leftIndicator);
             userIndicator = itemView.findViewById(R.id.userIndicator);
-            expiration = itemView.findViewById(R.id.expirationIndicator);
-            hasUser = itemView.findViewById(R.id.hasUser);
+            topExpiration = itemView.findViewById(R.id.topExpiration);
+//            topUser = itemView.findViewById(R.id.topUser);
             deviceIC = itemView.findViewById(R.id.deviceIC);
             deviceIC2 = itemView.findViewById(R.id.deviceIC2);
             dropDownArrow = itemView.findViewById(R.id.dropDownArrow);
@@ -310,6 +329,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             deleteBtn =  itemView.findViewById(R.id.deleteBtn);
 
             otherInfo = itemView.findViewById(R.id.otherInfo);
+            otherInfo2 = itemView.findViewById(R.id.otherInfo2);
             actions = itemView.findViewById(R.id.actions);
 
             // Get the layout parameters of the view
@@ -318,11 +338,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             linearLayout2 = itemView.findViewById(R.id.linearLayoutShown2);
             linearLayoutIndicators = itemView.findViewById(R.id.linearLayoutIndicators);
             dummy = itemView.findViewById(R.id.dummy);
+            linearLayout06 = itemView.findViewById(R.id.linearLayout6);
 
-            paddingTopIndicators = linearLayoutIndicators.getPaddingTop();
-            paddingStartIndicators = linearLayoutIndicators.getPaddingStart();
-            paddingEndIndicators = linearLayoutIndicators.getPaddingEnd();
-            paddingBottomIndicators = linearLayoutIndicators.getPaddingBottom();
+            linearLayout01 = itemView.findViewById(R.id.linearLayout01);
+
+            constraintHolder = itemView.findViewById(R.id.constraintHolder);
+            topUserF = itemView.findViewById(R.id.topUserF);
+            topExpirationF = itemView.findViewById(R.id.topExpirationF);
+
+            sub = itemView.findViewById(R.id.needToSubtract);
 
             itemView.setOnClickListener(this);
 
@@ -338,6 +362,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             position = getAdapterPosition();
             data = deviceList.get(position);
 
+            int originalImgSizeH = imgScan.getHeight();
+            int originalImgSizeW = imgScan.getWidth();
+
+
+            String input = data.getDatePurchased();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yy");
+            Date inputDate = null;
+            try {
+                inputDate = simpleDateFormat.parse(input);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
             // Debugging
 //            Log.d("ItemAdapter", "getSerial: " + data.getSerialNumber());
 //            Log.d("ItemAdapter", "getPosition: " + position);
@@ -347,139 +384,173 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 Utils.smoothHideAndReveal(otherInfo, animationDuration);
                 Utils.smoothHideAndReveal(actions, animationDuration);
                 Utils.smoothHideAndReveal(linearLayout2, animationDuration);
-                Utils.smoothHideAndReveal(linearLayoutIndicators, animationDuration);
+                Utils.smoothHideAndReveal(topUserF, animationDuration);
+                Utils.smoothHideAndReveal(topExpirationF, animationDuration);
+//                Utils.smoothHideAndReveal(linearLayoutIndicators, animationDuration);
                 Utils.smoothHideAndReveal(dummy, animationDuration);
 
                 if (otherInfo.getVisibility() == View.GONE) {
                     Log.d("ItemAdapter", "otherInfo is VISIBLE");
 
 
-                    linearLayout2.setGravity(Gravity.TOP);
-                    linearLayoutIndicators.setPadding(paddingStartIndicators, 16, paddingEndIndicators,  paddingBottomIndicators);
 
                     otherInfo.setVisibility(View.VISIBLE); // Set otherInfo to VISIBLE
+                    otherInfo2.setVisibility(View.VISIBLE); // Set otherInfo to VISIBLE
+                    connector.setVisibility(View.VISIBLE);
+                    connector5.setVisibility(View.VISIBLE);
+                    assignedTo_Text.setVisibility(View.VISIBLE);
+                    assignedTo_id.setVisibility(View.VISIBLE);
+                    imageView3.setVisibility(View.VISIBLE);
+                    imageView5.setVisibility(View.VISIBLE);
+                    dateExpire_Text.setVisibility(View.VISIBLE);
+                    dateExpire_id.setVisibility(View.VISIBLE);
                     actions.setVisibility(View.VISIBLE); // Set ic_edit and delete to VISIBLE
-                    dummy.setVisibility(View.VISIBLE);
+
+
 
                     Utils.rotateUp(dropDownArrow);
-
-                    hasUser.setVisibility(View.GONE);
-                    leftIndicator.setVisibility(View.GONE);
 
                     serialNum_id.setText(data.getSerialNumber());
 
                     if (!data.getName().isEmpty()) {
-                        // otherInfo is finally visible and getName is not null and expiration is not expire
-                        userIndicator.setVisibility(View.GONE);
+                        // otherInfo is finally visible and getName is not null and topExpiration is not expire
+                        imgScan.setImageResource(R.drawable.qr_icon_48);
+//                        userIndicator.setVisibility(View.GONE);
+                        linearLayout2.setPadding(startPadding, Utils.dpToPxOrDirectPx(context, 2), endPadding, bottomPadding);
                     } else {
-                        // otherInfo is finally visible and getName is null  and expiration is expired
-                        userIndicator.setVisibility(View.VISIBLE);
+                        // otherInfo is finally visible and getName is null  and topExpiration is expired
+//                        userIndicator.setVisibility(View.VISIBLE);
+
+                        ConstraintSet constraintSet = new ConstraintSet();
+                        constraintSet.clone(constraintHolder);
+
+                        // Remove existing constraints
+                        constraintSet.clear(R.id.topUserF, ConstraintSet.TOP);
+                        constraintSet.clear(R.id.topUserF, ConstraintSet.START);
+                        constraintSet.clear(R.id.topUserF, ConstraintSet.BOTTOM);
+                        constraintSet.clear(R.id.topUserF, ConstraintSet.END);
+
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.TOP, R.id.imageView3, ConstraintSet.TOP);
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.BOTTOM, R.id.imageView3, ConstraintSet.BOTTOM);
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.END, R.id.constraintHolder, ConstraintSet.END, Utils.dpToPxOrDirectPx(context, 16));
+
+                        constraintSet.applyTo(constraintHolder);
+                        linearLayout2.setPadding(startPadding, Utils.dpToPxOrDirectPx(context, 2), endPadding, bottomPadding);
                     }
 
-                    imgScan.setImageResource(R.drawable.qr_icon_24);
+//                    imgScan.setImageResource(R.drawable.qr_icon_24);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(originalImgSizeW / 2, originalImgSizeH / 2);
+                    imgScan.setLayoutParams(params);
+//                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(originalImgSizeW / 2, originalImgSizeH / 2);
+//                    dummy.setLayoutParams(params);
+
                     suHeader.setVisibility(View.GONE);
 
-                    txtSN.setVisibility(View.VISIBLE);
+                    linearLayout01.setVisibility(View.VISIBLE);
 
-                    try {
-                        dateFormat = new SimpleDateFormat("MM/dd/yy");
-                        inputDate = dateFormat.parse(data.getDatePurchased());
-                        Utils.calculateExpirationAndStatus(inputDate, dateExpire_id, status_id);
+                    if (Utils.calculateExpiration(inputDate, "For Refresh")) {
+                        ConstraintSet constraintSet = new ConstraintSet();
+                        constraintSet.clone(constraintHolder);
 
-                        // Get the status text to determine visibility
-                        String status = status_id.getText().toString();
+                        // Remove existing constraints
+                        constraintSet.clear(R.id.topExpirationF, ConstraintSet.TOP);
+                        constraintSet.clear(R.id.topExpirationF, ConstraintSet.START);
+                        constraintSet.clear(R.id.topExpirationF, ConstraintSet.BOTTOM);
+                        constraintSet.clear(R.id.topExpirationF, ConstraintSet.END);
 
-                        // Set visibility of indicator based on status
-                        if (status.equals("For Refresh")) {
-                            expiration.setVisibility(View.VISIBLE);
-                            leftIndicator.setVisibility(View.GONE);
-                        } else {
-                            expiration.setVisibility(View.GONE);
-                            leftIndicator.setVisibility(View.GONE);
-                        }
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.TOP, R.id.imageView5, ConstraintSet.TOP);
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.BOTTOM, R.id.imageView5, ConstraintSet.BOTTOM);
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.END, R.id.constraintHolder, ConstraintSet.END, Utils.dpToPxOrDirectPx(context, 16));
+
+                        constraintSet.applyTo(constraintHolder);
+                    } else {
+                        topExpiration.setVisibility(View.GONE);
                     }
 
-                    Utils.expandCardViewItemAdapter(cardViewMain, animationDuration);
+                    Utils.expandCardViewItemAdapter(context, cardViewMain, animationDuration);
+
 
                 } else {
 
-
-                    linearLayout2.setGravity(Gravity.CENTER_VERTICAL);
-                    linearLayoutIndicators.setPadding(paddingStartIndicators, paddingTopIndicators, paddingEndIndicators,  paddingBottomIndicators);
-
                     // otherInfo is visible
-                    otherInfo.setVisibility(View.GONE); // Set otherInfo to GONE
+                    otherInfo.setVisibility(View.GONE); // Set otherInfo to VISIBLE
+                    otherInfo2.setVisibility(View.GONE); // Set otherInfo to VISIBLE
+                    connector.setVisibility(View.GONE);
+                    connector5.setVisibility(View.GONE);
+                    assignedTo_Text.setVisibility(View.GONE);
+                    assignedTo_id.setVisibility(View.GONE);
+                    imageView3.setVisibility(View.GONE);
+                    imageView5.setVisibility(View.GONE);
+                    dateExpire_Text.setVisibility(View.GONE);
+                    dateExpire_id.setVisibility(View.GONE);
                     actions.setVisibility(View.GONE); // Set ic_edit and delete to GONE
-                    dummy.setVisibility(View.GONE);
+//                    dummy.setVisibility(View.GONE);
+
+                    
 
                     Utils.rotateDown(dropDownArrow);
                     if (!data.getName().isEmpty()) {
                         // otherInfo is finally GONE and getName is not null
-                        hasUser.setVisibility(View.GONE);
+//                        topUser.setVisibility(View.GONE);
+//                        userIndicator.setVisibility(View.GONE);
+                        linearLayout2.setPadding(startPadding, topPadding, endPadding, bottomPadding);
+
+                        imgScan.setImageResource(R.drawable.user_bulk_48);
+                        suHeader.setVisibility(View.VISIBLE);
+                        serialNum_id.setText(data.getName());
                     } else {
-                        // otherInfo is finally GONE and getName is null
-                        hasUser.setVisibility(View.VISIBLE);
-                    }
+                        // otherInfo is finally visible and getName is null  and topExpiration is expired
 
+                        ConstraintSet constraintSet = new ConstraintSet();
+                        constraintSet.clone(constraintHolder);
 
-                    imgScan.setImageResource(R.drawable.qr_icon_48);
-                    suHeader.setVisibility(View.VISIBLE);
+                        // Remove existing constraints
+                        constraintSet.clear(R.id.topUserF, ConstraintSet.TOP);
+                        constraintSet.clear(R.id.topUserF, ConstraintSet.START);
+                        constraintSet.clear(R.id.topUserF, ConstraintSet.BOTTOM);
+                        constraintSet.clear(R.id.topUserF, ConstraintSet.END);
 
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.TOP, R.id.linearLayout6, ConstraintSet.TOP);
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.BOTTOM, R.id.linearLayout6, ConstraintSet.BOTTOM);
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.END, R.id.linearLayout6, ConstraintSet.START, Utils.dpToPxOrDirectPx(context, 16));
+//
+                        constraintSet.applyTo(constraintHolder);
 
-                    txtSN.setVisibility(View.GONE);
+                        linearLayout2.setPadding(startPadding, Utils.dpToPxOrDirectPx(context, noUserMarginTop), endPadding, bottomPadding);
 
-                    if (data.getName().isEmpty()) {
                         imgScan.setImageResource(R.drawable.qr_icon_48);
                         suHeader.setVisibility(View.GONE);
-                    } else {
-                        imgScan.setImageResource(R.drawable.user_bulk_48);
-                        serialNum_id.setText(data.getName());
                     }
 
-                    try {
-                        dateFormat = new SimpleDateFormat("MM/dd/yy");
-                        inputDate = dateFormat.parse(data.getDatePurchased());
-                        Utils.calculateExpirationAndStatus(inputDate, dateExpire_id, status_id);
+                    if (Utils.calculateExpiration(inputDate, "For Refresh")) {
 
-                        // Get the status text to determine visibility
-                        String status = status_id.getText().toString();
+                        ConstraintSet constraintSet = new ConstraintSet();
+                        constraintSet.clone(constraintHolder);
 
-                        // Set visibility of indicator based on status
-                        if (status.equals("For Refresh")) {
-                            leftIndicator.setVisibility(View.VISIBLE);
-                        } else {
-                            leftIndicator.setVisibility(View.GONE);
-                        }
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                        // Remove existing constraints
+                        constraintSet.clear(R.id.topExpirationF, ConstraintSet.TOP);
+                        constraintSet.clear(R.id.topExpirationF, ConstraintSet.START);
+                        constraintSet.clear(R.id.topExpirationF, ConstraintSet.BOTTOM);
+                        constraintSet.clear(R.id.topExpirationF, ConstraintSet.END);
+
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.TOP, R.id.topUserF, ConstraintSet.TOP);
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.BOTTOM, R.id.topUserF, ConstraintSet.BOTTOM);
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.END, R.id.topUserF, ConstraintSet.START, Utils.dpToPxOrDirectPx(context, 16));
+
+                        constraintSet.applyTo(constraintHolder);
                     }
+
+
+                    // Reset Size
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(originalImgSizeW * 2, originalImgSizeH * 2);
+                    imgScan.setLayoutParams(params);
+
+                    linearLayout01.setVisibility(View.GONE);
 
                     Utils.collapseCardViewItemAdapter(cardViewMain, cardViewMain, animationDuration);
 
                 }
 
-
-
-                try {
-                    dateFormat = new SimpleDateFormat("MM/dd/yy");
-                    inputDate = dateFormat.parse(data.getDatePurchased());
-                    Utils.calculateExpirationAndStatus(inputDate, dateExpire_id, status_id);
-
-                    // Get the status text to determine visibility
-                    String status = status_id.getText().toString();
-
-                    // Set visibility of indicator based on status
-                    if (status.equals("For Refresh")) {
-
-                        expiration.setVisibility(View.VISIBLE);
-                    } else {
-                        expiration.setVisibility(View.GONE);
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
             }
 
         }
@@ -519,10 +590,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     notifyItemRemoved(position);
                     notifyDataSetChanged();
                     ((Activity) context).recreate();
-                    Log.d("TAG", "onClick: " + device.getSerialNumber());
+                    Log.d("ItemAdapter", "onClick: " + device.getSerialNumber());
                     Toast.makeText(context, "SN: " + device.getSerialNumber() + " Deleted", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e("TAG", "Invalid position: " + position);
+                    Log.e("ItemAdapter", "Invalid position: " + position);
                     Toast.makeText(context, "Invalid position", Toast.LENGTH_SHORT).show();
                 }
                 alertDialog.hide();

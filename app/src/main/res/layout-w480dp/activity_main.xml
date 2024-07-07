@@ -12,6 +12,8 @@
     <include
         android:id="@+id/nav_bar"
         layout="@layout/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -69,7 +71,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/addBtn"
                 style="@style/cardViewBtnAdd"
-                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/actions"
@@ -176,7 +177,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/laptopBtn"
                 style="@style/cardViewBtn1"
-                app:cardElevation="0dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
@@ -206,7 +206,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/tabletBtn"
                 style="@style/cardViewBtn1"
-                app:cardElevation="0dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
@@ -237,7 +236,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/phoneBtn"
                 style="@style/cardViewBtn1"
-                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/laptopBtn"
@@ -266,7 +264,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/pcBtn"
                 style="@style/cardViewBtn1"
-                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/phoneBtn"
@@ -296,7 +293,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/unknownUserBtn"
                 style="@style/cardViewBtn1"
-                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/phoneBtn"
@@ -324,7 +320,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/expiredDevices"
                 style="@style/cardViewBtn1"
-                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/unknownUserBtn"
@@ -352,7 +347,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/allBtn"
                 style="@style/cardViewBtn1"
-                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/unknownBtn"
@@ -381,7 +375,6 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/unknownBtn"
                 style="@style/cardViewBtn1"
-                app:cardElevation="0dp"
                 android:layout_margin="@dimen/marginAllSides_4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

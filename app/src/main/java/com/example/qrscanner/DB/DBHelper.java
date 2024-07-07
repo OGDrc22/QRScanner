@@ -168,9 +168,9 @@ public class DBHelper extends SQLiteOpenHelper {
             assignedToUserModel.image = (cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_IMAGE)));
 
             // Debugging Logs
-//            Log.d("FetchDevice", "Serial Number: " + assignedToUserModel.serial_number);
-//            Log.d("FetchDevice", "Assigned to: " + assignedToUserModel.name);
-//            Log.d("FetchDevice", "Device Model: " + assignedToUserModel.device_brand);
+//            Log.d("DBHelper FetchDevice", "Serial Number: " + assignedToUserModel.serial_number);
+//            Log.d("DBHelper FetchDevice", "Assigned to: " + assignedToUserModel.name);
+//            Log.d("DBHelper FetchDevice", "Device Model: " + assignedToUserModel.device_brand);
             arrayList.add(assignedToUserModel);
         }
 
@@ -179,7 +179,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void deleteDeviceBySerialNumber(String serialNumber) {
-        Log.d("TAG", "deleteDeviceBySerialNumber: deleted");
+        Log.d("DBHelper", "deleteDeviceBySerialNumber: deleted");
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_ASSIGNED_TO_USER, KEY_SERIAL_NUMBER + " = ?", new String[]{serialNumber});
         db.close();
@@ -278,7 +278,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_GADGETS_CATEGORY_NAME, name);
         values.put(KEY_GADGETS_CATEGORY_IMAGE, image);
-        Log.d("DB", "addGadgetCategory: Called");
+        Log.d("DBHelper", "addGadgetCategory: Called");
         db.insert(TABLE_GADGETS_CATEGORY, null, values);
     }
 
@@ -306,13 +306,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_GADGETS_CATEGORY_NAME, newName);
         values.put(KEY_GADGETS_CATEGORY_IMAGE, newImage);
 
-        Log.d("DB", "Updating Gadget ID: " + gadget.getId() + " with Name: " + newName + " and Image: " + newImage);
+        Log.d("DBHelper", "Updating Gadget ID: " + gadget.getId() + " with Name: " + newName + " and Image: " + newImage);
 
         int rowsAffected = db.update(TABLE_GADGETS_CATEGORY, values, KEY_GADGETS_CATEGORY_ID + " = ?", new String[]{String.valueOf(gadget.getId())});
         if (rowsAffected > 0){
-            Log.d("DB", "updateGadget: updated");
+            Log.d("DBHelper", "updateGadget: updated");
         } else {
-            Log.d("DB", "updateGadget: not affected");
+            Log.d("DBHelper", "updateGadget: not affected");
         }
     }
 
@@ -320,13 +320,13 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String whereClause = KEY_GADGETS_CATEGORY_ID + " = ?";
 
-        Log.d("DB", "Deleting Gadget ID: " + gadget.getId());
+        Log.d("DBHelper", "Deleting Gadget ID: " + gadget.getId());
 
         int rowsAffected = db.delete(TABLE_GADGETS_CATEGORY, whereClause, new String[]{String.valueOf(gadget.getId())});
         if (rowsAffected > 0) {
-            Log.d("DB", "deleteGadget: deleted");
+            Log.d("DBHelper", "deleteGadget: deleted");
         } else {
-            Log.d("DB", "deleteGadget: not affected");
+            Log.d("DBHelper", "deleteGadget: not affected");
         }
     }
 

@@ -5,111 +5,126 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginVertical="4dp"
-    style="@style/itemBG"
+    style="@style/itemBG_small"
     android:id="@+id/cardViewMain"
     android:elevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="62dp">
+        android:id="@+id/needToSubtract">
 
 
         <LinearLayout
-            android:id="@+id/linearLayoutIndicators"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_4"
+            android:layout_marginTop="@dimen/padding_8"
             android:layout_marginEnd="@dimen/padding_16"
-            android:gravity="center"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayoutShown2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/linearLayoutShown2">
+            app:layout_constraintTop_toTopOf="parent">
 
-
-            <ImageView
-                android:id="@+id/leftIndicator"
-                style="@style/sizeIC"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/ic_expiration" />
-
-            <ImageView
-                android:id="@+id/hasUser"
-                style="@style/sizeIC"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/user_unknown_bulk"
-                android:visibility="visible" />
-
-            <ImageView
-                android:id="@+id/dropDownArrow"
+            <LinearLayout
+                android:id="@+id/linearLayoutIndicators"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding_8"
-                android:scaleType="center"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
-                android:src="@drawable/drop_down" />
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/topExpiration"
+                    style="@style/sizeIC_small"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_expiration" />
+
+                <ImageView
+                    android:id="@+id/topUser"
+                    style="@style/sizeIC_small"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/user_unknown_bulk"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/dropDownArrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding_8"
+                    android:scaleType="center"
+                    android:scaleX="1.5"
+                    android:scaleY="1.5"
+                    android:src="@drawable/drop_down" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayoutShown2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingVertical="@dimen/padding_16"
+            android:paddingVertical="@dimen/padding_8"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/dummy"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/imageViewScan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/qr_icon_48"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <!--Even the height to imageScan-->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_gravity="center_vertical"/>
 
-            <TextView
-                android:id="@+id/textSN"
-                style="@style/textStyleConstantColor2"
+            <LinearLayout
+                android:id="@+id/linearLayout01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Serial number"
+                android:orientation="vertical"
+                android:layout_marginVertical="@dimen/padding_4"
+                android:layout_gravity="top"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/imageViewScan"
                 app:layout_constraintStart_toEndOf="@+id/imageViewScan"
-                app:layout_constraintTop_toTopOf="@+id/imageViewScan" />
+                app:layout_constraintTop_toTopOf="@+id/imageViewScan">
+
+                <TextView
+                    android:id="@+id/textSN"
+                    style="@style/textStyleConstantColor2_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Serial number" />
+
+            </LinearLayout>
 
 
             <LinearLayout
+                android:id="@+id/linearLayoutShown2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="@dimen/padding_16"
+                android:layout_gravity="top"
                 app:layout_constraintBottom_toBottomOf="@+id/textSN"
                 app:layout_constraintStart_toEndOf="@+id/textSN"
                 app:layout_constraintTop_toTopOf="@+id/textSN">
 
+
                 <TextView
                     android:id="@+id/sn"
-                    style="@style/TitleStyleConstantColor_18"
+                    style="@style/TitleStyleConstantColor_18_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Header" />
 
+
                 <TextView
                     android:id="@+id/subHeader"
-                    style="@style/SubTitleConstantColor_14"
+                    style="@style/SubTitleConstantColor_14_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sub Header"
                     android:visibility="visible" />
+
 
             </LinearLayout>
 
@@ -117,13 +132,24 @@
 
         <LinearLayout
             android:id="@+id/dummy"
-            style="@style/sizeIC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_16"
-            android:layout_marginTop="@dimen/padding_16"
+            android:layout_marginTop="@dimen/padding_12"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageViewScan"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/qr_icon_48"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
 
         <!--OTHER INFO CONTAINER-->
 
@@ -138,7 +164,7 @@
 
             <ImageView
                 android:id="@+id/connector"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:layout_marginStart="@dimen/padding_16"
                 android:src="@drawable/ic_vertical_lines"
                 app:layout_constraintStart_toStartOf="parent"
@@ -146,8 +172,7 @@
 
             <ImageView
                 android:id="@+id/userIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/deleteIC_small"
                 android:layout_marginEnd="@dimen/padding_16"
                 android:src="@drawable/user_unknown_bulk"
                 android:transitionName="hasUser"
@@ -158,7 +183,7 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/user_bulk_48"
                 app:layout_constraintEnd_toEndOf="@+id/connector"
                 app:layout_constraintStart_toStartOf="@+id/connector"
@@ -166,7 +191,7 @@
 
             <TextView
                 android:id="@+id/textAT"
-                style="@style/textStyleConstantColor2"
+                style="@style/textStyleConstantColor2_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -177,7 +202,7 @@
 
             <TextView
                 android:id="@+id/at"
-                style="@style/textStyleConstantColor2Opaque"
+                style="@style/textStyleConstantColor2Opaque_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
@@ -191,7 +216,7 @@
 
             <ImageView
                 android:id="@+id/connector2"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_vertical_lines"
                 app:layout_constraintEnd_toEndOf="@+id/imageView3"
                 app:layout_constraintStart_toStartOf="@+id/imageView3"
@@ -200,7 +225,7 @@
 
             <ImageView
                 android:id="@+id/imageViewDep"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_department"
                 app:layout_constraintEnd_toEndOf="@+id/connector2"
                 app:layout_constraintStart_toStartOf="@+id/connector2"
@@ -208,7 +233,7 @@
 
             <ImageView
                 android:id="@+id/connector3"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_vertical_lines"
                 app:layout_constraintEnd_toEndOf="@+id/imageViewDep"
                 app:layout_constraintStart_toStartOf="@+id/imageViewDep"
@@ -217,7 +242,7 @@
 
             <TextView
                 android:id="@+id/textDep"
-                style="@style/textStyleConstantColor2"
+                style="@style/textStyleConstantColor2_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Department"
@@ -227,7 +252,7 @@
 
             <TextView
                 android:id="@+id/dep"
-                style="@style/textStyleConstantColor2Opaque"
+                style="@style/textStyleConstantColor2Opaque_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Department"
@@ -246,13 +271,13 @@
 
                 <ImageView
                     android:id="@+id/deviceIC"
-                    style="@style/sizeIC"
+                    style="@style/sizeIC_small"
                     android:src="@drawable/device_model"
                     android:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/deviceIC2"
-                    style="@style/sizeIC"
+                    style="@style/sizeIC_small"
                     android:layout_height="22dp"
                     android:src="@drawable/device_model"
                     android:visibility="gone" />
@@ -261,7 +286,7 @@
 
             <ImageView
                 android:id="@+id/connector4"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_vertical_lines"
                 app:layout_constraintEnd_toEndOf="@+id/linearLayout"
                 app:layout_constraintStart_toStartOf="@+id/linearLayout"
@@ -270,7 +295,7 @@
 
             <TextView
                 android:id="@+id/textDM"
-                style="@style/textStyleConstantColor2"
+                style="@style/textStyleConstantColor2_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -281,7 +306,7 @@
 
             <TextView
                 android:id="@+id/dm"
-                style="@style/textStyleConstantColor2Opaque"
+                style="@style/textStyleConstantColor2Opaque_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Device Model"
@@ -292,7 +317,7 @@
 
             <ImageView
                 android:id="@+id/imageView6"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_calendar"
                 app:layout_constraintEnd_toEndOf="@+id/connector4"
                 app:layout_constraintStart_toStartOf="@+id/connector4"
@@ -300,7 +325,7 @@
 
             <ImageView
                 android:id="@+id/connector5"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_vertical_lines"
                 app:layout_constraintEnd_toEndOf="@+id/imageView6"
                 app:layout_constraintStart_toStartOf="@+id/imageView6"
@@ -309,7 +334,7 @@
 
             <TextView
                 android:id="@+id/textDP"
-                style="@style/textStyleConstantColor2"
+                style="@style/textStyleConstantColor2_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -320,7 +345,7 @@
 
             <TextView
                 android:id="@+id/dp"
-                style="@style/textStyleConstantColor2Opaque"
+                style="@style/textStyleConstantColor2Opaque_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date Purchased"
@@ -330,8 +355,8 @@
 
 
             <ImageView
-                android:id="@+id/expirationIndicator"
-                style="@style/sizeIC"
+                android:id="@+id/rightExpiration"
+                style="@style/sizeIC_small"
                 android:layout_marginEnd="@dimen/padding_16"
                 android:src="@drawable/warning_sign"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView5"
@@ -340,7 +365,7 @@
 
             <ImageView
                 android:id="@+id/imageView5"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_expiration"
                 app:layout_constraintEnd_toEndOf="@+id/connector5"
                 app:layout_constraintStart_toStartOf="@+id/connector5"
@@ -348,7 +373,7 @@
 
             <ImageView
                 android:id="@+id/connector6"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_vertical_lines"
                 app:layout_constraintEnd_toEndOf="@+id/imageView5"
                 app:layout_constraintStart_toStartOf="@+id/imageView5"
@@ -357,7 +382,7 @@
 
             <TextView
                 android:id="@+id/textDE"
-                style="@style/textStyleConstantColor2"
+                style="@style/textStyleConstantColor2_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -368,7 +393,7 @@
 
             <TextView
                 android:id="@+id/de"
-                style="@style/textStyleConstantColor2Opaque"
+                style="@style/textStyleConstantColor2Opaque_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Expiration"
@@ -379,7 +404,7 @@
 
             <ImageView
                 android:id="@+id/imageView10"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_reload"
                 app:layout_constraintEnd_toEndOf="@+id/connector6"
                 app:layout_constraintStart_toStartOf="@+id/connector6"
@@ -387,7 +412,7 @@
 
             <ImageView
                 android:id="@+id/connector7"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_vertical_lines"
                 app:layout_constraintEnd_toEndOf="@+id/imageView10"
                 app:layout_constraintStart_toStartOf="@+id/imageView10"
@@ -396,7 +421,7 @@
 
             <TextView
                 android:id="@+id/textSTS"
-                style="@style/textStyleConstantColor2"
+                style="@style/textStyleConstantColor2_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -407,7 +432,7 @@
 
             <TextView
                 android:id="@+id/sts"
-                style="@style/textStyleConstantColor2Opaque"
+                style="@style/textStyleConstantColor2Opaque_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Status"
@@ -418,7 +443,7 @@
 
             <ImageView
                 android:id="@+id/imageView11"
-                style="@style/sizeIC"
+                style="@style/sizeIC_small"
                 android:src="@drawable/ic_stocks"
                 app:layout_constraintEnd_toEndOf="@+id/connector7"
                 app:layout_constraintStart_toStartOf="@+id/connector7"
@@ -426,7 +451,7 @@
 
             <TextView
                 android:id="@+id/textAVL"
-                style="@style/textStyleConstantColor2"
+                style="@style/textStyleConstantColor2_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -437,7 +462,7 @@
 
             <TextView
                 android:id="@+id/avl"
-                style="@style/textStyleConstantColor2Opaque"
+                style="@style/textStyleConstantColor2Opaque_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Availability"
@@ -480,7 +505,7 @@
                     android:paddingVertical="20dp">
 
                     <ImageView
-                        style="@style/sizeIC"
+                        style="@style/sizeIC_small"
                         android:src="@drawable/ic_edit" />
 
                     <TextView
@@ -539,11 +564,11 @@
                     android:paddingVertical="20dp">
 
                     <ImageView
-                        style="@style/deleteIC"
+                        style="@style/deleteIC_small"
                         android:src="@drawable/trash_can_10416" />
 
                     <TextView
-                        style="@style/deleteTextStyle"
+                        style="@style/textStyleConstantColorRed_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Delete" />

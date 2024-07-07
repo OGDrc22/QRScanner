@@ -31,6 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingHorizontal="@dimen/padding_4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -56,7 +57,7 @@
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -76,7 +77,7 @@
                     style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -97,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusableInTouchMode="false"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -119,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusableInTouchMode="false"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -143,7 +144,7 @@
                     style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -167,7 +168,7 @@
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -190,7 +191,7 @@
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -213,7 +214,7 @@
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -234,7 +235,7 @@
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:textSize="@dimen/text_14dp" />
+                    android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>

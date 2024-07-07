@@ -704,6 +704,7 @@
 
             // Add default departments if the list is empty
             if (departmentList.isEmpty()) {
+                dbHelper.addDepartmentCategory("Unknown");
                 dbHelper.addDepartmentCategory("HR");
                 dbHelper.addDepartmentCategory("Finance");
                 dbHelper.addDepartmentCategory("IT");

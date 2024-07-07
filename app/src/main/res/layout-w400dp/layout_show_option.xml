@@ -23,7 +23,7 @@
                 android:id="@+id/view3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="@color/accent"
+                style="@style/alertDialogAccents"
                 app:layout_constraintBottom_toBottomOf="@+id/layoutTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

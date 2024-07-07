@@ -1,11 +1,8 @@
 package com.example.qrscanner;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
@@ -29,9 +25,11 @@ import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.utils.Utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Date;
 
 public class ExpiredDevicesActivity extends AppCompatActivity {
 
@@ -146,7 +144,11 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
             }
         });
 
-        filterDeviceList();
+        try {
+            filterDeviceList();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -166,13 +168,17 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
             // Refresh the UI here, for example, reload data from the database
-            loadDataFromDatabase();
+            try {
+                loadDataFromDatabase();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
             Collections.reverse(deviceList);
             adapter.notifyDataSetChanged(); // Notify the adapter of dataset changes
         }
     }
 
-    private void loadDataFromDatabase() {
+    private void loadDataFromDatabase() throws ParseException {
         deviceList.clear();
         deviceList.addAll(dbHelper.fetchDevice());
         filterDeviceList();
@@ -181,7 +187,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
     }
 
     // Show the item that is Expired Device column
-    private void filterDeviceList() {
+    private void filterDeviceList() throws ParseException {
         filteredList = new ArrayList<>();
         filteredList.clear();
         if (deviceList.isEmpty()) {
@@ -189,10 +195,10 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         } else {
             // Iterate through the original list and add items that match the criteria to the filtered list
             for (Assigned_to_User_Model device : deviceList) {
-                // Assuming device contains the name of the gadget
-                String deviceStatus = device.getStatus();
-                // Check if the device name contains "laptop" (case-insensitive)
-                if (deviceStatus.toLowerCase().contains("for refresh")) {
+                String input = device.getDatePurchased();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
+                Date dateInput = dateFormat.parse(input);
+                if (Utils.calculateExpiration(dateInput, "For Refresh")) {
                     filteredList.add(device);
                 }
             }

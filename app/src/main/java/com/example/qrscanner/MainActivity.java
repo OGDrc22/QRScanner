@@ -1,6 +1,5 @@
 package com.example.qrscanner;
 
-import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import androidx.annotation.NonNull;
@@ -510,10 +509,10 @@ public class MainActivity extends AppCompatActivity {
 
     // Add this method to export data
     private void exportDatabaseToExcel(String fileName) {
-            Log.d(TAG, "Storage permission granted");
+            Log.d("MainActivity", "Storage permission granted");
             // Fetch data from the database
             ArrayList<Assigned_to_User_Model> deviceList = dbHelper.fetchDevice();
-            Log.d(TAG, "Fetched " + deviceList.size() + " records from the database");
+            Log.d("MainActivity", "Fetched " + deviceList.size() + " records from the database");
 
             // Create an Excel workbook and sheet
             Workbook workbook = new XSSFWorkbook();
@@ -544,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
                 row.createCell(6).setCellValue(device.getDateExpired());
                 row.createCell(7).setCellValue(device.getStatus());
                 row.createCell(8).setCellValue(device.getAvailability());
-                Log.d(TAG, "Added row " + rowNum + " to the sheet");
+                Log.d("MainActivity", "Added row " + rowNum + " to the sheet");
             }
 
         try {
@@ -552,7 +551,7 @@ public class MainActivity extends AppCompatActivity {
                 OutputStream outputStream = getContentResolver().openOutputStream(selectedFileUri);
                 workbook.write(outputStream);
                 outputStream.close();
-                Log.d(TAG, "Excel file saved to: " + selectedFileUri.getPath());
+                Log.d("MainActivity", "Excel file saved to: " + selectedFileUri.getPath());
                 Toast.makeText(MainActivity.this, "Data exported successfully to " + selectedFileUri.getPath(), Toast.LENGTH_LONG).show();
             } else {
                 
@@ -570,10 +569,10 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "Storage permission granted by user");
+                Log.d("MainActivity", "Storage permission granted by user");
                 exportDatabaseToExcel(fileNameToExport);  // Retry exporting now that permission is granted
             } else {
-                Log.d(TAG, "Storage permission denied by user");
+                Log.d("MainActivity", "Storage permission denied by user");
                 Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
             }
         }

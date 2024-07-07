@@ -777,7 +777,6 @@ public class ScanQR extends AppCompatActivity {
         // Add default gadgets if database is empty
         if (gadgetsList.isEmpty()) {
             dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_unknown_device));
-            Log.d("TAG", "getGadgetsCategoryFromDatabase: Add Item 1");
             dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.laptop_icon));
             dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_mobile_phone));
             dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_tablet));
@@ -866,6 +865,7 @@ public class ScanQR extends AppCompatActivity {
 
         // Add default departments if the list is empty
         if (departmentList.isEmpty()) {
+            dbHelper.addDepartmentCategory("Unknown");
             dbHelper.addDepartmentCategory("HR");
             dbHelper.addDepartmentCategory("Finance");
             dbHelper.addDepartmentCategory("IT");

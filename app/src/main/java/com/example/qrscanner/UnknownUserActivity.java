@@ -1,6 +1,7 @@
 package com.example.qrscanner;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -128,7 +129,8 @@ public class UnknownUserActivity extends AppCompatActivity {
         currentActivity2 = findViewById(R.id.currentActivity2);
         currentActivity2.setVisibility(View.VISIBLE);
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            currentActivity2.setImageResource(R.drawable.user_unknown_light);
+            currentActivity2.setImageResource(R.drawable.user_unknown);
+            currentActivity2.setColorFilter(Color.argb(255, 255, 255, 255));
         } else {
             currentActivity2.setImageResource(R.drawable.user_unknown);
         }
