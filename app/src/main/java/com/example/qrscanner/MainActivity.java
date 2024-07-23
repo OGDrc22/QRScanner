@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -53,8 +54,15 @@ import com.example.qrscanner.models.Assigned_to_User_Model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -360,7 +368,8 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select File"), FILE_REQUEST_CODE);
     }
 
-//    Importing excel code block
+
+    // Importing excel code block
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -370,10 +379,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            // Handle the selected file here
             Uri selectedFileUri = data.getData();
 
-            // Now you have the URI of the selected file, you can read its data and insert into database
             try {
                 InputStream inputStream = getContentResolver().openInputStream(selectedFileUri);
                 Workbook workbook = WorkbookFactory.create(inputStream);
@@ -381,133 +388,136 @@ public class MainActivity extends AppCompatActivity {
 
                 DBHelper dbHelper = new DBHelper(this);
 
-                for (Row row : sheet) {
-//                    double serialNum = row.getCell(0).getNumericCellValue();
-                    String serialNum;
-                    Cell serialNumCell = row.getCell(0);
-                    if (serialNumCell != null) {
-                        if (serialNumCell.getCellType() == CellType.STRING) {
-                            serialNum = serialNumCell.getStringCellValue();
-                        } else if (serialNumCell.getCellType() == CellType.NUMERIC) {
-                            serialNum = String.valueOf((int) serialNumCell.getNumericCellValue());
-                        } else {
-                            continue; // Skip if it's neither STRING nor NUMERIC
-                        }
-                    } else {
-                        continue; // Skip if the cell is null
-                    }
+                // Identify header row and map headers to column indices
+                Row headerRow = sheet.getRow(0); // Assuming first row is the header
+                if (headerRow == null) {
+                    throw new IllegalArgumentException("No Header row found");
+                }
 
-                    serialCode = serialNum;
-                    // Handel Duplicates Serial Number in importing data, in case the data already exist in database
-                    if (dbHelper.getAllSerialNumbers().contains(serialCode)) {
+
+                Map<String, Integer> headerMap = new HashMap<>();
+                for (Cell cell : headerRow) {
+                    if (cell.getCellType() == CellType.STRING) {
+                        String header = cell.getStringCellValue().trim().toLowerCase();
+                        headerMap.put(header, cell.getColumnIndex());
+                    }
+                }
+
+                // Check for required headers
+                if (!containsKeyword(headerMap, "serial")) {
+                    throw new IllegalArgumentException("Missing required header: Serial");
+                }
+                if (!containsKeyword(headerMap, "user") && !containsKeyword(headerMap, "user")) {
+                    throw new IllegalArgumentException("Missing required header: Name or User");
+                }
+                if (!containsKeyword(headerMap, "device") && !containsKeyword(headerMap, "asset type")) {
+                    throw new IllegalArgumentException("Missing required header: Name or User");
+                }
+                if (!containsKeyword(headerMap, "device model") && !containsKeyword(headerMap, "asset description")) {
+                    throw new IllegalArgumentException("Missing required header: Name or User");
+                }
+                if (!containsKeyword(headerMap, "date purchased") && !containsKeyword(headerMap, "ship date")) {
+                    throw new IllegalArgumentException("Missing required header: Name or User");
+                }
+
+                // Iterate over data rows
+                Iterator<Row> rowIterator = sheet.rowIterator();
+                rowIterator.next(); // Skip header row
+                while (rowIterator.hasNext()) {
+                    Row row = rowIterator.next();
+
+                    String serialNum = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "serial")));
+                    String name = containsKeyword(headerMap, "user") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "user"))) : containsKeyword(headerMap, "user") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "user"))) : "";
+                    String department = containsKeyword(headerMap, "department") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "department"))) : "Unknown";
+                    if (department.isEmpty()) {
+                        department = "Unknown";
+                    }
+                    String deviceType = containsKeyword(headerMap, "device") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "device"))) : containsKeyword(headerMap, "type") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "type"))) : "Unknown";
+                    if (deviceType.isEmpty()) {
+                        deviceType = "Unknown";
+                    }
+                    String deviceModel = containsKeyword(headerMap, "device model") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "device model"))) : containsKeyword(headerMap, "description") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "description"))) : null;
+                    if (deviceModel.isEmpty()) {
+                        deviceModel = null;
+                    }
+                    String datePurchased = containsKeyword(headerMap, "date purchased") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date purchased"))) : containsKeyword(headerMap, "ship date") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "ship date"))) : "00/00/00";
+                    if (datePurchased.isEmpty()) {
+                        datePurchased = "00/00/00";
+                    }
+                    String dateExpired = containsKeyword(headerMap, "date expired") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date expired"))) : "00/00/00";
+                    if (dateExpired.isEmpty()) {
+                        dateExpired = "00/00/00";
+                    }
+                    String status = containsKeyword(headerMap, "status") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "status"))) : null;
+                    String availability = containsKeyword(headerMap, "availability") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "availability"))) : "In Stock";
+
+                    // Handle duplicate serial numbers
+                    if (dbHelper.getAllSerialNumbers().contains(serialNum)) {
                         continue;
                     }
 
-//                    String name = row.getCell(1).getStringCellValue();
-                    String name;
-                    Cell nameCell = row.getCell(1);
-                    if (nameCell != null && nameCell.getCellType() == CellType.STRING) {
-                        name = nameCell.getStringCellValue();
-                    } else {
-                        // Handle empty or non-string cell
-                        name = null; // Or any default value you want to use
-                    }
-
-//                    String department = row.getCell(2).getStringCellValue();
-                    String department;
-                    Cell departmentCell = row.getCell(2);
-                    if (departmentCell != null && departmentCell.getCellType() == CellType.STRING) {
-                        department = departmentCell.getStringCellValue();
-                    } else {
-                        // Handle empty or non-string cell
-                        department = null; // Or any default value you want to use
-                    }
-
-//                    String device = row.getCell(3).getStringCellValue();
-                    String device;
-                    Cell deviceCell = row.getCell(3);
-                    if (deviceCell != null && deviceCell.getCellType() == CellType.STRING) {
-                        device = deviceCell.getStringCellValue();
-                    } else {
-                        // Handle empty or non-string cell
-                        device = "Unknown"; // Or any default value you want to use
-                    }
-
-//                    String deviceModel = row.getCell(4).getStringCellValue();
-                    String deviceModel;
-                    Cell deviceModelCell = row.getCell(4);
-                    if (deviceModelCell != null && deviceModelCell.getCellType() == CellType.STRING) {
-                        deviceModel = deviceModelCell.getStringCellValue();
-                    } else {
-                        // Handle empty or non-string cell
-                        deviceModel = null; // Or any default value you want to use
-                    }
-
-
-//                    String datePurchased = row.getCell(4).getStringCellValue();
-                    String datePurchased;
-                    Cell datePurchasedCell = row.getCell(5);
-                    if (datePurchasedCell != null && datePurchasedCell.getCellType() == CellType.STRING) {
-                        datePurchased = datePurchasedCell.getStringCellValue();
-                    } else {
-                        // Handle empty or non-string cell
-                        datePurchased = null; // Or any default value you want to use
-                    }
-
-//                    String dateExpired = row.getCell(5).getStringCellValue();
-                    String dateExpired;
-                    Cell dateExpiredCell = row.getCell(6);
-                    if (dateExpiredCell != null && dateExpiredCell.getCellType() == CellType.STRING) {
-                        dateExpired = dateExpiredCell.getStringCellValue();
-                    } else {
-                        // Handle empty or non-string cell
-                        dateExpired = null; // Or any default value you want to use
-                    }
-
-//                    String status = row.getCell(6).getStringCellValue();
-                    String status;
-                    Cell statusCell = row.getCell(7);
-                    if (statusCell != null && statusCell.getCellType() == CellType.STRING) {
-                        status = statusCell.getStringCellValue();
-                    } else {
-                        // Handle empty or non-string cell
-                        status = null; // Or any default value you want to use
-                    }
-
-//                    String availability = row.getCell(7).getStringCellValue();
-                    String availability;
-                    Cell availabilityCell = row.getCell(8);
-                    if (nameCell != null) {
-                        availability = "In Use";
-                    } else {
-                        // Handle empty or non-string cell
-                        availability = "In Stock"; // Or any default value you want to use
-                    }
-
-                    dbHelper.addDevice(String.valueOf(serialNum), name, department, device, deviceModel, datePurchased, dateExpired, status, availability);
-
-                    Log.d("TAG", "Existing Serials: " + dbHelper.getAllSerialNumbers());
-                    Log.d("TAG", "From Import: " + serialCode);
+                    dbHelper.addDevice(serialNum, name, department, deviceType, deviceModel, datePurchased, dateExpired, status, availability);
                 }
 
-                if (!dbHelper.getAllSerialNumbers().contains(serialCode) && dbHelper.getAllSerialNumbers().contains(serialCode)) {
-                    // Toast "Success", "Successfully imported some of the data"
-                } else {
-                    // Toast "Success", "Data Imported successfully"
-                }
+                Toast.makeText(this, "Data imported successfully", Toast.LENGTH_SHORT).show();
                 loadDataFromDatabase();
 
             } catch (IOException e) {
                 e.printStackTrace();
-                // Handle any errors that occur during file reading or data insertion
-                // Toast "Failed", "Error Importing the data"
+                Toast.makeText(this, "Error importing data", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                Toast.makeText(this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    // Add this method to export data
+    private boolean containsKeyword(Map<String, Integer> headerMap, String keyword) {
+        for (String header : headerMap.keySet()) {
+            if (header.contains(keyword.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int getColumnIndex(Map<String, Integer> headerMap, String keyword) {
+        for (Map.Entry<String, Integer> entry : headerMap.entrySet()) {
+            if (entry.getKey().contains(keyword.toLowerCase())) {
+                return entry.getValue();
+            }
+        }
+        throw new IllegalArgumentException("Header not found for keyword: " + keyword);
+    }
+
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    // Parse the date from the cell and format it
+                    Date date = cell.getDateCellValue();
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
+                    return sdf.format(date);
+                } else {
+                    return String.valueOf((int) cell.getNumericCellValue());
+                }
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return "";
+        }
+    }
+
+
+
+
     private void exportDatabaseToExcel(String fileName) {
             Log.d("MainActivity", "Storage permission granted");
             // Fetch data from the database

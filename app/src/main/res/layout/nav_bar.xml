@@ -10,6 +10,7 @@
     <ImageView
         android:id="@+id/backBtn"
         style="@style/backBtnIC"
+        android:background="?android:selectableItemBackgroundBorderless"
         android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -61,6 +62,7 @@
         android:gravity="end"
         android:padding="8dp"
         android:src="@drawable/gear"
+        android:background="?android:selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/linearLayout4" />

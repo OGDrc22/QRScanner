@@ -64,5 +64,6 @@
 
     <color name="clDelete">#FF0F0F</color>
     <color name="clError">#FF474C</color>
+    <color name="clNeonGreen">#009602</color>
 
 </resources>

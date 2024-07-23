@@ -1,6 +1,5 @@
 package com.example.qrscanner;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qrscanner.DB.DBHelper;
-import com.example.qrscanner.adapter.GadgetsAdapter;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.utils.Utils;
@@ -79,7 +77,7 @@ public class DesktopsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final int initialHeight = cardView_options.getHeight();
                 int duration = 300;
-                Utils.smoothHideAndReveal(cardView_options, duration);
+                Utils.smoothTransition(cardView_options, duration);
                 if (cardViewContent.getVisibility() == View.GONE) {
                     Utils.rotateUp(settingsIcon);
                     cardViewContent.setVisibility(View.VISIBLE);

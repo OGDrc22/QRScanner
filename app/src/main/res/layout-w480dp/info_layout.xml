@@ -7,18 +7,28 @@
     android:layout_marginVertical="4dp"
     style="@style/itemBG"
     android:id="@+id/cardViewMain"
-    android:elevation="0dp">
+    android:elevation="0dp"
+    android:foreground="?android:attr/selectableItemBackgroundBorderless">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <View
+            android:id="@+id/center"
+            style="@style/divider"
+            android:layout_width="1dp"
+            android:layout_height="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <FrameLayout
             android:id="@+id/topUserF"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/padding_16"
+            android:layout_marginEnd="@dimen/padding_8"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
             app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
             app:layout_constraintTop_toTopOf="@+id/linearLayout6">
@@ -27,7 +37,7 @@
                 android:id="@+id/topUser2"
                 style="@style/sizeIC"
                 android:src="@drawable/user_unknown_bulk"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
         </FrameLayout>
 
@@ -35,7 +45,7 @@
             android:id="@+id/topExpirationF"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/padding_16"
+            android:layout_marginEnd="@dimen/padding_8"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
             app:layout_constraintEnd_toStartOf="@+id/topUserF"
             app:layout_constraintTop_toTopOf="@+id/linearLayout6">
@@ -44,9 +54,13 @@
                 android:id="@+id/topExpiration"
                 style="@style/sizeIC"
                 android:src="@drawable/expiration"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
+                app:layout_constraintEnd_toStartOf="@+id/topUserF"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout6" />
 
         </FrameLayout>
+
 
 
         <LinearLayout
@@ -79,68 +93,78 @@
             android:orientation="horizontal"
             android:paddingVertical="@dimen/padding_16"
             android:visibility="visible"
-            app:layout_constraintStart_toEndOf="@+id/dummy"
+            app:layout_constraintStart_toEndOf="@+id/imgScan_Frame"
             app:layout_constraintTop_toTopOf="parent">
 
             <View
-                android:layout_width="0dp"
+                android:id="@+id/view000"
+                android:layout_width="16dp"
                 android:layout_height="48dp"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:visibility="visible" />
 
-            <LinearLayout
-                android:id="@+id/linearLayout01"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:layout_marginVertical="@dimen/padding_4"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/imageViewScan"
-                app:layout_constraintStart_toEndOf="@+id/imageViewScan"
-                app:layout_constraintTop_toTopOf="@+id/imageViewScan">
-
-                <TextView
-                    android:id="@+id/textSN"
-                    style="@style/SubTitleConstantColor_16"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Serial number" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearLayoutShown2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:orientation="vertical"
-                android:paddingStart="@dimen/padding_16"
-                app:layout_constraintBottom_toBottomOf="@+id/textSN"
-                app:layout_constraintStart_toEndOf="@+id/textSN"
-                app:layout_constraintTop_toTopOf="@+id/textSN">
-
-                <TextView
-                    android:id="@+id/sn"
-                    style="@style/TitleStyleConstantColor_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Header" />
-
-                <TextView
-                    android:id="@+id/subHeader"
-                    style="@style/SubTitleConstantColor_16"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sub Header"
-                    android:visibility="visible" />
-
-            </LinearLayout>
 
         </LinearLayout>
 
+        <FrameLayout
+            android:id="@+id/textSN_F"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout5"
+            app:layout_constraintTop_toTopOf="@+id/imgScan_Frame">
+
+            <TextView
+                android:id="@+id/textSN"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Serial Number"
+                style="@style/Identifier_text_upper"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/imgScan_Frame"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout5"
+                app:layout_constraintTop_toTopOf="@+id/imgScan_Frame" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/headerF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/imgScan_Frame"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout5"
+            app:layout_constraintTop_toTopOf="@+id/imgScan_Frame"
+            app:layout_constraintVertical_bias="0.2">
+
+            <TextView
+                android:id="@+id/sn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Header"
+                style="@style/TitleStyleConstantColor_18" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/subHeaderF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/imgScan_Frame"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout5"
+            app:layout_constraintTop_toTopOf="@+id/imgScan_Frame"
+            app:layout_constraintVertical_bias="0.8" >
+
+            <TextView
+                android:id="@+id/subHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sub Header"
+                style="@style/SubTitleConstantColor_14_small"
+                android:visibility="visible"/>
+
+        </FrameLayout>
+
         <LinearLayout
-            android:id="@+id/dummy"
+            android:id="@+id/imgScan_Frame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_16"
@@ -168,14 +192,14 @@
             android:id="@+id/connector"
             style="@style/sizeIC"
             android:layout_marginStart="@dimen/padding_16"
-            android:visibility="gone"
             android:src="@drawable/ic_vertical_lines"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dummy"/>
+            app:layout_constraintTop_toBottomOf="@+id/imgScan_Frame" />
 
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/assignedToIC"
             style="@style/sizeIC"
             android:src="@drawable/user_bulk_48"
             android:visibility="gone"
@@ -184,324 +208,277 @@
             app:layout_constraintTop_toBottomOf="@+id/connector" />
 
         <TextView
-            android:id="@+id/textAT"
-            style="@style/SubTitleConstantColor_16"
+            android:id="@+id/hintAssignedTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Assigned To"
+            style="@style/Identifier_text_upper"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-            app:layout_constraintStart_toEndOf="@+id/imageView3"
-            app:layout_constraintTop_toTopOf="@+id/imageView3" />
+            app:layout_constraintBottom_toTopOf="@+id/assignedToIC"
+            app:layout_constraintStart_toEndOf="@+id/assignedToIC"
+            app:layout_constraintTop_toTopOf="@+id/assignedToIC" />
 
         <TextView
-            android:id="@+id/at"
-            style="@style/textStyleConstantColor2Opaque"
+            android:id="@+id/textHolderAssignedTo"
+            style="@style/textStyleConstantColor_16_opaque"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_weight="1"
             android:ellipsize="end"
             android:maxEms="11"
             android:text="Unassigned"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/textAT"
-            app:layout_constraintStart_toEndOf="@+id/textAT"
-            app:layout_constraintTop_toTopOf="@+id/textAT" />
+            app:layout_constraintBottom_toBottomOf="@+id/assignedToIC"
+            app:layout_constraintStart_toStartOf="@+id/hintAssignedTo"
+            app:layout_constraintTop_toBottomOf="@+id/hintAssignedTo" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/otherInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+
+        <ImageView
+            android:id="@+id/imgVwDepartment"
+            style="@style/sizeIC"
+            android:src="@drawable/ic_department"
+            android:layout_marginStart="@dimen/padding_16"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView3">
+            app:layout_constraintBottom_toBottomOf="@+id/assignedToIC"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toTopOf="@+id/assignedToIC" />
+
+        <TextView
+            android:id="@+id/hintDepartment"
+            style="@style/Identifier_text_upper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_16"
+            android:text="Department"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/imgVwDepartment"
+            app:layout_constraintStart_toEndOf="@+id/imgVwDepartment"
+            app:layout_constraintTop_toTopOf="@+id/imgVwDepartment" />
+
+        <TextView
+            android:id="@+id/textHolderDepartment"
+            style="@style/textStyleConstantColor_16_opaque"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Department"
+            android:visibility="gone"
+            android:maxEms="16"
+            android:ellipsize="end"
+            app:layout_constraintBottom_toBottomOf="@+id/imgVwDepartment"
+            app:layout_constraintStart_toStartOf="@+id/hintDepartment"
+            app:layout_constraintTop_toBottomOf="@+id/hintDepartment" />
+
+        <ImageView
+            android:id="@+id/connector2"
+            style="@style/sizeIC"
+            android:src="@drawable/ic_vertical_lines"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/assignedToIC"
+            app:layout_constraintStart_toStartOf="@+id/assignedToIC"
+            app:layout_constraintTop_toBottomOf="@+id/assignedToIC" />
 
 
-            <ImageView
-                android:id="@+id/connector2"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_vertical_lines"
-                android:layout_marginStart="@dimen/padding_16"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-
-            <ImageView
-                android:id="@+id/imageViewDep"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_department"
-                app:layout_constraintEnd_toEndOf="@+id/connector2"
-                app:layout_constraintStart_toStartOf="@+id/connector2"
-                app:layout_constraintTop_toBottomOf="@+id/connector2" />
-
-            <ImageView
-                android:id="@+id/connector3"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_vertical_lines"
-                app:layout_constraintEnd_toEndOf="@+id/imageViewDep"
-                app:layout_constraintStart_toStartOf="@+id/imageViewDep"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewDep" />
-
-
-            <TextView
-                android:id="@+id/textDep"
-                style="@style/SubTitleConstantColor_16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Department"
-                android:layout_marginStart="@dimen/padding_16"
-                app:layout_constraintBottom_toBottomOf="@+id/imageViewDep"
-                app:layout_constraintStart_toEndOf="@+id/imageViewDep"
-                app:layout_constraintTop_toTopOf="@+id/imageViewDep" />
-
-            <TextView
-                android:id="@+id/dep"
-                style="@style/textStyleConstantColor2Opaque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Department"
-                android:layout_marginStart="40dp"
-                app:layout_constraintBottom_toBottomOf="@+id/textDep"
-                app:layout_constraintStart_toEndOf="@+id/textDep"
-                app:layout_constraintTop_toTopOf="@+id/textDep" />
-
-            <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/connector3"
-                app:layout_constraintStart_toStartOf="@+id/connector3"
-                app:layout_constraintTop_toBottomOf="@+id/connector3">
-
-                <ImageView
-                    android:id="@+id/deviceIC"
-                    style="@style/sizeIC"
-                    android:src="@drawable/device_model"
-                    android:visibility="visible" />
-
-                <ImageView
-                    android:id="@+id/deviceIC2"
-                    style="@style/sizeIC"
-                    android:layout_height="22dp"
-                    android:src="@drawable/device_model"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/connector4"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_vertical_lines"
-                app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-                app:layout_constraintStart_toStartOf="@+id/linearLayout"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
-
-            <TextView
-                android:id="@+id/textDM"
-                style="@style/SubTitleConstantColor_16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Device Model"
-                app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-                app:layout_constraintStart_toEndOf="@+id/linearLayout"
-                app:layout_constraintTop_toTopOf="@+id/linearLayout" />
-
-            <TextView
-                android:id="@+id/dm"
-                style="@style/textStyleConstantColor2Opaque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Device Model"
-                app:layout_constraintBottom_toBottomOf="@+id/textDM"
-                app:layout_constraintStart_toStartOf="@+id/dep"
-                app:layout_constraintTop_toTopOf="@+id/textDM" />
-
-
-            <ImageView
-                android:id="@+id/imageView6"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_calendar"
-                app:layout_constraintEnd_toEndOf="@+id/connector4"
-                app:layout_constraintStart_toStartOf="@+id/connector4"
-                app:layout_constraintTop_toBottomOf="@+id/connector4" />
-
-
-
-            <TextView
-                android:id="@+id/textDP"
-                style="@style/SubTitleConstantColor_16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Date Purchased"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
-                app:layout_constraintStart_toEndOf="@+id/imageView6"
-                app:layout_constraintTop_toTopOf="@+id/imageView6" />
-
-            <TextView
-                android:id="@+id/dp"
-                style="@style/textStyleConstantColor2Opaque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Date Purchased"
-                app:layout_constraintBottom_toBottomOf="@+id/textDP"
-                app:layout_constraintStart_toStartOf="@+id/dm"
-                app:layout_constraintTop_toTopOf="@+id/textDP" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-            <ImageView
-                android:id="@+id/connector5"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_vertical_lines"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="@+id/imageView3"
-                app:layout_constraintStart_toStartOf="@id/imageView3"
-                app:layout_constraintTop_toBottomOf="@+id/otherInfo" />
-
-
-            <ImageView
-                android:id="@+id/imageView5"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_expiration"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="@+id/connector5"
-                app:layout_constraintStart_toStartOf="@+id/connector5"
-                app:layout_constraintTop_toBottomOf="@+id/connector5" />
+        <ImageView
+            android:id="@+id/deviceTypeIC"
+            style="@style/sizeIC"
+            android:src="@drawable/device_model"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/connector2"
+            app:layout_constraintStart_toStartOf="@+id/connector2"
+            app:layout_constraintTop_toBottomOf="@+id/connector2" />
 
 
         <TextView
-            android:id="@+id/textDE"
-            style="@style/SubTitleConstantColor_16"
+            android:id="@+id/hintDeviceType"
+            style="@style/Identifier_text_upper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Expiration"
+            android:text="Device Type"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView5"
-            app:layout_constraintStart_toEndOf="@+id/imageView5"
-            app:layout_constraintTop_toTopOf="@+id/imageView5" />
+            app:layout_constraintBottom_toTopOf="@+id/deviceTypeIC"
+            app:layout_constraintStart_toEndOf="@+id/deviceTypeIC"
+            app:layout_constraintTop_toTopOf="@+id/deviceTypeIC" />
 
         <TextView
-            android:id="@+id/de"
-            style="@style/textStyleConstantColor2Opaque"
+            android:id="@+id/textHolderDeviceType"
+            style="@style/textStyleConstantColor_16_opaque"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="54dp"
+            android:text="Device Type"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/deviceTypeIC"
+            app:layout_constraintStart_toStartOf="@+id/hintDeviceType"
+            app:layout_constraintTop_toBottomOf="@+id/hintDeviceType" />
+
+        <ImageView
+            android:id="@+id/connector4"
+            style="@style/sizeIC"
+            android:src="@drawable/ic_vertical_lines"
+            android:visibility="gone"
+            android:layout_marginStart="@dimen/padding_16"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toBottomOf="@+id/imgVwDepartment" />
+
+        <ImageView
+            android:id="@+id/deviceModelIC"
+            style="@style/sizeIC"
+            android:src="@drawable/device_model"
+            android:visibility="gone"
+            android:layout_marginStart="@dimen/padding_16"
+            app:layout_constraintBottom_toBottomOf="@+id/deviceTypeIC"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toTopOf="@+id/deviceTypeIC" />
+
+        <TextView
+            android:id="@+id/hintDeviceModel"
+            style="@style/Identifier_text_upper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_16"
+            android:text="Device Model"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/deviceModelIC"
+            app:layout_constraintStart_toEndOf="@+id/deviceModelIC"
+            app:layout_constraintTop_toTopOf="@+id/deviceModelIC" />
+
+        <TextView
+            android:id="@+id/textHolderDeviceModel"
+            style="@style/textStyleConstantColor_16_opaque"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Device Model"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/deviceModelIC"
+            app:layout_constraintStart_toStartOf="@+id/hintDeviceModel"
+            app:layout_constraintTop_toBottomOf="@+id/hintDeviceModel" />
+
+
+        <ImageView
+            android:id="@+id/imgVwDatePur"
+            style="@style/sizeIC"
+            android:src="@drawable/ic_calendar"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/connector3"
+            app:layout_constraintStart_toStartOf="@+id/connector3"
+            app:layout_constraintTop_toBottomOf="@+id/connector3" />
+
+
+        <TextView
+            android:id="@+id/hintDatePurchased"
+            style="@style/Identifier_text_upper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Date Purchased"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/imgVwDatePur"
+            app:layout_constraintStart_toEndOf="@+id/imgVwDatePur"
+            app:layout_constraintTop_toTopOf="@+id/imgVwDatePur" />
+
+        <TextView
+            android:id="@+id/textHolderDatePur"
+            style="@style/textStyleConstantColor_16_opaque"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date Purchased"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/imgVwDatePur"
+            app:layout_constraintStart_toStartOf="@+id/hintDatePurchased"
+            app:layout_constraintTop_toBottomOf="@+id/hintDatePurchased" />
+
+
+        <ImageView
+            android:id="@+id/connector3"
+            style="@style/sizeIC"
+            android:src="@drawable/ic_vertical_lines"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/deviceTypeIC"
+            app:layout_constraintStart_toStartOf="@+id/deviceTypeIC"
+            app:layout_constraintTop_toBottomOf="@+id/deviceTypeIC" />
+
+
+        <ImageView
+            android:id="@+id/connector5"
+            style="@style/sizeIC"
+            android:src="@drawable/ic_vertical_lines"
+            android:visibility="gone"
+            android:layout_marginStart="@dimen/padding_16"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toBottomOf="@+id/deviceModelIC" />
+
+
+        <ImageView
+            android:id="@+id/imgVwDateExpired"
+            style="@style/sizeIC"
+            android:src="@drawable/ic_expiration"
+            android:visibility="gone"
+            android:layout_marginStart="@dimen/padding_16"
+            app:layout_constraintBottom_toBottomOf="@+id/imgVwDatePur"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toTopOf="@+id/imgVwDatePur" />
+
+
+        <TextView
+            android:id="@+id/hintExpirationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Expiration Date"
+            style="@style/Identifier_text_upper"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/imgVwDateExpired"
+            app:layout_constraintStart_toEndOf="@+id/imgVwDateExpired"
+            app:layout_constraintTop_toTopOf="@+id/imgVwDateExpired" />
+
+        <TextView
+            android:id="@+id/textHolderDateExpired"
+            style="@style/textStyleConstantColor_16_opaque"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Expiration"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/textDE"
-            app:layout_constraintStart_toEndOf="@+id/textDE"
-            app:layout_constraintTop_toTopOf="@+id/textDE" />
+            app:layout_constraintBottom_toBottomOf="@+id/imgVwDateExpired"
+            app:layout_constraintStart_toStartOf="@+id/hintExpirationDate"
+            app:layout_constraintTop_toBottomOf="@+id/hintExpirationDate" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/otherInfo2"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textHolderStatus"
+            style="@style/Identifier_text_upper"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/padding_8"
+            android:layout_marginEnd="@dimen/padding_16"
+            android:text="Status"
+            android:textColor="@color/txtHeader"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/imageView5"
-            app:layout_constraintStart_toStartOf="@+id/imageView5"
-            app:layout_constraintTop_toBottomOf="@+id/imageView5" >
+            app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout6"
+            app:layout_constraintVertical_bias="0.0" />
 
-
-            <ImageView
-                android:id="@+id/connector6"
-                style="@style/sizeIC"
-                android:layout_marginStart="@dimen/padding_16"
-                android:src="@drawable/ic_vertical_lines"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-            <ImageView
-                android:id="@+id/imageView10"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_reload"
-                app:layout_constraintEnd_toEndOf="@+id/connector6"
-                app:layout_constraintStart_toStartOf="@+id/connector6"
-                app:layout_constraintTop_toBottomOf="@+id/connector6" />
-
-            <ImageView
-                android:id="@+id/connector7"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_vertical_lines"
-                app:layout_constraintEnd_toEndOf="@+id/imageView10"
-                app:layout_constraintStart_toStartOf="@+id/imageView10"
-                app:layout_constraintTop_toBottomOf="@+id/imageView10" />
-
-
-            <TextView
-                android:id="@+id/textSTS"
-                style="@style/SubTitleConstantColor_16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Status"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView10"
-                app:layout_constraintStart_toEndOf="@+id/imageView10"
-                app:layout_constraintTop_toTopOf="@+id/imageView10" />
-
-            <TextView
-                android:id="@+id/sts"
-                style="@style/textStyleConstantColor2Opaque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Status"
-                android:layout_marginStart="84dp"
-                app:layout_constraintBottom_toBottomOf="@+id/textSTS"
-                app:layout_constraintStart_toEndOf="@+id/textSTS"
-                app:layout_constraintTop_toTopOf="@+id/textSTS" />
-
-
-            <ImageView
-                android:id="@+id/imageView11"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_stocks"
-                app:layout_constraintEnd_toEndOf="@+id/connector7"
-                app:layout_constraintStart_toStartOf="@+id/connector7"
-                app:layout_constraintTop_toBottomOf="@+id/connector7" />
-
-            <TextView
-                android:id="@+id/textAVL"
-                style="@style/SubTitleConstantColor_16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Availability"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView11"
-                app:layout_constraintStart_toEndOf="@+id/imageView11"
-                app:layout_constraintTop_toTopOf="@+id/imageView11" />
-
-            <TextView
-                android:id="@+id/avl"
-                style="@style/textStyleConstantColor2Opaque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Availability"
-                app:layout_constraintBottom_toBottomOf="@+id/textAVL"
-                app:layout_constraintStart_toStartOf="@+id/sts"
-                app:layout_constraintTop_toTopOf="@+id/textAVL" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <TextView
+            android:id="@+id/textHolderAvailability"
+            style="@style/Identifier_text_upper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Availability"
+            android:textColor="@color/txtHeader"
+            android:layout_marginEnd="@dimen/padding_16"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
+            app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
+            app:layout_constraintTop_toBottomOf="@+id/textHolderStatus"
+            app:layout_constraintVertical_bias="0.0"  />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/actions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:layout_marginTop="@dimen/padding_16"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/otherInfo2">
+            app:layout_constraintTop_toBottomOf="@+id/imgVwDatePur">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/editBtn"
@@ -509,9 +486,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:backgroundTint="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:visibility="visible"
                 app:cardElevation="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/view2"
                 app:layout_constraintEnd_toStartOf="@+id/view2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"><!--style="@style/editBtnStyle"-->
@@ -520,6 +498,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="20dp">
@@ -529,7 +508,7 @@
                         android:src="@drawable/ic_edit" />
 
                     <TextView
-                        style="@style/SaveText"
+                        style="@style/EditText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Edit" />
@@ -568,9 +547,10 @@
                 android:layout_marginHorizontal="16dp"
                 android:backgroundTint="@android:color/transparent"
                 android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:visibility="visible"
                 app:cardElevation="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/view2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view2"
                 app:layout_constraintTop_toTopOf="parent">
@@ -579,12 +559,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="20dp">
 
                     <ImageView
-                        style="@style/deleteIC"
+                        style="@style/deleteIC_small"
                         android:src="@drawable/trash_can_10416" />
 
                     <TextView

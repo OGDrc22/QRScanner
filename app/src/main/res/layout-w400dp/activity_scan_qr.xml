@@ -58,6 +58,7 @@
             android:text="Show FillUp"
             android:layout_margin="@dimen/padding_32"
             style="@style/genBtnTxtStyleScan_small"
+            android:foreground="?android:selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/holder" />

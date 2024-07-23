@@ -54,7 +54,7 @@
                 app:errorIconDrawable="@drawable/warning_sign"
                 app:helperText="Required*"
                 app:helperTextTextColor="@color/clDelete"
-                app:startIconDrawable="@drawable/baseline_qr_code_scanner_24">
+                app:startIconDrawable="@drawable/qr_icon_24">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/qrText"

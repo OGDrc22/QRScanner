@@ -1,11 +1,8 @@
 package com.example.qrscanner;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -31,7 +27,6 @@ import com.example.qrscanner.utils.Utils;
 import java.util.ArrayList;
 
 import java.util.Collections;
-import java.util.Iterator;
 
 public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnDeleteClickListener {
 
@@ -85,7 +80,7 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
             public void onClick(View v) {
                 final int initialHeight = cardView_options.getHeight();
                 int duration = 300;
-                Utils.smoothHideAndReveal(cardView_options, duration);
+                Utils.smoothTransition(cardView_options, duration);
                 if (cardViewContent.getVisibility() == View.GONE) {
                     Utils.rotateUp(settingsIcon);
                     cardViewContent.setVisibility(View.VISIBLE);

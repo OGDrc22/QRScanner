@@ -44,11 +44,13 @@
     //    import com.example.qrscanner.options.Data;
     import com.example.qrscanner.models.Department;
     import com.example.qrscanner.models.Gadgets;
+    import com.example.qrscanner.utils.CompareMethod;
     import com.example.qrscanner.utils.Utils;
     import com.google.android.material.datepicker.MaterialDatePicker;
     import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
     import com.google.android.material.textfield.TextInputEditText;
     import com.google.android.material.textfield.TextInputLayout;
+    import com.google.android.material.textview.MaterialTextView;
 
     import java.text.ParseException;
     import java.text.SimpleDateFormat;
@@ -59,9 +61,8 @@
 
     public class UpdateData extends AppCompatActivity {
 
-        private EditText assignedTo, deviceModel, datePurchased;
         private TextView titleTextView;
-        private TextInputEditText qrText, dateExpired, status, availability, chooserDevice, chooserDepartment;
+        private TextInputEditText qrText, assignedTo, chooserDepartment,chooserDevice, deviceModel, datePurchased, dateExpired, status, availability;
         private TextInputLayout textInputLayoutQRText, textInputLayoutAssignedTo, textInputLayoutDep, textInputLayoutDevice, textInputLayoutDeviceModel, textInputLayoutDatePurchased, textInputLayoutExpired, textInputLayoutStatus;
         private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewSave;
         private CardView saveBtn, cancelBtn;
@@ -79,6 +80,14 @@
         private Gadgets gadgetPosition;
         private ListView listView;
         private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+
+
+        private final String keyNew = "New";
+        private final String keyIdentical = "No differences found.";
+        private final String keyDifferent = "Difference found";
+
+        private static List<String> differences;
+        private static StringBuilder sb;
 
         // Constructor to accept ItemAdapter reference
         public UpdateData() {
@@ -143,6 +152,9 @@
                 }
             });
 
+
+            differences = new ArrayList<>();
+            sb = new StringBuilder();
 
 
             dbHelper = new DBHelper(this);
@@ -211,12 +223,12 @@
             Drawable drawable = textInputLayoutDevice.getStartIconDrawable();
             int parentH = drawable.getMinimumHeight();
             chooserDevice.setOnClickListener(v -> {
-                clickOptionGadgetCategory(parentH);
+                openGadgetCategoryOption(parentH);
                 chooserDevice.setText(getIntent().getStringExtra("device"));
             });
 
             chooserDepartment.setOnClickListener(v -> {
-                clickDepartmentCategory();
+                openDepartmentCategoryOption();
 
 //                debugging
 //                Log.d("TAG", "onCreate: Call clickDepCatMethod");
@@ -335,49 +347,40 @@
 //                    allFieldsFilled = false;
 //                }
 
-                    if (allFieldsFilled) {
-                        // Proceed with saving data
-                        dbHelper.editDevice(
-                                qrText.getText().toString(),
-                                assignedTo.getText().toString(),
-                                chooserDepartment.getText().toString(),
-                                chooserDevice.getText().toString(),
-                                deviceModel.getText().toString(),
-                                datePurchased.getText().toString(),
-                                dateExpired.getText().toString(),
-                                status.getText().toString(),
-                                availability.getText().toString()
-                        );
-
-                        // Reset other fields
-                        qrText.setText(null);
-                        assignedTo.setText(null);
-                        chooserDepartment.setText(null);
-                        chooserDevice.setText(null);
-                        deviceModel.setText(null);
-                        datePurchased.setText(null);
-                        dateExpired.setText(null);
-                        status.setText(null);
-                        availability.setText(null);
-
-
-                        Drawable[] layers = new Drawable[] {
-                                imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
-                        };
-                        TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                        imageViewSave.setImageDrawable(transitionDrawable);
-                        transitionDrawable.startTransition(700);
-
-
-                        Intent intent = new Intent();
-                        intent.putExtra("dataRefreshed", true);
-                        setResult(RESULT_OK, intent);
-                        new Handler().postDelayed(() -> {
-                            finish();
-                        }, 1000);
-                    } else {
+                    if (!allFieldsFilled) {
                         Toast.makeText(UpdateData.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
                     }
+
+                    CompareMethod compareMethod = new CompareMethod(dbHelper, differences, sb, qrText, assignedTo, chooserDepartment, chooserDevice, deviceModel, datePurchased, keyIdentical, keyDifferent, keyNew);
+                    String result = compareMethod.compare();
+
+                    if (result.equals(keyIdentical)) {
+                        Toast.makeText(UpdateData.this, keyIdentical, Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+
+                    if (result.equals(keyDifferent)) {
+                        CompareMethod.overrideItem(UpdateData.this, dateExpired, status, availability, () -> {
+                            if (CompareMethod.getNextActionRes()) {
+                                Drawable[] layers = new Drawable[]{
+                                        imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
+                                };
+                                TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+                                imageViewSave.setImageDrawable(transitionDrawable);
+                                transitionDrawable.startTransition(700);
+
+                                Intent intent = new Intent();
+                                intent.putExtra("dataRefreshed", true);
+                                setResult(RESULT_OK, intent);
+                                new Handler().postDelayed(() -> {
+                                    finish();
+                                }, 500);
+                            }
+                        });
+
+                    }
+
+
                 }
             });
 
@@ -386,7 +389,9 @@
 
 
 
-        private void clickOptionGadgetCategory(int parentHeight) {
+
+
+        private void openGadgetCategoryOption(int parentHeight) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
             View customView = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
@@ -611,11 +616,16 @@
 
             // Add default gadgets if database is empty
             if (gadgetsList.isEmpty()) {
+
                 dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_unknown_device));
                 dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.laptop_icon));
                 dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_mobile_phone));
                 dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_tablet));
                 dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_pc_computer));
+                dbHelper.addGadgetCategory("Monitor", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_monitor));
+                dbHelper.addGadgetCategory("Mouse", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_mouse));
+                dbHelper.addGadgetCategory("Keyboard", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_keyboard));
+                dbHelper.addGadgetCategory("Headset", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_headset));
 
                 gadgetsList = dbHelper.getAllGadgetsCategory();
             }
@@ -633,15 +643,17 @@
                 imageView.setImageResource(R.drawable.device_model);
             }
         }
-        // END GADGETS CHOOSER
 
-        private void clickDepartmentCategory() {
+
+
+        private void openDepartmentCategoryOption() {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
             View customView = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
 
             TextView titleText = customView.findViewById(R.id.titleText);
-            titleText.setText("Select Department");
+            String title = "Select Department";
+            titleText.setText(title);
 
             // Find the ListView in your custom layout
             listView = customView.findViewById(R.id.list_item_option);

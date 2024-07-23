@@ -80,7 +80,7 @@ public class MobileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final int initialHeight = cardView_options.getHeight();
                 int duration = 300;
-                Utils.smoothHideAndReveal(cardView_options, duration);
+                Utils.smoothTransition(cardView_options, duration);
                 if (cardViewContent.getVisibility() == View.GONE) {
                     Utils.rotateUp(settingsIcon);
                     cardViewContent.setVisibility(View.VISIBLE);

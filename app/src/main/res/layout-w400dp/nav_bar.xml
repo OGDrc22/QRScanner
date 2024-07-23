@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
+    android:paddingHorizontal="@dimen/padding_8"
     android:paddingVertical="8dp">
 
     <ImageView
         android:id="@+id/backBtn"
         style="@style/backBtnIC_small"
+        android:background="?android:selectableItemBackgroundBorderless"
         android:src="@drawable/arrow_back"
         android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +61,7 @@
         android:gravity="end"
         android:padding="8dp"
         android:src="@drawable/gear"
+        android:background="?android:selectableItemBackgroundBorderless"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -125,7 +127,7 @@
                     android:paddingVertical="@dimen/padding_16">
 
                     <TextView
-                        style="@style/textStyleConstantColor2Opaque_small"
+                        style="@style/textStyleConstantColor_2_opaque_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sort"

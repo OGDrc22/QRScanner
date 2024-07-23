@@ -1,5 +1,8 @@
 package com.example.qrscanner.utils;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -11,6 +14,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.transition.AutoTransition;
+import android.transition.ChangeBounds;
+import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -24,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.example.qrscanner.DB.DBHelper;
@@ -242,8 +248,33 @@ public class Utils {
 
     }
 
-    public static void smoothHideAndReveal(ViewGroup viewGroup, int animationDuration) {
+    public static void smoothTransition(ViewGroup viewGroup, int animationDuration) {
         TransitionManager.beginDelayedTransition(viewGroup, new AutoTransition().setDuration(animationDuration));
+    }
+
+    public static void changeBoundsTransition(ConstraintLayout constraintHolder, int duration) {
+        Transition transition = new ChangeBounds();
+        transition.setInterpolator(new AccelerateDecelerateInterpolator());
+        transition.setDuration(500);
+
+        TransitionManager.beginDelayedTransition(constraintHolder, transition);
+    }
+    public static void scaleUpAnimator(View whatToScale, float from, float to, int duration) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(whatToScale, "scaleX", from, to);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(whatToScale, "scaleY", from, to);
+        animatorSet.playTogether(scaleX, scaleY);
+        animatorSet.setDuration(duration);
+        animatorSet.start();
+    }
+
+    public static void scaleDownAnimator(View whatToScale, float from, float to, int duration) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(whatToScale, "scaleX", from, to);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(whatToScale, "scaleY", from, to);
+        animatorSet.playTogether(scaleX, scaleY);
+        animatorSet.setDuration(duration);
+        animatorSet.start();
     }
 
     public static void expandCardView(final CardView cardView, int duration) {
@@ -275,10 +306,9 @@ public class Utils {
         animator.start();
     }
 
-    public static void expandCardViewItemAdapter(Context context, final CardView cardView, int duration) {
+    public static void expandCardViewItemAdapter(final CardView cardView, int duration) {
 
-        final int initialHeight = cardView.getMeasuredHeight();
-        int newHeight = getWrapContentHeight(cardView) - initialHeight - dpToPxOrDirectPx(context,24);
+        int newHeight = (getWrapContentHeight(cardView));
 
         ValueAnimator animator = ValueAnimator.ofInt(cardView.getHeight(), newHeight);
         animator.addUpdateListener(animation -> {
@@ -307,8 +337,12 @@ public class Utils {
 
     public static int getWrapContentHeight(CardView cardView) {
         // Measure the CardView
-        cardView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+//        cardView.measure(View.MeasureSpec.makeMeasureSpec(cardView.getWidth(), View.MeasureSpec.UNSPECIFIED),
+//                View.MeasureSpec.makeMeasureSpec(cardView.getWidth(), View.MeasureSpec.UNSPECIFIED));
+
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(cardView.getWidth(), View.MeasureSpec.EXACTLY);
+        int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        cardView.measure(widthSpec, heightSpec);
 
         // Get the measured height
         return cardView.getMeasuredHeight();

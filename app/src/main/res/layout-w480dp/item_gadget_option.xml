@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="16dp"
-        android:paddingHorizontal="8dp">
+        android:paddingHorizontal="8dp"
+        android:foreground="?android:selectableItemBackgroundBorderless">
 
         <ImageView
             android:id="@+id/image"

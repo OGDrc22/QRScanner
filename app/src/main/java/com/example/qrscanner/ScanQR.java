@@ -17,13 +17,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -52,6 +49,7 @@ import com.example.qrscanner.models.Assigned_to_User_Model;
 //import com.example.qrscanner.options.Data;
 import com.example.qrscanner.models.Department;
 import com.example.qrscanner.models.Gadgets;
+import com.example.qrscanner.utils.CompareMethod;
 import com.example.qrscanner.utils.Utils;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -61,25 +59,27 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 
 public class ScanQR extends AppCompatActivity {
 
-    private EditText deviceModel;
-    private TextInputEditText qrText, assignedTo,chooserDepartment, chooserDevice, datePurchased, dateExpired, status, availability;
+    private TextInputEditText qrText, assignedTo,chooserDepartment, chooserDevice, deviceModel, datePurchased, dateExpired, status, availability;
     private TextInputLayout textInputLayoutQRText, textInputLayoutAssignedTo, textInputLayoutDep, textInputLayoutDevice, textInputLayoutDeviceModel, textInputLayoutDatePurchased, textInputLayoutExpired, textInputLayoutStatus;
     private BottomSheetDialog bottomSheetDialog;
     private TextView titleText;
@@ -91,6 +91,8 @@ public class ScanQR extends AppCompatActivity {
     private String scannedData, gadgetCategoryName, departmentCategoryName;
     private ImageView settings, backBtn, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewSave;
 
+    private MaterialCardView cancelButton;
+
     private Gadgets gadgetPosition;
     private Department departmentPosition;
 
@@ -99,6 +101,13 @@ public class ScanQR extends AppCompatActivity {
 
     private DBHelper dbHelper;
     private static final String pattern = "MM/dd/yy";
+
+    private final String keyNew = "New";
+    private final String keyIdentical = "No differences found.";
+    private final String keyDifferent = "Difference found";
+
+    private List<String> differences;
+    private StringBuilder sb;
 
     TextWatcher textWatcherAssignedTo = new TextWatcher() {
         @Override
@@ -160,13 +169,16 @@ public class ScanQR extends AppCompatActivity {
         cameraPreview = findViewById(R.id.cameraPreview);
 
         bottomSheetDialog = new BottomSheetDialog(ScanQR.this);
+        differences = new ArrayList<>();
+        sb = new StringBuilder();
+
 
 
         titleText = findViewById(R.id.titleTextView);
         settings = findViewById(R.id.settingsIcon);
         backBtn = findViewById(R.id.backBtn);
         currentActivity = findViewById(R.id.currentActivity);
-
+        currentActivity.setImageResource(R.drawable.qr_icon_24);
         titleText.setText("Scan QR Code");
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -196,7 +208,6 @@ public class ScanQR extends AppCompatActivity {
 
         //TODO WHEN A GADGET DELETED PUT "Unknown"
 
-        currentActivity.setImageResource(R.drawable.ic_scan);
 
         if (ContextCompat.checkSelfPermission(ScanQR.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             init();
@@ -270,9 +281,32 @@ public class ScanQR extends AppCompatActivity {
                 result.addOnSuccessListener(barcodes -> {
                     for (Barcode barcode : barcodes) {
                         openBottomSheetDialog();
-                        bottomSheetDialog.show();
                         scannedData = barcode.getRawValue();
-                        qrText.setText(scannedData);
+
+                        ArrayList<Assigned_to_User_Model> dataList = dbHelper.fetchDevice();
+                        for (Assigned_to_User_Model item : dataList) {
+                            String serialNum = item.getSerialNumber();
+                            String serialNumString = String.valueOf(serialNum);
+
+                            if (scannedData.equals(serialNumString)) {
+                                bottomSheetDialog.show();
+                                qrText.setText(item.getSerialNumber());
+                                assignedTo.setText(item.getName());
+                                chooserDepartment.setText(item.getDepartment());
+                                chooserDevice.setText(item.getDeviceType());
+                                deviceModel.setText(item.getDeviceBrand());
+                                datePurchased.setText(item.getDatePurchased());
+                                dateExpired.setText(item.getDateExpired());
+                                status.setText(item.getStatus());
+                                availability.setText(item.getAvailability());
+
+                                cancelButton.setVisibility(View.VISIBLE);
+                                Toast.makeText(this, "Already in the Database", Toast.LENGTH_SHORT).show();
+                            } else {
+                                bottomSheetDialog.show();
+                                qrText.setText(scannedData);
+                            }
+                        }
 
                         if (!qrText.getText().toString().isEmpty()) {
                             textInputLayoutQRText.setHelperTextEnabled(false);
@@ -294,9 +328,6 @@ public class ScanQR extends AppCompatActivity {
         preview.setSurfaceProvider(cameraPreview.getSurfaceProvider());
         processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
     }
-
-
-
 
 
 
@@ -326,6 +357,7 @@ public class ScanQR extends AppCompatActivity {
         textInputLayoutDatePurchased = view.findViewById(R.id.TIL_DatePurchased);
         textInputLayoutExpired = view.findViewById(R.id.TIL_Expiration);
         textInputLayoutStatus = view.findViewById(R.id.TIL_Status);
+        cancelButton = view.findViewById(R.id.cancelButton);
 
 
         assignedTo.addTextChangedListener(textWatcherAssignedTo);
@@ -357,7 +389,7 @@ public class ScanQR extends AppCompatActivity {
         int parentH = drawable.getMinimumHeight();
 
         chooserDevice.setOnClickListener(v -> {
-            clickOptionGadgetCategory(parentH);
+            openGadgetCategoryOption(parentH);
             textInputLayoutDevice.setError(null);
             chooserDevice.setText("Unknown");
             textInputLayoutDevice.setStartIconDrawable(R.drawable.ic_unknown_device);
@@ -371,7 +403,7 @@ public class ScanQR extends AppCompatActivity {
 
 
         chooserDepartment.setOnClickListener(v -> {
-            clickDepartmentCategory();
+            openDepartmentCategoryOption();
 
 
             textInputLayoutAssignedTo.clearFocus();
@@ -425,16 +457,10 @@ public class ScanQR extends AppCompatActivity {
                     allFieldsFilled = false;
                 }
 
-//                if (assignedTo.getText().toString().isEmpty()) {
-//                    textInputLayoutAssignedTo.setError("Please fill up");
-//                    textInputLayoutAssignedTo.setErrorEnabled(true);
+//                if (chooserDepartment.getText().toString().isEmpty()) {
+//                    textInputLayoutDep.setError("Please fill up");
 //                    allFieldsFilled = false;
 //                }
-
-                if (chooserDepartment.getText().toString().isEmpty()) {
-                    textInputLayoutDep.setError("Please fill up");
-                    allFieldsFilled = false;
-                }
 
                 if (chooserDevice.getText().toString().isEmpty()) {
                     textInputLayoutDevice.setError("Please pick \"Unknown\", if you don't know what type of device is.");
@@ -453,17 +479,17 @@ public class ScanQR extends AppCompatActivity {
                     allFieldsFilled = false;
                 }
 
-//                if (dateExpired.getText().toString().isEmpty()) {
-//                    textInputLayoutExpired.setError("Please fill up");
-//                    allFieldsFilled = false;
-//                }
-//
-//                if (status.getText().toString().isEmpty()) {
-//                    textInputLayoutStatus.setError("Please fill up");
-//                    allFieldsFilled = false;
-//                }
+//                differences = new ArrayList<>();
+//                sb = new StringBuilder();
 
-                if (allFieldsFilled) {
+                CompareMethod compareMethod = new CompareMethod(dbHelper, differences, sb, qrText, assignedTo, chooserDepartment, chooserDevice, deviceModel, datePurchased, keyIdentical, keyDifferent, keyNew);
+                String result = compareMethod.compare();
+
+                if (result.equals(keyNew)) {
+
+                    if (!allFieldsFilled) {
+                        Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+                    }
                     // Proceed with saving data
                     dbHelper.addDevice(
                             qrText.getText().toString(),
@@ -499,19 +525,45 @@ public class ScanQR extends AppCompatActivity {
                     new Handler().postDelayed(() -> {
                         bottomSheetDialog.dismiss();
                     }, 1000);
-                } else {
-                    Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+
+
+                } else if (result.equals(keyDifferent)) {
+
+                    if (!allFieldsFilled) {
+                        Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    CompareMethod.overrideItem(ScanQR.this, dateExpired, status, availability, () -> {
+                        if (CompareMethod.getNextActionRes()) {
+                            Drawable[] layers = new Drawable[]{
+                                    imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
+                            };
+                            TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+                            imageViewSave.setImageDrawable(transitionDrawable);
+                            transitionDrawable.startTransition(700);
+
+                            Intent intent = new Intent();
+                            intent.putExtra("dataRefreshed", true);
+                            setResult(RESULT_OK, intent);
+                            new Handler().postDelayed(() -> {
+                                finish();
+                            }, 500);
+                        }
+                    });
+
+                } else if (result.equals(keyIdentical)) {
+
+                    bottomSheetDialog.dismiss();
+
                 }
             }
         });
-
-        // Debug
-        boolean check = textInputLayoutAssignedTo.getErrorIconDrawable() != null;
-        MaterialCardView debug = view.findViewById(R.id.cancelButton);
-        debug.setOnClickListener(new View.OnClickListener() {
+        
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ScanQR.this, "Error Icon Visible: " + check, Toast.LENGTH_SHORT).show();
+                bottomSheetDialog.cancel();
             }
         });
 
@@ -530,24 +582,9 @@ public class ScanQR extends AppCompatActivity {
 
 
 
-//    private void afterTextChanged(TextInputLayout textInputLayout, TextInputEditText textInputEditText) {
-//        while (true){
-//            if (textInputEditText.getText().toString().isEmpty()) {
-//                textInputLayout.setEndIconDrawable(R.drawable.ic_cancel_24);
-//            } else {
-//                textInputLayout.setEndIconDrawable(R.drawable.ic_edit);
-//            }
-//        }
-//    }
 
 
-
-
-
-
-
-    //GADGET CHOOSER
-    private void clickOptionGadgetCategory(int parentHeight) {
+    private void openGadgetCategoryOption(int parentHeight) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ScanQR.this, R.style.AlertDialogTheme);
         View customView = LayoutInflater.from(ScanQR.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
@@ -776,11 +813,16 @@ public class ScanQR extends AppCompatActivity {
 
         // Add default gadgets if database is empty
         if (gadgetsList.isEmpty()) {
+
             dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_unknown_device));
             dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.laptop_icon));
             dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_mobile_phone));
             dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_tablet));
             dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_pc_computer));
+            dbHelper.addGadgetCategory("Monitor", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_monitor));
+            dbHelper.addGadgetCategory("Mouse", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_mouse));
+            dbHelper.addGadgetCategory("Keyboard", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_keyboard));
+            dbHelper.addGadgetCategory("Headset", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_headset));
 
             gadgetsList = dbHelper.getAllGadgetsCategory();
         }
@@ -790,16 +832,14 @@ public class ScanQR extends AppCompatActivity {
 
 
 
-    //END GADGET CHOOSER
-
-
-    private void clickDepartmentCategory() {
+    private void openDepartmentCategoryOption() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ScanQR.this, R.style.AlertDialogTheme);
         View customView = LayoutInflater.from(ScanQR.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
 
         TextView titleText = customView.findViewById(R.id.titleText);
-        titleText.setText("Select Department");
+        String title = "Select Department";
+        titleText.setText(title);
 
         // Find the ListView in your custom layout
         listView = customView.findViewById(R.id.list_item_option);
@@ -1007,17 +1047,3 @@ public class ScanQR extends AppCompatActivity {
         });
     }
 }
-
-
-
-//    // Assuming you have the scanned content as 'qrContent'
-//    String[] parts = qrContent.split(",");
-//    String serialNumber = parts[0].trim();
-//    String name = parts[1].trim();
-//
-//    // Insert into the database
-//    SQLiteDatabase db = getWritableDatabase();
-//    ContentValues values = new ContentValues();
-//    values.put(KEY_SERIAL_NUMBER, serialNumber);
-//    values.put(KEY_NAME, name);
-//    long newRowId = db.insert(TABLE_NAME, null, values);

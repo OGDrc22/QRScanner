@@ -16,10 +16,10 @@
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/qr_icon_24"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@drawable/ic_foreground"
+        android:roundIcon="@drawable/qr_icon_48"
         android:supportsRtl="true"
         android:theme="@style/Theme.QRScanner.Light"
         tools:targetApi="31" >
