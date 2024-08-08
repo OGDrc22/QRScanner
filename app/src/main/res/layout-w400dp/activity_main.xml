@@ -19,8 +19,7 @@
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search_bar"
-        style="@style/searchbar_small"
-        android:theme="@style/searchbar_small"
+        style="@style/searchbar_400dp"
         android:textAppearance="@font/gotham_regular"
         android:layout_width="match_parent"
         android:layout_height="36dp"
@@ -81,7 +80,7 @@
 
                     <ImageView
                         android:id="@+id/imageViewAdd"
-                        style="@style/sizeICScan_small"
+                        style="@style/sizeICScan_400dp"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginEnd="8dp"
@@ -89,7 +88,7 @@
 
                     <TextView
                         android:id="@+id/textAdd"
-                        style="@style/cardBtnTxtStyleScan_small"
+                        style="@style/cardBtnTxtStyleScan_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Scan Device" />
@@ -131,7 +130,7 @@
                                 android:src="@drawable/ic_import" />
 
                             <TextView
-                                style="@style/cardBtnTxtStyle3_small"
+                                style="@style/cardBtnTxtStyle3_400dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Import" />
@@ -157,7 +156,7 @@
                                 android:src="@drawable/ic_export" />
 
                             <TextView
-                                style="@style/cardBtnTxtStyle3_small"
+                                style="@style/cardBtnTxtStyle3_400dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Export" />
@@ -191,7 +190,7 @@
 
                     <TextView
                         android:id="@+id/textLaptop"
-                        style="@style/cardBtnTxtStyle_small"
+                        style="@style/cardBtnTxtStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Laptops" />
@@ -220,7 +219,7 @@
 
                     <TextView
                         android:id="@+id/textTablet"
-                        style="@style/cardBtnTxtStyle_small"
+                        style="@style/cardBtnTxtStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tablets" />
@@ -248,7 +247,7 @@
 
                     <TextView
                         android:id="@+id/textCellphone"
-                        style="@style/cardBtnTxtStyle_small"
+                        style="@style/cardBtnTxtStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Phones" />
@@ -277,7 +276,7 @@
 
                     <TextView
                         android:id="@+id/textPC"
-                        style="@style/cardBtnTxtStyle_small"
+                        style="@style/cardBtnTxtStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Desktops" />
@@ -305,7 +304,7 @@
 
                     <TextView
                         android:id="@+id/uUText"
-                        style="@style/cardBtnTxtStyle_small"
+                        style="@style/cardBtnTxtStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Unknown User" />
@@ -332,7 +331,7 @@
 
                     <TextView
                         android:id="@+id/expiredText"
-                        style="@style/cardBtnTxtStyle_small"
+                        style="@style/cardBtnTxtStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Expired Device" />
@@ -360,7 +359,7 @@
 
                     <TextView
                         android:id="@+id/allText"
-                        style="@style/cardBtnTxtStyle_small"
+                        style="@style/cardBtnTxtStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="All Device" />
@@ -387,7 +386,7 @@
 
                     <TextView
                         android:id="@+id/unknownText"
-                        style="@style/cardBtnTxtStyle_small"
+                        style="@style/cardBtnTxtStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Unknown" />

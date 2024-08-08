@@ -36,6 +36,9 @@
     <color name="txtSubHeader">#80171717</color>
     <color name="txtTranslucentLight">#66969696</color>
 
+    <color name="txtHeaderLight">#e6e9f6</color>
+    <color name="txtSubHeaderLight">#80e6e9f6</color>
+
     <color name="divider">#807E7E7E</color>
 
     <color name="textL">#0F0E16</color>
@@ -59,11 +62,12 @@
     <color name="cl4">#F2CCAE</color>
 
     <color name="itemBg">#EFEFEF</color>
-    <color name="itemBg2">#B6D0E2</color>
+    <color name="itemBg2">#1e2328</color>
     <color name="clExpired">#FFC0C0</color>
 
     <color name="clDelete">#FF0F0F</color>
     <color name="clError">#FF474C</color>
     <color name="clNeonGreen">#009602</color>
+
 
 </resources>

@@ -51,7 +51,7 @@
 
                 <TextView
                     android:id="@+id/titleText"
-                    style="@style/textStyleBoldConstantColorTitle_small"
+                    style="@style/textStyleBoldConstantColorTitle_400dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="8dp"
@@ -88,7 +88,7 @@
 
                     <EditText
                         android:id="@+id/editText"
-                        style="@style/textStyle1_small"
+                        style="@style/textStyle1_400dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:hint="Device Name."
@@ -133,7 +133,7 @@
 
                 <Button
                     android:id="@+id/actionDelete"
-                    style="@style/textStyleConstantColorRed_small"
+                    style="@style/textStyleConstantColorRed_400dp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="1dp"
@@ -158,7 +158,7 @@
 
                 <Button
                     android:id="@+id/actionCancel"
-                    style="@style/CancelBTNTextStyle_small"
+                    style="@style/CancelBTNTextStyle_400dp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="1dp"
@@ -187,7 +187,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="1dp"
                     android:paddingVertical="18dp"
-                    style="@style/ExportBTNTextStyle_small"
+                    style="@style/ExportBTNTextStyle_400dp"
                     android:backgroundTint="@android:color/transparent"
                     android:text="Save"
                     app:layout_constraintBottom_toBottomOf="parent"

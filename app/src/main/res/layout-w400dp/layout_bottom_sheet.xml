@@ -58,7 +58,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/qrText"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -80,7 +80,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/assignedTo"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
@@ -98,7 +98,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/chooserDepartment"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -119,7 +119,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/chooserDevice"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -144,7 +144,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/deviceModel"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
@@ -164,7 +164,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textDatePurchased"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -186,7 +186,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textDateExpired"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -208,7 +208,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/status"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -229,7 +229,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/availability"
-                    style="@style/TextInputEditText_small"
+                    style="@style/TextInputEditText_400dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -280,7 +280,7 @@
                         android:src="@drawable/save" />
 
                     <TextView
-                        style="@style/SaveText_small"
+                        style="@style/SaveText_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Save" />
@@ -313,7 +313,7 @@
                     android:paddingVertical="18dp">
 
                     <TextView
-                        style="@style/CancelBTNTextStyle_small"
+                        style="@style/CancelBTNTextStyle_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cancel" />

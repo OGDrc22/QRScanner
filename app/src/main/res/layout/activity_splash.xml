@@ -10,7 +10,7 @@
 
     <ImageView
         android:id="@+id/splash_main"
-        style="@style/iconMain"
+        style="@style/iconSplash"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

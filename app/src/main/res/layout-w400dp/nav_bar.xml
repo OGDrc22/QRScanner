@@ -10,7 +10,7 @@
 
     <ImageView
         android:id="@+id/backBtn"
-        style="@style/backBtnIC_small"
+        style="@style/backBtnIC_400dp"
         android:background="?android:selectableItemBackgroundBorderless"
         android:src="@drawable/arrow_back"
         android:padding="8dp"
@@ -43,7 +43,7 @@
 
         <TextView
             android:id="@+id/titleTextView"
-            style="@style/TitleStyle_small"
+            style="@style/TitleStyle_400dp"
             android:layout_marginStart="12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
 
                     <ImageView
                         android:id="@+id/deleteIC"
-                        style="@style/deleteIC_small"
+                        style="@style/deleteIC_400dp"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/trash_can_10416"
@@ -108,7 +108,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        style="@style/textStyleConstantColorRed_small"
+                        style="@style/textStyleConstantColorRed_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -127,7 +127,7 @@
                     android:paddingVertical="@dimen/padding_16">
 
                     <TextView
-                        style="@style/textStyleConstantColor_2_opaque_small"
+                        style="@style/textStyleConstantColor_2_opaque_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sort"
@@ -152,7 +152,7 @@
 
                     <TextView
                         android:id="@+id/textViewItemCount"
-                        style="@style/SubTitleConstantColor_14_small"
+                        style="@style/Identifier_text_upper"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Item Count: "

@@ -1,5 +1,6 @@
 package com.example.qrscanner.adapter;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -190,17 +191,23 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             int clGreen = ContextCompat.getColor(context, R.color.primary);
             int clRed = ContextCompat.getColor(context, R.color.clError);
             if (status.equals("For Refresh")) {
-                holder.topExpiration.setVisibility(View.VISIBLE);
-                holder.cardViewMain.setCardBackgroundColor(clExpired);
+                holder.topExpiration.setVisibility(0);
                 holder.textHolderStatus.setTextColor(clRed);
+                ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(holder.imgVwStatus, "rotation", new float[]{0.0f, 180.0f});
+                rotationAnimator.setDuration(1000);
+                rotationAnimator.setRepeatCount(-1);
+                rotationAnimator.start();
             } else {
-                holder.topExpiration.setVisibility(View.GONE);
+                holder.topExpiration.setVisibility(8);
                 holder.textHolderStatus.setTextColor(clGreen);
-                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                if (AppCompatDelegate.getDefaultNightMode() == 2) {
                     holder.cardViewMain.setCardBackgroundColor(clDark);
-                } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                } else if (AppCompatDelegate.getDefaultNightMode() == 1) {
                     holder.cardViewMain.setCardBackgroundColor(clLight);
                 }
+                ObjectAnimator rotationAnimator2 = ObjectAnimator.ofFloat(holder.imgVwStatus, "rotation", new float[]{0.0f, 180.0f});
+                rotationAnimator2.setDuration(1000);
+                rotationAnimator2.start();
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -289,8 +296,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         LinearLayout linearLayoutDeviceType, linearLayoutDeviceModel, imgScan_Frame, linearLayout01, linearLayout06;
         TextView txtSN, serialNum_tv, textHolderAssignedTo, textHolderDepartment, textHolderDeviceModel, textHolderDatePur, textHolderDateExpired, textHolderStatus, textHolderAvailability, textHolderDeviceType, subHeader;
         TextView hintAssignedTo, hintDepartment, hintDeviceType, hintDeviceModel, hintDatePurchased, hintExpirationDate;
-        ConstraintLayout otherInfo2, actions;
-        ImageView imgScan, imgVwDepartment, imgVwDatePur, imgVwDateExpired, topExpiration, deviceTypeIC, deviceModelIC, dropDownArrow, imageView3, connector, connector2, connector3, connector4, connector5;
+        ConstraintLayout actions;
+        ImageView imgScan, imgVwDepartment, imgVwStatus, imgVwDatePur, imgVwDateExpired, topExpiration, deviceTypeIC, deviceModelIC, dropDownArrow, imageView3, connector, connector2, connector3, connector4, connector5;
         CardView editBtn, deleteBtn, cardViewMain;
 
         FrameLayout topUserF, topExpirationF, headerF, subHeaderF, textSN_F;
@@ -328,6 +335,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             textHolderStatus = itemView.findViewById(R.id.textHolderStatus);
             imgVwDepartment = itemView.findViewById(R.id.imgVwDepartment);
             imgVwDatePur = itemView.findViewById(R.id.imgVwDatePur);
+            imgVwStatus = itemView.findViewById(R.id.imgVwStatus);
             imgVwDateExpired = itemView.findViewById(R.id.imgVwDateExpired);
             deviceTypeIC = itemView.findViewById(R.id.deviceTypeIC);
             deviceModelIC = itemView.findViewById(R.id.deviceModelIC);
@@ -358,7 +366,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             editBtn =  itemView.findViewById(R.id.editBtn);
             deleteBtn =  itemView.findViewById(R.id.deleteBtn);
 
-            otherInfo2 = itemView.findViewById(R.id.otherInfo2);
             actions = itemView.findViewById(R.id.actions);
 
             // Get the layout parameters of the view

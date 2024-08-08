@@ -53,7 +53,7 @@
 
                 <TextView
                     android:id="@+id/titleText"
-                    style="@style/textStyleBoldConstantColorTitle_small"
+                    style="@style/textStyleBoldConstantColorTitle_400dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="8dp"
@@ -63,7 +63,7 @@
 
             <TextView
                 android:id="@+id/messageText"
-                style="@style/textStyle1_small"
+                style="@style/textStyle1_400dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
@@ -79,7 +79,7 @@
 
                 <Button
                     android:id="@+id/actionCancel"
-                    style="@style/CancelBTNTextStyle_small"
+                    style="@style/CancelBTNTextStyle_400dp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="1dp"
@@ -113,7 +113,7 @@
 
                 <Button
                     android:id="@+id/actionDelete"
-                    style="@style/textStyleConstantColorRed_small"
+                    style="@style/textStyleConstantColorRed_400dp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="1dp"

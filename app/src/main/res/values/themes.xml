@@ -3,35 +3,27 @@
     <style name="Base.Theme.QRScanner" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-
         <item name="android:statusBarColor" targetApi="1">@color/defaultStatus</item>
     </style>
 
-    <style name="ThemeOverlay.QRScanner.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
-        <item name="fullscreenTextColor">@color/light_blue_A200</item>
-    </style>
 
     <style name="Theme.QRScanner.Light" parent="Base.Theme.QRScanner" />
 
     <style name="Theme.QRScanner.Fullscreen" parent="Theme.QRScanner.Light">
-
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowBackground">@null</item>
     </style>
 
-    <!-- DATE PICKER-->
     <style name="AppDatePicker" parent="@style/ThemeOverlay.MaterialComponents.MaterialCalendar">
         <item name="colorPrimary">@color/accent</item>
         <item name="colorSecondary">@color/bgL</item>
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent
-        </item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
     </style>
+
     <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerSize">@dimen/cardCornerRadius_20</item>
     </style>
 
-    <!--END OF DATE PICKER-->
 
     <style name="ScreenBackground">
         <item name="android:background">@color/bgL</item>
@@ -41,10 +33,20 @@
         <item name="android:src">@drawable/logo</item>
     </style>
 
-    <style name="iconMain">
+    <style name="iconSplash">
         <item name="android:src">@drawable/splash_vector</item>
         <item name="android:layout_width">148dp</item>
         <item name="android:layout_height">148dp</item>
+    </style>
+
+    <style name="searchbar">
+        <item name="android:textSize">@dimen/text_14sp</item>
+        <item name="android:backgroundTint">@color/itemBg</item>
+    </style>
+
+    <style name="searchbar_400dp">
+        <item name="android:textSize">@dimen/text_12sp</item>
+        <item name="android:backgroundTint">@color/itemBg</item>
     </style>
 
     <style name="TitleStyle">
@@ -52,67 +54,37 @@
         <item name="android:textSize">20dp</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="TitleStyle_small">
+    
+    <style name="TitleStyle_18sp">
+        <item name="android:textSize">@dimen/text_18sp</item>
+        <item name="android:textColor">@color/txtHeader</item>
+        <item name="android:fontFamily">@font/gotham_bold</item>
+    </style>
+
+    <style name="TitleStyle_400dp">
         <item name="android:textColor">@color/accent</item>
         <item name="android:textSize">@dimen/text_18sp</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
 
-    <style name="TitleStyleConstantColor_20">
-        <item name="android:textColor">@color/txtHeader</item>
-        <item name="android:textSize">@dimen/text_20sp</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-    <style name="TitleStyleConstantColor_18">
-        <item name="android:textColor">@color/txtHeader</item>
-        <item name="android:textSize">@dimen/text_18sp</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-    <style name="TitleStyleConstantColor_16">
-        <item name="android:textColor">@color/txtHeader</item>
-        <item name="android:textSize">@dimen/text_16sp</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-    <style name="SubTitleConstantColor_16">
+    <style name="SubTitle_14sp">
+        <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/txtSubHeader</item>
-        <item name="android:textSize">@dimen/text_16sp</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
 
-    <style name="TitleStyleConstantColor_16_small">
-        <item name="android:textColor">@color/txtHeader</item>
-        <item name="android:textSize">@dimen/text_16sp</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-    <style name="TitleStyleConstantColor_14_small">
-        <item name="android:textColor">@color/txtHeader</item>
-        <item name="android:textSize">@dimen/text_14sp</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-    <style name="SubTitleConstantColor_14_small">
-        <item name="android:textColor">@color/txtSubHeader</item>
-        <item name="android:textSize">@dimen/text_14sp</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
     <style name="Identifier_text_upper">
         <item name="android:textColor">@color/txtSubHeader</item>
         <item name="android:textSize">@dimen/text_12sp</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="Identifier_text_upper_small">
+
+    <style name="Identifier_text_upper_400dp">
         <item name="android:textColor">@color/txtSubHeader</item>
         <item name="android:textSize">@dimen/text_10sp</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
 
-    <style name="searchbar">
-        <item name="android:textSize">@dimen/text_14sp</item>
-        <item name="android:backgroundTint">@color/itemBg</item>
-    </style>
-    <style name="searchbar_small">
-        <item name="android:textSize">@dimen/text_12sp</item>
-        <item name="android:backgroundTint">@color/itemBg</item>
-    </style>
 
 
     <!-- TEXT STYLES -->
@@ -121,11 +93,13 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
-    <style name="textStyle1_small">
+
+    <style name="textStyle1_400dp">
         <item name="android:textSize">12dp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
+
     <style name="textStyle1Bold">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>
@@ -137,6 +111,7 @@
         <item name="android:textColor">@color/bgL</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
+
     <style name="textStyle2Bold">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>
@@ -148,6 +123,7 @@
         <item name="android:textColor">@color/bgD</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="textStyle3Bold">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgD</item>
@@ -160,12 +136,12 @@
         <item name="android:fontFamily">@font/gotham_bold</item>
         <item name="android:textStyle">bold</item>
     </style>
-    <style name="textStyleBoldConstantColorTitle_small">
+
+    <style name="textStyleBoldConstantColorTitle_400dp">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-
 
 
     <style name="textStyleBoldConstantColor1">
@@ -173,41 +149,49 @@
         <item name="android:textColor">@color/bgL</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="textStyleBoldConstantColor2">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgD</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="textStyleConstantColor1">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/bgL</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
+
     <style name="textStyleConstantColor2Opaque">
         <item name="android:textSize">@dimen/text_16sp</item>
         <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="textStyleConstantColor_2_opaque_small">
+
+    <style name="textStyleConstantColor_2_opaque_400dp">
         <item name="android:textSize">@dimen/text_12sp</item>
         <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="textStyleConstantColor_16_opaque">
         <item name="android:textSize">@dimen/text_16sp</item>
         <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="textStyleConstantColor_14_opaque">
         <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="textStyleConstantColor2_small">
+
+    <style name="textStyleConstantColor2_400dp">
         <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/txtSubHeader</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
+
     <style name="textStyleCounter">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/accent</item>
@@ -221,24 +205,28 @@
         <item name="android:textColor">@color/clDelete</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
+
     <style name="ExportBTNTextStyle">
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/accent</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
-    <style name="ExportBTNTextStyle_small">
+
+    <style name="ExportBTNTextStyle_400dp">
         <item name="android:textSize">12dp</item>
         <item name="android:textColor">@color/accent</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
-    <style name="CancelBTNTextStyle_small">
+
+    <style name="CancelBTNTextStyle_400dp">
         <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
-    <style name="textStyleConstantColorRed_small">
+
+    <style name="textStyleConstantColorRed_400dp">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/clDelete</item>
@@ -250,22 +238,26 @@
         <item name="android:backgroundTint">@color/accent</item>
         <item name="android:foreground">?android:selectableItemBackgroundBorderless</item>
     </style>
+
     <style name="SaveText">
         <item name="android:textSize">@dimen/text_16sp</item>
         <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="SaveText_small">
+
+    <style name="SaveText_400dp">
         <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="EditText">
         <item name="android:textSize">@dimen/text_16sp</item>
         <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="EditText_small">
+
+    <style name="EditText_400dp">
         <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
@@ -278,6 +270,7 @@
         <item name="cardBackgroundColor">@android:color/transparent</item>
         <item name="android:foreground">?android:selectableItemBackgroundBorderless</item>
     </style>
+
     <style name="CancelBTNTextStyle">
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/txtSubHeader</item>
@@ -294,7 +287,6 @@
         <item name="android:backgroundTint">@color/primary</item>
     </style>
     <!---BUTTON STYLES ^^^^^ -->
-
 
 
     <style name="cardViewOptions">
@@ -316,6 +308,7 @@
         <item name="cardElevation">0dp</item>
         <item name="android:foreground">?android:attr/selectableItemBackgroundBorderless</item>
     </style>
+
     <style name="cardViewBtnUn">
         <item name="maxHeight">160dp</item>
         <item name="android:layout_width">0dp</item>
@@ -336,6 +329,7 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
     </style>
+
     <style name="linearlayoutstyle2">
         <item name="android:orientation">horizontal</item>
         <item name="android:layout_width">wrap_content</item>
@@ -345,60 +339,67 @@
     </style>
 
 
-
     <style name="cardBtnTxtStyle">
         <item name="android:textSize">@dimen/text_18sp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="cardBtnTxtStyle_small">
+
+    <style name="cardBtnTxtStyle_400dp">
         <item name="android:textSize">@dimen/text_12sp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="cardBtnTxtStyle2">
         <item name="android:textSize">@dimen/text_18sp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="cardBtnTxtStyle2_small">
+
+    <style name="cardBtnTxtStyle2_400dp">
         <item name="android:textSize">@dimen/text_16sp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="cardBtnTxtStyle3">
         <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="cardBtnTxtStyle3_small">
+
+    <style name="cardBtnTxtStyle3_400dp">
         <item name="android:textSize">@dimen/text_12sp</item>
         <item name="android:textColor">@color/textL</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="cardBtnTxtStyleScan">
         <item name="android:textSize">@dimen/text_18sp</item>
         <item name="android:textColor">@color/light1</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="cardBtnTxtStyleScan_small">
+
+    <style name="cardBtnTxtStyleScan_400dp">
         <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/light1</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
+
     <style name="genBtnTxtStyleScan">
         <item name="backgroundTint">@color/accent</item>
         <item name="android:textSize">@dimen/text_18sp</item>
         <item name="android:textColor">@color/light1</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-    <style name="genBtnTxtStyleScan_small">
+
+    <style name="genBtnTxtStyleScan_400dp">
         <item name="backgroundTint">@color/accent</item>
         <item name="android:textSize">@dimen/text_12sp</item>
         <item name="android:textColor">@color/light1</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
-
 
 
     <style name="cardViewBtn1">
@@ -422,95 +423,112 @@
         <item name="android:padding">8dp</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
-    <style name="backBtnIC_small">
+
+    <style name="backBtnIC_400dp">
         <item name="tint">@color/black</item>
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:padding">4dp</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
+
     <style name="sizeIC">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
     </style>
-    <style name="sizeIC_small">
+
+    <style name="sizeIC_400dp">
         <item name="android:layout_width">20dp</item>
         <item name="android:layout_height">20dp</item>
     </style>
+
     <style name="sizeICMedium">
         <item name="android:layout_width">36dp</item>
         <item name="android:layout_height">36dp</item>
     </style>
+
     <style name="sizeIC2">
         <item name="tint">@color/black</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
     </style>
+
     <style name="sizeIC2M">
         <item name="tint">@color/black</item>
         <item name="android:layout_width">32dp</item>
         <item name="android:layout_height">32dp</item>
     </style>
-    <style name="sizeIC2M_small">
+
+    <style name="sizeIC2M_400dp">
         <item name="tint">@color/black</item>
         <item name="android:layout_width">20dp</item>
         <item name="android:layout_height">20dp</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
+
     <style name="sizeICMono">
         <item name="tint">@color/black</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
+
     <style name="sizeICScan">
         <item name="tint">@color/light1</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
     </style>
+
     <style name="sizeICScanM">
         <item name="tint">@color/light1</item>
         <item name="android:layout_width">36dp</item>
         <item name="android:layout_height">36dp</item>
     </style>
-    <style name="sizeICScan_small">
+
+    <style name="sizeICScan_400dp">
         <item name="tint">@color/light1</item>
         <item name="android:layout_width">20dp</item>
         <item name="android:layout_height">20dp</item>
     </style>
-    <style name="sizeICScanM_small">
+
+    <style name="sizeICScanM_400dp">
         <item name="tint">@color/light1</item>
         <item name="android:layout_width">28dp</item>
         <item name="android:layout_height">28dp</item>
     </style>
 
     <style name="deleteIC">
-        <item name="tint">@color/clDelete</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
-    </style>
-    <style name="deleteIC_small">
         <item name="tint">@color/clDelete</item>
-        <item name="android:layout_width">20dp</item>
-        <item name="android:layout_height">20dp</item>
     </style>
+
     <style name="deleteICMedium">
-        <item name="tint">@color/clDelete</item>
         <item name="android:layout_width">36dp</item>
         <item name="android:layout_height">36dp</item>
+        <item name="tint">@color/clDelete</item>
     </style>
+
+    <style name="deleteIC_400dp">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="tint">@color/clDelete</item>
+    </style>
+
     <style name="icConstantColor1">
         <item name="android:tint">@color/textOffWhite</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
+
     <style name="icConstantColor1Medium">
         <item name="android:tint">@color/textOffWhite</item>
         <item name="android:layout_width">36dp</item>
         <item name="android:layout_height">36dp</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
+
     <style name="icConstantColor2">
         <item name="android:tint">@color/black</item>
         <item name="android:layout_width">24dp</item>
@@ -521,12 +539,12 @@
     <!-- ICONS SIZE ^^^^^ -->
 
 
-
     <style name="itemBG">
         <item name="cardBackgroundColor">@color/itemBg</item>
         <item name="cardCornerRadius">@dimen/cardCornerRadius_20</item>
     </style>
-    <style name="itemBG_small">
+
+    <style name="itemBG_400dp">
         <item name="cardBackgroundColor">@color/itemBg</item>
         <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
     </style>
@@ -551,11 +569,13 @@
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
     </style>
+
     <style name="hasUserIC">
         <item name="android:src">@drawable/user_unknown</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
     </style>
+
     <style name="unknownDeviceIC">
         <item name="android:src">@drawable/ic_unknown_device</item>
         <item name="android:layout_width">32dp</item>
@@ -608,7 +628,8 @@
         <item name="android:textAppearance">@font/gotham_regular</item>
         <item name="android:textSize">@dimen/text_14sp</item>
     </style>
-    <style name="TextInputEditText_small">
+
+    <style name="TextInputEditText_400dp">
         <item name="android:textColor">@color/accent</item>
         <item name="android:textAppearance">@font/gotham_regular</item>
         <item name="android:textSize">@dimen/text_12sp</item>

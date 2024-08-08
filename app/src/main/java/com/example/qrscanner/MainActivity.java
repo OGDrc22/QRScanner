@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -404,20 +405,20 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Check for required headers
-                if (!containsKeyword(headerMap, "serial")) {
+                if (!containsKeyword(headerMap, "Serial")) {
                     throw new IllegalArgumentException("Missing required header: Serial");
                 }
-                if (!containsKeyword(headerMap, "user") && !containsKeyword(headerMap, "user")) {
-                    throw new IllegalArgumentException("Missing required header: Name or User");
+                if (!containsKeyword(headerMap, "User") && !containsKeyword(headerMap, "Assigned To") && !containsKeyword(headerMap, "Name")) {
+                    throw new IllegalArgumentException("Missing required header: Name or User or ");
                 }
-                if (!containsKeyword(headerMap, "device") && !containsKeyword(headerMap, "asset type")) {
-                    throw new IllegalArgumentException("Missing required header: Name or User");
+                if (!containsKeyword(headerMap, "Device") && !containsKeyword(headerMap, "Asset Type")) {
+                    throw new IllegalArgumentException("Missing required header: Device or Asset Type");
                 }
-                if (!containsKeyword(headerMap, "device model") && !containsKeyword(headerMap, "asset description")) {
-                    throw new IllegalArgumentException("Missing required header: Name or User");
+                if (!containsKeyword(headerMap, "Device Model") && !containsKeyword(headerMap, "Asset Description")) {
+                    throw new IllegalArgumentException("Missing required header: Device Model or Asset Description");
                 }
-                if (!containsKeyword(headerMap, "date purchased") && !containsKeyword(headerMap, "ship date")) {
-                    throw new IllegalArgumentException("Missing required header: Name or User");
+                if (!containsKeyword(headerMap, "Date Purchased") && !containsKeyword(headerMap, "Ship Date")) {
+                    throw new IllegalArgumentException("Missing required header: Date Purchased or Ship Date");
                 }
 
                 // Iterate over data rows
@@ -425,36 +426,84 @@ public class MainActivity extends AppCompatActivity {
                 rowIterator.next(); // Skip header row
                 while (rowIterator.hasNext()) {
                     Row row = rowIterator.next();
-
                     String serialNum = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "serial")));
-                    String name = containsKeyword(headerMap, "user") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "user"))) : containsKeyword(headerMap, "user") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "user"))) : "";
-                    String department = containsKeyword(headerMap, "department") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "department"))) : "Unknown";
-                    if (department.isEmpty()) {
+
+                    String name;
+                    if (containsKeyword(headerMap, "user")) {
+                        name = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "user")));
+                    } else {
+                        name = "";
+                    }
+
+                    String department;
+                    if (containsKeyword(headerMap, "department")) {
+                        department = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "department")));
+                        if (department.isEmpty()) {
+                            department = "Unknown";
+                        }
+                    } else {
                         department = "Unknown";
                     }
-                    String deviceType = containsKeyword(headerMap, "device") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "device"))) : containsKeyword(headerMap, "type") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "type"))) : "Unknown";
-                    if (deviceType.isEmpty()) {
+
+                    String deviceType;
+                    if (containsKeyword(headerMap, "device")) {
+                        deviceType = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "device")));
+                        if (deviceType.isEmpty()) {
+                            deviceType = "Unknown";
+                        }
+                    } else if (containsKeyword(headerMap, "type")) {
+                        deviceType = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "type")));
+                        if (deviceType.isEmpty()) {
+                            deviceType = "Unknown";
+                        }
+                    } else {
                         deviceType = "Unknown";
                     }
-                    String deviceModel = containsKeyword(headerMap, "device model") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "device model"))) : containsKeyword(headerMap, "description") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "description"))) : null;
-                    if (deviceModel.isEmpty()) {
+
+                    String deviceModel;
+                    if (containsKeyword(headerMap, "device model")) {
+                        deviceModel = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "device model")));
+                    } else if (containsKeyword(headerMap, "description")) {
+                        deviceModel = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "description")));
+                    } else {
                         deviceModel = null;
                     }
-                    String datePurchased = containsKeyword(headerMap, "date purchased") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date purchased"))) : containsKeyword(headerMap, "ship date") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "ship date"))) : "00/00/00";
-                    if (datePurchased.isEmpty()) {
+
+                    String datePurchased;
+                    if (containsKeyword(headerMap, "date purchased")) {
+                        datePurchased = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date purchased")));
+                    } else if (containsKeyword(headerMap, "ship date")) {
+                        datePurchased = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "ship date")));
+                    } else {
                         datePurchased = "00/00/00";
                     }
-                    String dateExpired = containsKeyword(headerMap, "date expired") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date expired"))) : "00/00/00";
-                    if (dateExpired.isEmpty()) {
+
+                    String dateExpired;
+                    if (containsKeyword(headerMap, "date expired")) {
+                        dateExpired = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date expired")));
+                    } else {
                         dateExpired = "00/00/00";
                     }
-                    String status = containsKeyword(headerMap, "status") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "status"))) : null;
-                    String availability = containsKeyword(headerMap, "availability") ? getCellValueAsString(row.getCell(getColumnIndex(headerMap, "availability"))) : "In Stock";
+
+                    String status;
+                    if (containsKeyword(headerMap, "status")) {
+                        status = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "status")));
+                    } else {
+                        status = null;
+                    }
+
+                    String availability;
+                    if (containsKeyword(headerMap, "availability")) {
+                        availability = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "availability")));
+                    } else {
+                        availability = "In Stock";
+                    }
 
                     // Handle duplicate serial numbers
                     if (dbHelper.getAllSerialNumbers().contains(serialNum)) {
                         continue;
                     }
+
 
                     dbHelper.addDevice(serialNum, name, department, deviceType, deviceModel, datePurchased, dateExpired, status, availability);
                 }
@@ -519,58 +568,108 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void exportDatabaseToExcel(String fileName) {
-            Log.d("MainActivity", "Storage permission granted");
-            // Fetch data from the database
-            ArrayList<Assigned_to_User_Model> deviceList = dbHelper.fetchDevice();
-            Log.d("MainActivity", "Fetched " + deviceList.size() + " records from the database");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("MainActivity", "Storage permission granted");
+                // Fetch data from the database
+                ArrayList<Assigned_to_User_Model> deviceList = dbHelper.fetchDevice();
+                Log.d("MainActivity", "Fetched " + deviceList.size() + " records from the database");
 
-            // Create an Excel workbook and sheet
-            Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("Devices");
+                // Create an Excel workbook and sheet
+                Workbook workbook = new XSSFWorkbook();
+                Sheet sheet = workbook.createSheet("Devices");
+                CellStyle wrapStyle = workbook.createCellStyle();
+                wrapStyle.setWrapText(true);
 
-            // Create header row
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Serial Number");
-            headerRow.createCell(1).setCellValue("Assigned To");
-            headerRow.createCell(2).setCellValue("Department");
-            headerRow.createCell(3).setCellValue("Device");
-            headerRow.createCell(4).setCellValue("Device Model");
-            headerRow.createCell(5).setCellValue("Date Purchased");
-            headerRow.createCell(6).setCellValue("Date Expired");
-            headerRow.createCell(7).setCellValue("Status");
-            headerRow.createCell(8).setCellValue("Availability");
+                // Arrays to store the calculated widths
+                int[] cellLengthHeaders = new int[9];
+                int[] cellLengthContents = new int[9];
 
-            // Fill data rows
-            int rowNum = 1;
-            for (Assigned_to_User_Model device : deviceList) {
-                Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(device.getSerialNumber());
-                row.createCell(1).setCellValue(device.getName());
-                row.createCell(2).setCellValue(device.getDepartment());
-                row.createCell(3).setCellValue(device.getDeviceType());
-                row.createCell(4).setCellValue(device.getDeviceBrand());
-                row.createCell(5).setCellValue(device.getDatePurchased());
-                row.createCell(6).setCellValue(device.getDateExpired());
-                row.createCell(7).setCellValue(device.getStatus());
-                row.createCell(8).setCellValue(device.getAvailability());
-                Log.d("MainActivity", "Added row " + rowNum + " to the sheet");
+                // Create header row
+                Row headerRow = sheet.createRow(0);
+                headerRow.createCell(0).setCellValue("Serial Number / Service Tag \n IMEI no. / Sim Number");
+                headerRow.createCell(1).setCellValue("Assigned To / User \n Name");
+                headerRow.createCell(2).setCellValue("Department");
+                headerRow.createCell(3).setCellValue("Device Type \n / \n Asset Description");
+                headerRow.createCell(4).setCellValue("Device Model \n / \n Asset Type");
+                headerRow.createCell(5).setCellValue("Date Purchased \n / \n Ship Date");
+                headerRow.createCell(6).setCellValue("Date Expired");
+                headerRow.createCell(7).setCellValue("Status");
+                headerRow.createCell(8).setCellValue("Availability");
+
+                // Calculate header row widths
+                for (int i = 0; i <= 8; i++) {
+                    Cell cell = headerRow.getCell(i);
+                    int length = 0;
+
+                    // Check cell type to avoid exceptions
+                    if (cell.getCellType() == CellType.STRING) {
+                        length = cell.getStringCellValue().length() + 2;
+                    } else if (cell.getCellType() == CellType.NUMERIC) {
+                        length = String.valueOf(cell.getNumericCellValue()).length() + 2;
+                    }
+
+                    cellLengthHeaders[i] = length * 256;
+                    Log.d("TAG", "Header column " + i + " length: " + cellLengthHeaders[i]);
+                    cell.setCellStyle(wrapStyle);
+                }
+
+                // Fill data rows and calculate content widths
+                int rowNum = 1;
+                for (Assigned_to_User_Model device : deviceList) {
+                    Row row = sheet.createRow(rowNum++);
+                    row.createCell(0).setCellValue(device.getSerialNumber());
+                    row.createCell(1).setCellValue(device.getName());
+                    row.createCell(2).setCellValue(device.getDepartment());
+                    row.createCell(3).setCellValue(device.getDeviceType());
+                    row.createCell(4).setCellValue(device.getDeviceBrand());
+                    row.createCell(5).setCellValue(device.getDatePurchased());
+                    row.createCell(6).setCellValue(device.getDateExpired());
+                    row.createCell(7).setCellValue(device.getStatus());
+                    row.createCell(8).setCellValue(device.getAvailability());
+                    Log.d("MainActivity", "Added row " + rowNum + " to the sheet");
+
+                    for (int i = 0; i <= 8; i++) {
+                        Cell cell = row.getCell(i);
+                        int length = 0;
+
+                        // Check cell type to avoid exceptions
+                        if (cell.getCellType() == CellType.STRING) {
+                            length = cell.getStringCellValue().length() + 2;
+                        } else if (cell.getCellType() == CellType.NUMERIC) {
+                            length = String.valueOf(cell.getNumericCellValue()).length() + 2;
+                        }
+
+                        cellLengthContents[i] = Math.max(cellLengthContents[i], length * 256);
+                        Log.d("TAG", "Content column " + i + " length: " + cellLengthContents[i]);
+                    }
+                }
+
+                // Set the column width to the maximum of header and content width
+                for (int i = 0; i <= 8; i++) {
+                    int columnWidth = Math.max(cellLengthHeaders[i], cellLengthContents[i]);
+                    sheet.setColumnWidth(i, columnWidth);
+                    Log.d("TAG", "Final column " + i + " width: " + columnWidth);
+                }
+
+                try {
+                    if (selectedFileUri != null) {
+                        OutputStream outputStream = getContentResolver().openOutputStream(selectedFileUri);
+                        workbook.write(outputStream);
+                        outputStream.close();
+                        Log.d("MainActivity", "Excel file saved to: " + selectedFileUri.getPath());
+                        Toast.makeText(MainActivity.this, "Data exported successfully to " + selectedFileUri.getPath(), Toast.LENGTH_LONG).show();
+                    } else {
+
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // Handle any errors that occur during file writing
+                    Toast.makeText(MainActivity.this, "Failed to export data", Toast.LENGTH_SHORT).show();
+                }
             }
-
-        try {
-            if (selectedFileUri != null) {
-                OutputStream outputStream = getContentResolver().openOutputStream(selectedFileUri);
-                workbook.write(outputStream);
-                outputStream.close();
-                Log.d("MainActivity", "Excel file saved to: " + selectedFileUri.getPath());
-                Toast.makeText(MainActivity.this, "Data exported successfully to " + selectedFileUri.getPath(), Toast.LENGTH_LONG).show();
-            } else {
-                
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle any errors that occur during file writing
-            Toast.makeText(MainActivity.this, "Failed to export data", Toast.LENGTH_SHORT).show();
-        }
+        }).start();
     }
 
 

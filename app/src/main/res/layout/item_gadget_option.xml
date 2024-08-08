@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:paddingVertical="16dp"
         android:paddingHorizontal="8dp"
-        android:foreground="?android:selectableItemBackgroundBorderless">>
+        android:foreground="?android:selectableItemBackgroundBorderless">
 
         <ImageView
             android:id="@+id/image"
@@ -20,7 +20,7 @@
 
         <TextView
             android:id="@+id/name"
-            style="@style/textStyle1_small"
+            style="@style/textStyle1"
             android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardViewMain"
+    style="@style/itemBG"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginVertical="4dp"
-    style="@style/itemBG"
-    android:id="@+id/cardViewMain"
     android:elevation="0dp"
     android:foreground="?android:attr/selectableItemBackgroundBorderless">
 
@@ -17,9 +17,9 @@
 
         <View
             android:id="@+id/center"
-            style="@style/divider"
             android:layout_width="1dp"
             android:layout_height="24dp"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -28,16 +28,18 @@
             android:id="@+id/topUserF"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/padding_8"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
-            app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
+            app:layout_constraintEnd_toStartOf="@+id/topExpirationF"
             app:layout_constraintTop_toTopOf="@+id/linearLayout6">
 
             <ImageView
                 android:id="@+id/topUser2"
-                style="@style/sizeIC"
+                style="@style/sizeIC2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:src="@drawable/user_unknown_bulk"
-                android:visibility="visible"/>
-
+                android:visibility="visible" />
         </FrameLayout>
 
         <FrameLayout
@@ -46,27 +48,17 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/padding_8"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
-            app:layout_constraintEnd_toStartOf="@+id/topUserF"
+            app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
             app:layout_constraintTop_toTopOf="@+id/linearLayout6">
 
             <ImageView
                 android:id="@+id/topExpiration"
-                style="@style/sizeIC"
-                android:src="@drawable/expiration"
+                style="@style/ic_expiration"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
                 app:layout_constraintEnd_toStartOf="@+id/topUserF"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout6" />
-
-            <ImageView
-                android:id="@+id/deviceIC3"
-                style="@style/sizeIC"
-                android:src="@drawable/device_model"
-                android:visibility="gone" />
-
         </FrameLayout>
-
-
 
         <LinearLayout
             android:id="@+id/linearLayout6"
@@ -81,6 +73,7 @@
 
             <ImageView
                 android:id="@+id/dropDownArrow"
+                style="@style/sizeIC2"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_gravity="center_vertical"
@@ -88,7 +81,6 @@
                 android:scaleX="1.5"
                 android:scaleY="1.5"
                 android:src="@drawable/drop_down" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -107,29 +99,26 @@
                 android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:visibility="visible" />
-
-
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/textSN_F"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/imgScan_Frame"
+            android:layout_marginTop="@dimen/padding_12"
             app:layout_constraintStart_toEndOf="@+id/linearLayout5"
-            app:layout_constraintTop_toTopOf="@+id/imgScan_Frame">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/textSN"
+                style="@style/Identifier_text_upper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="S.N."
-                style="@style/Identifier_text_upper"
+                android:text="Serial Number"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/imgScan_Frame"
                 app:layout_constraintStart_toEndOf="@+id/linearLayout5"
                 app:layout_constraintTop_toTopOf="@+id/imgScan_Frame" />
-
         </FrameLayout>
 
         <FrameLayout
@@ -143,11 +132,10 @@
 
             <TextView
                 android:id="@+id/sn"
+                style="@style/TitleStyle_18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Header"
-                style="@style/TitleStyleConstantColor_16" />
-
+                android:text="Header" />
         </FrameLayout>
 
         <FrameLayout
@@ -157,16 +145,15 @@
             app:layout_constraintBottom_toBottomOf="@+id/imgScan_Frame"
             app:layout_constraintStart_toEndOf="@+id/linearLayout5"
             app:layout_constraintTop_toTopOf="@+id/imgScan_Frame"
-            app:layout_constraintVertical_bias="0.8" >
+            app:layout_constraintVertical_bias="0.8">
 
             <TextView
                 android:id="@+id/subHeader"
+                style="@style/SubTitle_14sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sub Header"
-                style="@style/SubTitleConstantColor_14_small"
-                android:visibility="visible"/>
-
+                android:visibility="visible" />
         </FrameLayout>
 
         <LinearLayout
@@ -182,31 +169,26 @@
 
             <ImageView
                 android:id="@+id/imageViewScan"
+                style="@style/sizeIC2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/qr_icon_48"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
         </LinearLayout>
-
-        <!--OTHER INFO CONTAINER-->
-
-        <!--*************  VISIBILITY FOR OTHER INFO CONTAINER  *************-->
 
         <ImageView
             android:id="@+id/connector"
-            style="@style/sizeIC"
+            style="@style/sizeIC2"
             android:layout_marginStart="@dimen/padding_16"
             android:src="@drawable/ic_vertical_lines"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imgScan_Frame" />
 
-
         <ImageView
             android:id="@+id/assignedToIC"
-            style="@style/sizeIC"
+            style="@style/sizeIC2"
             android:src="@drawable/user_bulk_48"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/connector"
@@ -215,11 +197,11 @@
 
         <TextView
             android:id="@+id/hintAssignedTo"
+            style="@style/Identifier_text_upper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Assigned To"
-            style="@style/Identifier_text_upper"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/assignedToIC"
             app:layout_constraintStart_toEndOf="@+id/assignedToIC"
@@ -227,7 +209,7 @@
 
         <TextView
             android:id="@+id/textHolderAssignedTo"
-            style="@style/textStyleConstantColor_14_opaque"
+            style="@style/textStyle_info_bold_opaque"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -238,59 +220,67 @@
             app:layout_constraintStart_toStartOf="@+id/hintAssignedTo"
             app:layout_constraintTop_toBottomOf="@+id/hintAssignedTo" />
 
-
-        <ImageView
-            android:id="@+id/imgVwDepartment"
-            style="@style/sizeIC"
-            android:src="@drawable/ic_department"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintDepartment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_16"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/assignedToIC"
             app:layout_constraintStart_toEndOf="@+id/center"
-            app:layout_constraintTop_toTopOf="@+id/assignedToIC" />
+            app:layout_constraintTop_toTopOf="@+id/assignedToIC">
 
-        <TextView
-            android:id="@+id/hintDepartment"
-            style="@style/Identifier_text_upper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:text="Department"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/imgVwDepartment"
-            app:layout_constraintStart_toEndOf="@+id/imgVwDepartment"
-            app:layout_constraintTop_toTopOf="@+id/imgVwDepartment" />
+            <ImageView
+                android:id="@+id/imgVwDepartment"
+                style="@style/sizeIC2"
+                android:layout_marginTop="@dimen/padding_8"
+                android:src="@drawable/ic_department"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textHolderDepartment"
-            style="@style/textStyleConstantColor_14_opaque"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Department"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/imgVwDepartment"
-            app:layout_constraintStart_toStartOf="@+id/hintDepartment"
-            app:layout_constraintTop_toBottomOf="@+id/hintDepartment" />
+            <TextView
+                android:id="@+id/hintDepartment"
+                style="@style/Identifier_text_upper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_16"
+                android:text="Department"
+                android:visibility="visible"
+                app:layout_constraintStart_toEndOf="@+id/imgVwDepartment"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textHolderDepartment"
+                style="@style/textStyle_info_bold_opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:maxEms="8"
+                android:maxLines="1"
+                android:text="Department"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/imgVwDepartment"
+                app:layout_constraintStart_toStartOf="@+id/hintDepartment"
+                app:layout_constraintTop_toBottomOf="@+id/hintDepartment" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/connector2"
-            style="@style/sizeIC"
+            style="@style/sizeIC2"
             android:src="@drawable/ic_vertical_lines"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/assignedToIC"
             app:layout_constraintStart_toStartOf="@+id/assignedToIC"
             app:layout_constraintTop_toBottomOf="@+id/assignedToIC" />
 
-
         <ImageView
             android:id="@+id/deviceTypeIC"
-            style="@style/sizeIC"
+            style="@style/sizeIC2"
             android:src="@drawable/device_model"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/connector2"
             app:layout_constraintStart_toStartOf="@+id/connector2"
             app:layout_constraintTop_toBottomOf="@+id/connector2" />
-
 
         <TextView
             android:id="@+id/hintDeviceType"
@@ -306,7 +296,7 @@
 
         <TextView
             android:id="@+id/textHolderDeviceType"
-            style="@style/textStyleConstantColor_14_opaque"
+            style="@style/textStyle_info_bold_opaque"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Device Type"
@@ -316,11 +306,20 @@
             app:layout_constraintTop_toBottomOf="@+id/hintDeviceType" />
 
         <ImageView
+            android:id="@+id/connector4"
+            style="@style/sizeIC2"
+            android:layout_marginStart="@dimen/padding_16"
+            android:src="@drawable/ic_vertical_lines"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toBottomOf="@+id/constraintDepartment" />
+
+        <ImageView
             android:id="@+id/deviceModelIC"
-            style="@style/sizeIC"
+            style="@style/sizeIC2"
+            android:layout_marginStart="@dimen/padding_16"
             android:src="@drawable/device_model"
             android:visibility="gone"
-            android:layout_marginStart="@dimen/padding_16"
             app:layout_constraintBottom_toBottomOf="@+id/deviceTypeIC"
             app:layout_constraintStart_toEndOf="@+id/center"
             app:layout_constraintTop_toTopOf="@+id/deviceTypeIC" />
@@ -339,7 +338,7 @@
 
         <TextView
             android:id="@+id/textHolderDeviceModel"
-            style="@style/textStyleConstantColor_14_opaque"
+            style="@style/textStyle_info_bold_opaque"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Device Model"
@@ -348,16 +347,14 @@
             app:layout_constraintStart_toStartOf="@+id/hintDeviceModel"
             app:layout_constraintTop_toBottomOf="@+id/hintDeviceModel" />
 
-
         <ImageView
             android:id="@+id/imgVwDatePur"
-            style="@style/sizeIC"
+            style="@style/sizeIC2"
             android:src="@drawable/ic_calendar"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/connector3"
             app:layout_constraintStart_toStartOf="@+id/connector3"
             app:layout_constraintTop_toBottomOf="@+id/connector3" />
-
 
         <TextView
             android:id="@+id/hintDatePurchased"
@@ -373,7 +370,7 @@
 
         <TextView
             android:id="@+id/textHolderDatePur"
-            style="@style/textStyleConstantColor_14_opaque"
+            style="@style/textStyle_info_bold_opaque"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date Purchased"
@@ -382,35 +379,41 @@
             app:layout_constraintStart_toStartOf="@+id/hintDatePurchased"
             app:layout_constraintTop_toBottomOf="@+id/hintDatePurchased" />
 
-
         <ImageView
             android:id="@+id/connector3"
-            style="@style/sizeIC"
+            style="@style/sizeIC2"
             android:src="@drawable/ic_vertical_lines"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/deviceTypeIC"
             app:layout_constraintStart_toStartOf="@+id/deviceTypeIC"
             app:layout_constraintTop_toBottomOf="@+id/deviceTypeIC" />
 
+        <ImageView
+            android:id="@+id/connector5"
+            style="@style/sizeIC2"
+            android:layout_marginStart="@dimen/padding_16"
+            android:src="@drawable/ic_vertical_lines"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toBottomOf="@+id/deviceModelIC" />
 
         <ImageView
             android:id="@+id/imgVwDateExpired"
-            style="@style/sizeIC"
+            style="@style/sizeIC2"
+            android:layout_marginStart="@dimen/padding_16"
             android:src="@drawable/ic_expiration"
             android:visibility="gone"
-            android:layout_marginStart="@dimen/padding_16"
             app:layout_constraintBottom_toBottomOf="@+id/imgVwDatePur"
             app:layout_constraintStart_toEndOf="@+id/center"
             app:layout_constraintTop_toTopOf="@+id/imgVwDatePur" />
 
-
         <TextView
             android:id="@+id/hintExpirationDate"
+            style="@style/Identifier_text_upper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Expiration Date"
-            style="@style/Identifier_text_upper"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/imgVwDateExpired"
             app:layout_constraintStart_toEndOf="@+id/imgVwDateExpired"
@@ -418,7 +421,7 @@
 
         <TextView
             android:id="@+id/textHolderDateExpired"
-            style="@style/textStyleConstantColor_14_opaque"
+            style="@style/textStyle_info_bold_opaque"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Expiration"
@@ -427,107 +430,100 @@
             app:layout_constraintStart_toStartOf="@+id/hintExpirationDate"
             app:layout_constraintTop_toBottomOf="@+id/hintExpirationDate" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/otherInfo2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/padding_8"
+        <ImageView
+            android:id="@+id/connector6"
+            style="@style/sizeIC2"
+            android:src="@drawable/ic_vertical_lines"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/imgVwDateExpired"
-            app:layout_constraintStart_toStartOf="@+id/imgVwDateExpired"
-            app:layout_constraintTop_toBottomOf="@+id/imgVwDateExpired">
+            app:layout_constraintEnd_toEndOf="@+id/imgVwDatePur"
+            app:layout_constraintStart_toStartOf="@+id/imgVwDatePur"
+            app:layout_constraintTop_toBottomOf="@+id/imgVwDatePur" />
 
+        <ImageView
+            android:id="@+id/imgVwStatus"
+            style="@style/sizeIC2"
+            android:src="@drawable/ic_reload"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/connector6"
+            app:layout_constraintStart_toStartOf="@+id/connector6"
+            app:layout_constraintTop_toBottomOf="@+id/connector6" />
 
-            <ImageView
-                android:id="@+id/connector6"
-                style="@style/sizeIC"
-                android:layout_marginStart="@dimen/padding_16"
-                android:src="@drawable/ic_vertical_lines"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/hintStatus"
+            style="@style/Identifier_text_upper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_16"
+            android:text="Status"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/imgVwStatus"
+            app:layout_constraintStart_toEndOf="@+id/imgVwStatus"
+            app:layout_constraintTop_toTopOf="@+id/imgVwStatus" />
 
+        <TextView
+            android:id="@+id/textHolderStatus"
+            style="@style/textStyle_info_bold_opaque"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_16"
+            android:text="Status"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/imgVwStatus"
+            app:layout_constraintStart_toEndOf="@+id/imgVwStatus"
+            app:layout_constraintTop_toBottomOf="@+id/hintStatus" />
 
-            <ImageView
-                android:id="@+id/imageView10"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_reload"
-                app:layout_constraintEnd_toEndOf="@+id/connector6"
-                app:layout_constraintStart_toStartOf="@+id/connector6"
-                app:layout_constraintTop_toBottomOf="@+id/connector6" />
+        <ImageView
+            android:id="@+id/connector7"
+            style="@style/sizeIC2"
+            android:layout_marginStart="@dimen/padding_16"
+            android:src="@drawable/ic_vertical_lines"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/center"
+            app:layout_constraintTop_toBottomOf="@+id/imgVwDateExpired" />
 
-            <ImageView
-                android:id="@+id/connector7"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_vertical_lines"
-                app:layout_constraintEnd_toEndOf="@+id/imageView10"
-                app:layout_constraintStart_toStartOf="@+id/imageView10"
-                app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+        <ImageView
+            android:id="@+id/imgVwAvailability"
+            style="@style/sizeIC2"
+            android:src="@drawable/ic_stocks"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/connector7"
+            app:layout_constraintStart_toStartOf="@+id/connector7"
+            app:layout_constraintTop_toBottomOf="@+id/connector7" />
 
+        <TextView
+            android:id="@+id/hintAvailability"
+            style="@style/Identifier_text_upper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_16"
+            android:text="Availability"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/imgVwAvailability"
+            app:layout_constraintStart_toEndOf="@+id/imgVwAvailability"
+            app:layout_constraintTop_toTopOf="@+id/imgVwAvailability" />
 
-            <TextView
-                android:id="@+id/textSTS"
-                style="@style/Identifier_text_upper"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Status"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView10"
-                app:layout_constraintStart_toEndOf="@+id/imageView10"
-                app:layout_constraintTop_toTopOf="@+id/imageView10" />
-
-            <TextView
-                android:id="@+id/textHolderStatus"
-                style="@style/textStyleConstantColor_14_opaque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="84dp"
-                android:text="Status"
-                app:layout_constraintBottom_toBottomOf="@+id/textSTS"
-                app:layout_constraintStart_toEndOf="@+id/textSTS"
-                app:layout_constraintTop_toTopOf="@+id/textSTS" />
-
-
-            <ImageView
-                android:id="@+id/imageView11"
-                style="@style/sizeIC"
-                android:src="@drawable/ic_stocks"
-                app:layout_constraintEnd_toEndOf="@+id/connector7"
-                app:layout_constraintStart_toStartOf="@+id/connector7"
-                app:layout_constraintTop_toBottomOf="@+id/connector7" />
-
-            <TextView
-                android:id="@+id/textAVL"
-                style="@style/Identifier_text_upper"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Availability"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView11"
-                app:layout_constraintStart_toEndOf="@+id/imageView11"
-                app:layout_constraintTop_toTopOf="@+id/imageView11" />
-
-            <TextView
-                android:id="@+id/textHolderAvailability"
-                style="@style/textStyleConstantColor_14_opaque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Availability"
-                app:layout_constraintBottom_toBottomOf="@+id/textAVL"
-                app:layout_constraintStart_toStartOf="@+id/textHolderStatus"
-                app:layout_constraintTop_toTopOf="@+id/textAVL" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <TextView
+            android:id="@+id/textHolderAvailability"
+            style="@style/textStyle_info_bold_opaque"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_16"
+            android:text="Availability"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/imgVwAvailability"
+            app:layout_constraintStart_toEndOf="@+id/imgVwAvailability"
+            app:layout_constraintTop_toBottomOf="@+id/hintAvailability" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/actions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_16"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/otherInfo2">
+            app:layout_constraintTop_toBottomOf="@+id/imgVwStatus">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/editBtn"
@@ -541,37 +537,34 @@
                 app:layout_constraintBottom_toBottomOf="@+id/view2"
                 app:layout_constraintEnd_toStartOf="@+id/view2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"><!--style="@style/editBtnStyle"-->
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="20dp">
 
                     <ImageView
-                        style="@style/sizeIC"
+                        style="@style/sizeIC2"
                         android:src="@drawable/ic_edit" />
 
                     <TextView
-                        style="@style/EditText_small"
+                        style="@style/EditText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Edit" />
-
-
                 </LinearLayout>
-
             </androidx.cardview.widget.CardView>
-
 
             <View
                 android:id="@+id/view"
                 style="@style/divider"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 app:layout_constraintBottom_toTopOf="@+id/view2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -580,13 +573,12 @@
             <View
                 android:id="@+id/view2"
                 style="@style/divider"
-                android:layout_width="2dp"
+                android:layout_width="1dp"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/deleteBtn"
@@ -607,26 +599,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="20dp">
 
                     <ImageView
-                        style="@style/deleteIC_small"
+                        style="@style/deleteIC_400dp"
                         android:src="@drawable/trash_can_10416" />
 
                     <TextView
-                        style="@style/textStyleConstantColorRed_small"
+                        style="@style/textStyleConstantColorRed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Delete" />
-
-
                 </LinearLayout>
-
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
