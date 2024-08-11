@@ -198,13 +198,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             int clDark = ContextCompat.getColor(context, R.color.itemBg2);
             int clGreen = ContextCompat.getColor(context, R.color.primary);
             int clRed = ContextCompat.getColor(context, R.color.clError);
+            ObjectAnimator rotationAnimator = new ObjectAnimator();
             if (status.equals("For Refresh")) {
                 holder.topExpiration.setVisibility(View.VISIBLE);
                 holder.textHolderStatus.setTextColor(clRed);
-                ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(holder.imgVwStatus, "rotation", new float[]{0.0f, 180.0f});
-                rotationAnimator.setDuration(1000);
-                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                rotationAnimator.start();
+//                rotationAnimator = ObjectAnimator.ofFloat(holder.imgVwStatus, "rotation", new float[]{0.0f, 180.0f});
+//                rotationAnimator.setDuration(1000);
+//                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
+//                rotationAnimator.start();
             } else {
                 holder.topExpiration.setVisibility(View.GONE);
                 holder.textHolderStatus.setTextColor(clGreen);
@@ -213,9 +214,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
                     holder.cardViewMain.setCardBackgroundColor(clLight);
                 }
-                ObjectAnimator rotationAnimator2 = ObjectAnimator.ofFloat(holder.imgVwStatus, "rotation", new float[]{0.0f, 180.0f});
-                rotationAnimator2.setDuration(1000);
-                rotationAnimator2.start();
+
+                if (rotationAnimator != null && rotationAnimator.isRunning()) {
+                    rotationAnimator.cancel();
+                }
+                holder.imgVwStatus.setRotation(0);
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -788,7 +791,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     Log.e("ItemAdapter", "Invalid position: " + position);
                     Toast.makeText(context, "Invalid position", Toast.LENGTH_SHORT).show();
                 }
-                alertDialog.hide();
+                alertDialog.dismiss();
             }
         });
 
@@ -797,7 +800,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show();
-                alertDialog.hide();
+                alertDialog.dismiss();
             }
         });
 

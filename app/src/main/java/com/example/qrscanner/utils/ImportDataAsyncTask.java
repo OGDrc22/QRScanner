@@ -219,7 +219,7 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
                         dateExpired = result.getFormattedExpirationDate();
                         status = result.getStringStatus();
                         Log.d("TAG", "doInBackground_p: " + datePurchased);
-                        Log.d("TAG", "doInBackground_e: " + dateExpired);
+                        Log.d("TAG", "doInBackground_e: " + dateExpired + " " + status);
                     }
                 } else {
                     dateExpired = "00/00/00";

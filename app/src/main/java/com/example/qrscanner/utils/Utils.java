@@ -161,7 +161,7 @@ public class Utils {
                 dbHelper.deleteAll();
                 deviceList.clear();
                 Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
-                alertDialog.hide();
+                alertDialog.dismiss();
             }
         });
 
@@ -171,7 +171,7 @@ public class Utils {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show();
-                alertDialog.hide();
+                alertDialog.dismiss();
             }
         });
 
@@ -259,7 +259,7 @@ public class Utils {
         Calendar currentDate = Calendar.getInstance();
         String stringStatus;
 
-        if (currentDate.after(expirationDate)) {
+            if (currentDate.after(expirationDate)) {
             stringStatus = "For Refresh";
         } else {
             stringStatus = "Fresh";

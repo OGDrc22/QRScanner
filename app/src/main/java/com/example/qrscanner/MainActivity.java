@@ -505,6 +505,7 @@ public class MainActivity extends AppCompatActivity {
                     row.createCell(6).setCellValue(device.getDateExpired());
                     Log.d("MainActivity", "run: date expired " + row.getCell(6).getStringCellValue());
                     row.createCell(7).setCellValue(device.getStatus());
+                    Log.d("MainActivity", "run: status " + row.getCell(7).getStringCellValue());
                     row.createCell(8).setCellValue(device.getAvailability());
                     Log.d("MainActivity", "Added row " + rowNum + " to the sheet");
 
