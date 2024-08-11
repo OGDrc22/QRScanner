@@ -198,7 +198,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
                 String input = device.getDatePurchased();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
                 Date dateInput = dateFormat.parse(input);
-                if (Utils.calculateExpiration(dateInput, "For Refresh")) {
+                if (Utils.calculateExpiration(dateInput,  "For Refresh")) {
                     filteredList.add(device);
                 }
             }

@@ -58,6 +58,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
                 app:layout_constraintEnd_toStartOf="@+id/topUserF"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout6" />
+
         </FrameLayout>
 
         <LinearLayout

@@ -1,6 +1,7 @@
 package com.example.qrscanner.adapter;
 
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -142,17 +143,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             holder.imgScan.setImageResource(R.drawable.qr_icon_48);
             holder.topUserF.setVisibility(View.VISIBLE);
             holder.headerF.setVisibility(View.GONE);
+            holder.textHolderAvailability.setText("In Stock");
 
             ConstraintSet constraintSet = new ConstraintSet();
             constraintSet.clone(holder.constraintHolder);
-
             constraintSet.setVerticalBias(R.id.subHeaderF, 0.5f);
-
             constraintSet.applyTo(holder.constraintHolder);
 
-            int color = ContextCompat.getColor(context, R.color.txtHeader);
-            holder.subHeader.setTextColor(color);
-            holder.subHeader.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.textSize_for_header);
+            int color = ContextCompat.getColor(this.context, R.color.txtHeader);
+            int colorInDarkMode = ContextCompat.getColor(this.context, R.color.txtHeaderLight);
+            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                holder.subHeader.setTextColor(colorInDarkMode);
+            } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                holder.subHeader.setTextColor(color);
+            }
 
         } else {
             holder.imgScan.setImageResource(R.drawable.user_bulk_48);
@@ -167,10 +171,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
             constraintSet.applyTo(holder.constraintHolder);
 
-            int color = ContextCompat.getColor(context, R.color.txtSubHeader);
-            holder.subHeader.setTextColor(color);
-            holder.subHeader.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.textSize_for_textHolderAssigned);
-
+            int color2 = ContextCompat.getColor(this.context, R.color.txtSubHeader);
+            int colorInDarkMode2 = ContextCompat.getColor(this.context, R.color.txtSubHeaderLight);
+            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                holder.subHeader.setTextColor(colorInDarkMode2);
+            } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                holder.subHeader.setTextColor(color2);
+            }
+            holder.subHeader.setTextSize(0, holder.textSize_for_textHolderAssigned);
         }
 
         // Call calculate ExpirationAndStatus method
@@ -191,18 +199,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             int clGreen = ContextCompat.getColor(context, R.color.primary);
             int clRed = ContextCompat.getColor(context, R.color.clError);
             if (status.equals("For Refresh")) {
-                holder.topExpiration.setVisibility(0);
+                holder.topExpiration.setVisibility(View.VISIBLE);
                 holder.textHolderStatus.setTextColor(clRed);
                 ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(holder.imgVwStatus, "rotation", new float[]{0.0f, 180.0f});
                 rotationAnimator.setDuration(1000);
-                rotationAnimator.setRepeatCount(-1);
+                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 rotationAnimator.start();
             } else {
-                holder.topExpiration.setVisibility(8);
+                holder.topExpiration.setVisibility(View.GONE);
                 holder.textHolderStatus.setTextColor(clGreen);
-                if (AppCompatDelegate.getDefaultNightMode() == 2) {
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
                     holder.cardViewMain.setCardBackgroundColor(clDark);
-                } else if (AppCompatDelegate.getDefaultNightMode() == 1) {
+                } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
                     holder.cardViewMain.setCardBackgroundColor(clLight);
                 }
                 ObjectAnimator rotationAnimator2 = ObjectAnimator.ofFloat(holder.imgVwStatus, "rotation", new float[]{0.0f, 180.0f});
@@ -292,12 +300,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ConstraintLayout constraintHolder, sub;
+        ConstraintLayout constraintHolder, constraintLayoutDepartment;
         LinearLayout linearLayoutDeviceType, linearLayoutDeviceModel, imgScan_Frame, linearLayout01, linearLayout06;
         TextView txtSN, serialNum_tv, textHolderAssignedTo, textHolderDepartment, textHolderDeviceModel, textHolderDatePur, textHolderDateExpired, textHolderStatus, textHolderAvailability, textHolderDeviceType, subHeader;
-        TextView hintAssignedTo, hintDepartment, hintDeviceType, hintDeviceModel, hintDatePurchased, hintExpirationDate;
+        TextView hintAssignedTo, hintDepartment, hintDeviceType, hintDeviceModel, hintDatePurchased, hintExpirationDate, hintAvailability, hintStatus;
         ConstraintLayout actions;
-        ImageView imgScan, imgVwDepartment, imgVwStatus, imgVwDatePur, imgVwDateExpired, topExpiration, deviceTypeIC, deviceModelIC, dropDownArrow, imageView3, connector, connector2, connector3, connector4, connector5;
+        ImageView imgScan, imgVwDepartment, imgVwStatus, imgVwDatePur, imgVwDateExpired, imgVwAvailability, topExpiration, deviceTypeIC, deviceModelIC, dropDownArrow, imageView3, connector, connector2, connector3, connector4, connector5, connector6, connector7;
         CardView editBtn, deleteBtn, cardViewMain;
 
         FrameLayout topUserF, topExpirationF, headerF, subHeaderF, textSN_F;
@@ -335,8 +343,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             textHolderStatus = itemView.findViewById(R.id.textHolderStatus);
             imgVwDepartment = itemView.findViewById(R.id.imgVwDepartment);
             imgVwDatePur = itemView.findViewById(R.id.imgVwDatePur);
-            imgVwStatus = itemView.findViewById(R.id.imgVwStatus);
             imgVwDateExpired = itemView.findViewById(R.id.imgVwDateExpired);
+            imgVwStatus = itemView.findViewById(R.id.imgVwStatus);
+            imgVwAvailability = itemView.findViewById(R.id.imgVwAvailability);
             deviceTypeIC = itemView.findViewById(R.id.deviceTypeIC);
             deviceModelIC = itemView.findViewById(R.id.deviceModelIC);
             topExpiration = itemView.findViewById(R.id.topExpiration);
@@ -349,6 +358,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             connector3 = itemView.findViewById(R.id.connector3);
             connector4 = itemView.findViewById(R.id.connector4);
             connector5 = itemView.findViewById(R.id.connector5);
+            connector6 = itemView.findViewById(R.id.connector6);
+            connector7 = itemView.findViewById(R.id.connector7);
 
 
             hintAssignedTo = itemView.findViewById(R.id.hintAssignedTo);
@@ -357,6 +368,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             hintDeviceModel = itemView.findViewById(R.id.hintDeviceModel);
             hintDatePurchased = itemView.findViewById(R.id.hintDatePurchased);
             hintExpirationDate = itemView.findViewById(R.id.hintExpirationDate);
+            hintAvailability = itemView.findViewById(R.id.hintAvailability);
+            hintStatus = itemView.findViewById(R.id.hintStatus);
 
             txtSN = itemView.findViewById(R.id.textSN);
 
@@ -376,6 +389,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
 
             constraintHolder = itemView.findViewById(R.id.constraintHolder);
+            constraintLayoutDepartment = itemView.findViewById(R.id.constraintDepartment);
             topUserF = itemView.findViewById(R.id.topUserF);
             topExpirationF = itemView.findViewById(R.id.topExpirationF);
 
@@ -448,21 +462,26 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     connector3.setVisibility(View.VISIBLE);
                     connector4.setVisibility(View.VISIBLE);
                     connector5.setVisibility(View.VISIBLE);
+                    connector6.setVisibility(View.VISIBLE);
+                    connector7.setVisibility(View.VISIBLE);
 
                     txtSN.setVisibility(View.VISIBLE);
                     textHolderDepartment.setVisibility(View.VISIBLE);
                     textHolderDeviceType.setVisibility(View.VISIBLE);
                     textHolderDeviceModel.setVisibility(View.VISIBLE);
                     textHolderDatePur.setVisibility(View.VISIBLE);
-                    textHolderStatus.setVisibility(View.VISIBLE);
                     textHolderAvailability.setVisibility(View.VISIBLE);
+                    textHolderStatus.setVisibility(View.VISIBLE);
 
                     imageView3.setVisibility(View.VISIBLE);
                     imgVwDepartment.setVisibility(View.VISIBLE);
                     imgVwDatePur.setVisibility(View.VISIBLE);
                     imgVwDateExpired.setVisibility(View.VISIBLE);
+                    imgVwStatus.setVisibility(View.VISIBLE);
+                    imgVwAvailability.setVisibility(View.VISIBLE);
 
                     textHolderDateExpired.setVisibility(View.VISIBLE);
+                    constraintLayoutDepartment.setVisibility(View.VISIBLE);
                     actions.setVisibility(View.VISIBLE); // Set ic_edit and delete to VISIBLE
 
                     hintAssignedTo.setVisibility(View.VISIBLE);
@@ -471,6 +490,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     hintDeviceModel.setVisibility(View.VISIBLE);
                     hintDatePurchased.setVisibility(View.VISIBLE);
                     hintExpirationDate.setVisibility(View.VISIBLE);
+                    hintAvailability.setVisibility(View.VISIBLE);
+                    hintStatus.setVisibility(View.VISIBLE);
 
                     deviceTypeIC.setVisibility(View.VISIBLE);
                     deviceModelIC.setVisibility(View.VISIBLE);
@@ -513,7 +534,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.applyTo(constraintHolder);
 
                         int color = ContextCompat.getColor(context, R.color.txtHeader);
-                        subHeader.setTextColor(color);
+                        int colorInDarkMode = ContextCompat.getColor(context, R.color.txtHeaderLight);
+                        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                            subHeader.setTextColor(colorInDarkMode);
+                        } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                            subHeader.setTextColor(color);
+                        }
                         subHeader.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize_for_header);
 
 
@@ -583,14 +609,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     connector3.setVisibility(View.GONE);
                     connector4.setVisibility(View.GONE);
                     connector5.setVisibility(View.GONE);
+                    connector6.setVisibility(View.GONE);
+                    connector7.setVisibility(View.GONE);
 
                     txtSN.setVisibility(View.GONE);
                     textHolderDepartment.setVisibility(View.GONE);
                     textHolderDeviceType.setVisibility(View.GONE);
                     textHolderDeviceModel.setVisibility(View.GONE);
                     textHolderDatePur.setVisibility(View.GONE);
-                    textHolderStatus.setVisibility(View.GONE);
                     textHolderAvailability.setVisibility(View.GONE);
+                    textHolderStatus.setVisibility(View.GONE);
 
                     imageView3.setVisibility(View.GONE);
                     imgVwDepartment.setVisibility(View.GONE);
@@ -598,8 +626,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     deviceTypeIC.setVisibility(View.GONE);
                     deviceModelIC.setVisibility(View.GONE);
                     imgVwDateExpired.setVisibility(View.GONE);
+                    imgVwStatus.setVisibility(View.GONE);
+                    imgVwAvailability.setVisibility(View.GONE);
 
                     textHolderDateExpired.setVisibility(View.GONE);
+                    constraintLayoutDepartment.setVisibility(View.GONE);
                     actions.setVisibility(View.GONE);
 
                     hintAssignedTo.setVisibility(View.GONE);
@@ -608,6 +639,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     hintDeviceModel.setVisibility(View.GONE);
                     hintDatePurchased.setVisibility(View.GONE);
                     hintExpirationDate.setVisibility(View.GONE);
+                    hintAvailability.setVisibility(View.GONE);
+                    hintStatus.setVisibility(View.GONE);
 
 
                     Utils.rotateDown(dropDownArrow);
@@ -647,10 +680,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.setVerticalBias(R.id.subHeaderF, 0.8f);
 
                         constraintSet.applyTo(constraintHolder);
-
-                        int color = ContextCompat.getColor(context, R.color.txtSubHeader);
-                        subHeader.setTextColor(color);
-                        subHeader.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize_for_textHolderAssigned);
+                        int color2 = ContextCompat.getColor(ItemAdapter.this.context, R.color.txtSubHeader);
+                        int colorInDarkMode2 = ContextCompat.getColor(ItemAdapter.this.context, R.color.txtSubHeaderLight);
+                        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                            this.subHeader.setTextColor(colorInDarkMode2);
+                        } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                            this.subHeader.setTextColor(color2);
+                        }
                         Log.d("ItemAdapter", "Collapsed: Before Setting Text Sizes: serialNum_tv TextSZ " + serialNum_tv.getTextSize());
                         serialNum_tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize_for_header);
                         Log.d("ItemAdapter", "Collapsed: After Setting Text Sizes: serialNum_tv TextSZ " + serialNum_tv.getTextSize());
@@ -667,9 +703,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.clear(R.id.topUserF, ConstraintSet.BOTTOM);
                         constraintSet.clear(R.id.topUserF, ConstraintSet.END);
 
-                        constraintSet.connect(R.id.topUserF, ConstraintSet.TOP, R.id.linearLayout6, ConstraintSet.TOP);
-                        constraintSet.connect(R.id.topUserF, ConstraintSet.BOTTOM, R.id.linearLayout6, ConstraintSet.BOTTOM);
-                        constraintSet.connect(R.id.topUserF, ConstraintSet.END, R.id.linearLayout6, ConstraintSet.START, topUser_marginEnd);
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.TOP, R.id.topExpirationF, ConstraintSet.TOP);
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.BOTTOM, R.id.topExpirationF, ConstraintSet.BOTTOM);
+                        constraintSet.connect(R.id.topUserF, ConstraintSet.END, R.id.topExpirationF, ConstraintSet.START, topUser_marginEnd);
 
                         constraintSet.connect(R.id.subHeaderF, ConstraintSet.TOP, R.id.imgScan_Frame, ConstraintSet.TOP);
                         constraintSet.connect(R.id.subHeaderF, ConstraintSet.START, R.id.linearLayout5, ConstraintSet.END);
@@ -691,9 +727,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.clear(R.id.topExpirationF, ConstraintSet.BOTTOM);
                         constraintSet.clear(R.id.topExpirationF, ConstraintSet.END);
 
-                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.TOP, R.id.topUserF, ConstraintSet.TOP);
-                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.BOTTOM, R.id.topUserF, ConstraintSet.BOTTOM);
-                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.END, R.id.topUserF, ConstraintSet.START, topUser_marginEnd);
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.TOP, R.id.linearLayout6, ConstraintSet.TOP);
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.BOTTOM, R.id.linearLayout6, ConstraintSet.BOTTOM);
+                        constraintSet.connect(R.id.topExpirationF, ConstraintSet.END, R.id.linearLayout6, ConstraintSet.START, topUser_marginEnd);
 
                         constraintSet.applyTo(constraintHolder);
                     }

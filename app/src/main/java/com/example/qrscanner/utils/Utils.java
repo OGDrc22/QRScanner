@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -211,18 +213,60 @@ public class Utils {
         expirationDate.setTime(inputDate);
         expirationDate.add(Calendar.YEAR, 5); // Add 5 years
 
+
         Calendar currentDate = Calendar.getInstance();
 
         boolean result = false;
-        if (filterKey.equals("For Refresh")) {
-            if (currentDate.after(expirationDate)) {
-                result = true;
-            } else {
-                result = false;
-            }
+        if (currentDate.after(expirationDate)) {
+            result = true;
+        } else {
+            result = false;
         }
         
         return result;
+    }
+
+    public static class ExpirationResult {
+        private String formattedExpirationDate;
+        private String stringStatus;
+
+        public ExpirationResult(String formattedExpirationDate, String stringStatus) {
+            this.formattedExpirationDate = formattedExpirationDate;
+            this.stringStatus = stringStatus;
+        }
+
+        public String getFormattedExpirationDate() {
+            return formattedExpirationDate;
+        }
+
+        public String getStringStatus() {
+            return stringStatus;
+        }
+    }
+
+    public static ExpirationResult calculateExpirationString(Date inputDate, String filterKey) {
+        // Calculate expiration date
+        Calendar expirationDate = Calendar.getInstance();
+        expirationDate.setTime(inputDate);
+        expirationDate.add(Calendar.YEAR, 5); // Add 5 years
+
+        // Get the expiration date after adding 5 years
+        Date updatedExpirationDate = expirationDate.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
+        String formattedExpirationDate = dateFormat.format(updatedExpirationDate);
+
+        // Determine the status
+        Calendar currentDate = Calendar.getInstance();
+        String stringStatus;
+
+        if (currentDate.after(expirationDate)) {
+            stringStatus = "For Refresh";
+        } else {
+            stringStatus = "Fresh";
+        }
+
+        // Return both formattedExpirationDate and stringStatus
+        return new ExpirationResult(formattedExpirationDate, stringStatus);
     }
 
 
@@ -361,4 +405,23 @@ public class Utils {
             return (int) valueInDp;
         }
     }
+
+
+    //    FPS Adjuster    //
+    public static class CustomFpsInterpolator implements TimeInterpolator {
+        private float framesPerSecond;
+
+        public CustomFpsInterpolator(float fps) {
+            this.framesPerSecond = fps;
+        }
+
+        @Override
+        public float getInterpolation(float input) {
+            // Simulate lower FPS by quantizing the input
+            float frameInterval = 1.0f / framesPerSecond;
+            return (float) (Math.floor(input / frameInterval) * frameInterval);
+        }
+    }
+
+
 }

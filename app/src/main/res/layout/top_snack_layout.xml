@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     android:id="@+id/customToast">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardViewNotif"
-        style="@style/toastNotification"
-        android:layout_width="wrap_content"
+        style="@style/itemBG"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -20,26 +19,25 @@
             android:id="@+id/constraint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp">
+            android:padding="24dp">
 
             <ImageView
-                android:id="@+id/imageViewToast"
+                android:id="@+id/topSnack_icon"
                 style="@style/sizeIC"
-                android:layout_marginEnd="12dp"
+                android:layout_marginStart="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayoutDeviceType"
-                app:srcCompat="@drawable/ic_launcher_foreground"/>
+                app:srcCompat="@drawable/check"/>
 
             <LinearLayout
-                android:id="@+id/linearLayoutDeviceType"
+                android:id="@+id/linearLayoutMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -53,18 +51,18 @@
 
                 <TextView
                     android:id="@+id/textViewDesc"
+                    style="@style/textStyle3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_marginStart="4dp"
                     android:text="TextView"
-                    style="@style/textStyle3"
                     android:visibility="gone" />
 
             </LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

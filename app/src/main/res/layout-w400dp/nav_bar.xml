@@ -76,9 +76,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backBtn">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView_options"
-            style="@style/cardViewOptions"
+            style="@style/itemBG"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible">
@@ -127,7 +127,7 @@
                     android:paddingVertical="@dimen/padding_16">
 
                     <TextView
-                        style="@style/textStyleConstantColor_2_opaque_400dp"
+                        style="@style/textStyle_info_bold_opaque_400dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sort"
@@ -164,7 +164,7 @@
 
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 

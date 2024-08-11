@@ -2,6 +2,8 @@ package com.example.qrscanner;
 
 
 import android.Manifest;
+
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -12,18 +14,27 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,6 +42,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -41,16 +54,25 @@ import android.widget.Toast;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.ImportDataAsyncTask;
+import com.example.qrscanner.utils.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,15 +93,16 @@ public class MainActivity extends AppCompatActivity {
     private CardView addBtn, laptopBtn, tabletBtn, phoneBtn, pcBtn, allBtn, unknownBtn, importBtn, exportBtn, unknownUserBtn, expiredBtn;
 
     private ImageView settings, currentActivity, backBtn;
-    private androidx.appcompat.widget.SearchView searchView;
+    private SearchView searchView;
     private RecyclerView recyclerView;
-    private ConstraintLayout constraintLayout;
-    private GridLayout mainOption;
+    private ConstraintLayout main, constraintLayout;
     private ItemAdapter adapter;
     private ArrayList<Assigned_to_User_Model> deviceList;
     private ArrayList<String>  serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
 
-    private String serialCode;
+    private View topSnackView;
+    private ImageView topSnack_icon;
+    private TextView topSnackMessage, topSnackDesc;
 
     private DBHelper dbHelper;
 
@@ -103,7 +126,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         applyTheme();
 
 //        checkStoragePermission();
@@ -133,10 +162,19 @@ public class MainActivity extends AppCompatActivity {
         searchView = findViewById(R.id.search_bar);
         searchView.clearFocus();
 
+        main = findViewById(R.id.main);
         constraintLayout = findViewById(R.id.constraintLayoutOp);
 
         recyclerView = findViewById(R.id.recyclerViewSearch);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(MainActivity.this.LAYOUT_INFLATER_SERVICE);
+        topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
+        topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
+        topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
+        topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
+
 
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
 
@@ -280,6 +318,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openFileChooser();
+//                Dialog dialog = new Dialog(MainActivity.this);
+//                LayoutInflater inflater = getLayoutInflater();
+//                View dialogView = inflater.inflate(R.layout.loading_dialog, null);
+//                ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
+//                Utils.CustomFpsInterpolator fpsInterpolator = new Utils.CustomFpsInterpolator(16);
+//                ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
+//                objectAnimator.setDuration(1000);
+//                objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+//                objectAnimator.setInterpolator(fpsInterpolator);
+//                objectAnimator.start();
+//                dialog.setContentView(dialogView);
+//                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+//                dialog.getWindow().setDimAmount(0.8f);
+//                dialog.setCancelable(true);
+//                dialog.show();
             }
         });
 
@@ -369,7 +422,6 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select File"), FILE_REQUEST_CODE);
     }
 
-
     // Importing excel code block
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -381,193 +433,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             Uri selectedFileUri = data.getData();
-
-            try {
-                InputStream inputStream = getContentResolver().openInputStream(selectedFileUri);
-                Workbook workbook = WorkbookFactory.create(inputStream);
-                Sheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
-
-                DBHelper dbHelper = new DBHelper(this);
-
-                // Identify header row and map headers to column indices
-                Row headerRow = sheet.getRow(0); // Assuming first row is the header
-                if (headerRow == null) {
-                    throw new IllegalArgumentException("No Header row found");
-                }
-
-
-                Map<String, Integer> headerMap = new HashMap<>();
-                for (Cell cell : headerRow) {
-                    if (cell.getCellType() == CellType.STRING) {
-                        String header = cell.getStringCellValue().trim().toLowerCase();
-                        headerMap.put(header, cell.getColumnIndex());
-                    }
-                }
-
-                // Check for required headers
-                if (!containsKeyword(headerMap, "Serial")) {
-                    throw new IllegalArgumentException("Missing required header: Serial");
-                }
-                if (!containsKeyword(headerMap, "User") && !containsKeyword(headerMap, "Assigned To") && !containsKeyword(headerMap, "Name")) {
-                    throw new IllegalArgumentException("Missing required header: Name or User or ");
-                }
-                if (!containsKeyword(headerMap, "Device") && !containsKeyword(headerMap, "Asset Type")) {
-                    throw new IllegalArgumentException("Missing required header: Device or Asset Type");
-                }
-                if (!containsKeyword(headerMap, "Device Model") && !containsKeyword(headerMap, "Asset Description")) {
-                    throw new IllegalArgumentException("Missing required header: Device Model or Asset Description");
-                }
-                if (!containsKeyword(headerMap, "Date Purchased") && !containsKeyword(headerMap, "Ship Date")) {
-                    throw new IllegalArgumentException("Missing required header: Date Purchased or Ship Date");
-                }
-
-                // Iterate over data rows
-                Iterator<Row> rowIterator = sheet.rowIterator();
-                rowIterator.next(); // Skip header row
-                while (rowIterator.hasNext()) {
-                    Row row = rowIterator.next();
-                    String serialNum = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "serial")));
-
-                    String name;
-                    if (containsKeyword(headerMap, "user")) {
-                        name = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "user")));
-                    } else {
-                        name = "";
-                    }
-
-                    String department;
-                    if (containsKeyword(headerMap, "department")) {
-                        department = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "department")));
-                        if (department.isEmpty()) {
-                            department = "Unknown";
-                        }
-                    } else {
-                        department = "Unknown";
-                    }
-
-                    String deviceType;
-                    if (containsKeyword(headerMap, "device")) {
-                        deviceType = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "device")));
-                        if (deviceType.isEmpty()) {
-                            deviceType = "Unknown";
-                        }
-                    } else if (containsKeyword(headerMap, "type")) {
-                        deviceType = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "type")));
-                        if (deviceType.isEmpty()) {
-                            deviceType = "Unknown";
-                        }
-                    } else {
-                        deviceType = "Unknown";
-                    }
-
-                    String deviceModel;
-                    if (containsKeyword(headerMap, "device model")) {
-                        deviceModel = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "device model")));
-                    } else if (containsKeyword(headerMap, "description")) {
-                        deviceModel = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "description")));
-                    } else {
-                        deviceModel = null;
-                    }
-
-                    String datePurchased;
-                    if (containsKeyword(headerMap, "date purchased")) {
-                        datePurchased = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date purchased")));
-                    } else if (containsKeyword(headerMap, "ship date")) {
-                        datePurchased = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "ship date")));
-                    } else {
-                        datePurchased = "00/00/00";
-                    }
-
-                    String dateExpired;
-                    if (containsKeyword(headerMap, "date expired")) {
-                        dateExpired = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date expired")));
-                    } else {
-                        dateExpired = "00/00/00";
-                    }
-
-                    String status;
-                    if (containsKeyword(headerMap, "status")) {
-                        status = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "status")));
-                    } else {
-                        status = null;
-                    }
-
-                    String availability;
-                    if (containsKeyword(headerMap, "availability")) {
-                        availability = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "availability")));
-                    } else {
-                        availability = "In Stock";
-                    }
-
-                    // Handle duplicate serial numbers
-                    if (dbHelper.getAllSerialNumbers().contains(serialNum)) {
-                        continue;
-                    }
-
-
-                    dbHelper.addDevice(serialNum, name, department, deviceType, deviceModel, datePurchased, dateExpired, status, availability);
-                }
-
-                Toast.makeText(this, "Data imported successfully", Toast.LENGTH_SHORT).show();
-                loadDataFromDatabase();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error importing data", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
-            }
+            // Run the AsyncTask to import data
+            new ImportDataAsyncTask(MainActivity.this, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUri);
         }
     }
-
-    private boolean containsKeyword(Map<String, Integer> headerMap, String keyword) {
-        for (String header : headerMap.keySet()) {
-            if (header.contains(keyword.toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private int getColumnIndex(Map<String, Integer> headerMap, String keyword) {
-        for (Map.Entry<String, Integer> entry : headerMap.entrySet()) {
-            if (entry.getKey().contains(keyword.toLowerCase())) {
-                return entry.getValue();
-            }
-        }
-        throw new IllegalArgumentException("Header not found for keyword: " + keyword);
-    }
-
-    private String getCellValueAsString(Cell cell) {
-        if (cell == null) {
-            return "";
-        }
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue();
-            case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    // Parse the date from the cell and format it
-                    Date date = cell.getDateCellValue();
-                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
-                    return sdf.format(date);
-                } else {
-                    return String.valueOf((int) cell.getNumericCellValue());
-                }
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                return cell.getCellFormula();
-            default:
-                return "";
-        }
-    }
-
-
 
 
     private void exportDatabaseToExcel(String fileName) {
+        int cl1 = ContextCompat.getColor(MainActivity.this, R.color.txtTitleD);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -580,6 +453,7 @@ public class MainActivity extends AppCompatActivity {
                 Workbook workbook = new XSSFWorkbook();
                 Sheet sheet = workbook.createSheet("Devices");
                 CellStyle wrapStyle = workbook.createCellStyle();
+                wrapStyle.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
                 wrapStyle.setWrapText(true);
 
                 // Arrays to store the calculated widths
@@ -589,6 +463,7 @@ public class MainActivity extends AppCompatActivity {
                 // Create header row
                 Row headerRow = sheet.createRow(0);
                 headerRow.createCell(0).setCellValue("Serial Number / Service Tag \n IMEI no. / Sim Number");
+//                headerRow.getCell(0).getCellStyle().setAlignment(HorizontalAlignment.CENTER);
                 headerRow.createCell(1).setCellValue("Assigned To / User \n Name");
                 headerRow.createCell(2).setCellValue("Department");
                 headerRow.createCell(3).setCellValue("Device Type \n / \n Asset Description");
@@ -613,6 +488,8 @@ public class MainActivity extends AppCompatActivity {
                     cellLengthHeaders[i] = length * 256;
                     Log.d("TAG", "Header column " + i + " length: " + cellLengthHeaders[i]);
                     cell.setCellStyle(wrapStyle);
+                    headerRow.getCell(i).getCellStyle().setAlignment(HorizontalAlignment.CENTER);
+                    headerRow.getCell(i).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
                 }
 
                 // Fill data rows and calculate content widths
@@ -626,6 +503,7 @@ public class MainActivity extends AppCompatActivity {
                     row.createCell(4).setCellValue(device.getDeviceBrand());
                     row.createCell(5).setCellValue(device.getDatePurchased());
                     row.createCell(6).setCellValue(device.getDateExpired());
+                    Log.d("MainActivity", "run: date expired " + row.getCell(6).getStringCellValue());
                     row.createCell(7).setCellValue(device.getStatus());
                     row.createCell(8).setCellValue(device.getAvailability());
                     Log.d("MainActivity", "Added row " + rowNum + " to the sheet");
@@ -642,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         cellLengthContents[i] = Math.max(cellLengthContents[i], length * 256);
-                        Log.d("TAG", "Content column " + i + " length: " + cellLengthContents[i]);
+//                        Log.d("TAG", "Content column " + i + " length: " + cellLengthContents[i]);
                     }
                 }
 
@@ -659,14 +537,26 @@ public class MainActivity extends AppCompatActivity {
                         workbook.write(outputStream);
                         outputStream.close();
                         Log.d("MainActivity", "Excel file saved to: " + selectedFileUri.getPath());
-                        Toast.makeText(MainActivity.this, "Data exported successfully to " + selectedFileUri.getPath(), Toast.LENGTH_LONG).show();
-                    } else {
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                topSnack_icon.setImageResource(R.drawable.check);
+                                topSnackMessage.setText("Excel file saved to: " + selectedFileUri.getPath());
+                                TopSnack.createCustomTopSnack(MainActivity.this, main, topSnackView, null, null);
+                            }
+                        });
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                     // Handle any errors that occur during file writing
-                    Toast.makeText(MainActivity.this, "Failed to export data", Toast.LENGTH_SHORT).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            topSnack_icon.setImageResource(R.drawable.warning_sign);
+                            topSnackMessage.setText("Failed to export data");
+                            TopSnack.createCustomTopSnack(MainActivity.this, main, topSnackView, null, null);
+                        }
+                    });
                 }
             }
         }).start();

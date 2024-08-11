@@ -6,7 +6,6 @@
         <item name="android:statusBarColor" targetApi="1">@color/bgD</item>
     </style>
 
-
     <style name="Theme.QRScanner.Dark" parent="Base.Theme.QRScanner" />
 
     <style name="Theme.QRScanner.Fullscreen" parent="Theme.QRScanner.Dark">
@@ -85,6 +84,27 @@
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
 
+    <style name="textStyle_info_bold_opaque">
+        <item name="android:textSize">@dimen/text_16sp</item>
+        <item name="android:textColor">@color/txtHeaderLight</item>
+        <item name="android:fontFamily">@font/gotham_bold</item>
+    </style>
+    <style name="textStyle_info_bold_opaque_400dp">
+        <item name="android:textSize">@dimen/text_12sp</item>
+        <item name="android:textColor">@color/txtHeaderLight</item>
+        <item name="android:fontFamily">@font/gotham_bold</item>
+    </style>
+
+    <style name="textStyle_ConstantColor_info_bold_opaque_light">
+        <item name="android:textSize">@dimen/text_16sp</item>
+        <item name="android:textColor">@color/txtHeaderLight</item>
+        <item name="android:fontFamily">@font/gotham_bold</item>
+    </style>
+    <style name="textStyle_ConstantColor_info_bold_opaque_dark">
+        <item name="android:textSize">@dimen/text_16sp</item>
+        <item name="android:textColor">@color/txtHeader</item>
+        <item name="android:fontFamily">@font/gotham_bold</item>
+    </style>
 
 
     <style name="CancelBTNTextStyle">
@@ -444,11 +464,7 @@
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
-    <style name="textStyle_info_bold_opaque">
-        <item name="android:textSize">@dimen/text_16sp</item>
-        <item name="android:textColor">@color/txtHeaderLight</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
+
 
     <style name="toastNotification">
         <item name="cardBackgroundColor">@color/dark1</item>
