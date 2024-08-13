@@ -273,59 +273,7 @@ public class Utils {
             public void onClick(View v) {
                 alertDialog.dismiss();
 
-                new AsyncTask<Void, Void, Boolean>() {
-                    Dialog customLoading;
-
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        // Show loading animation
-                        customLoading = new Dialog(context);
-                        LayoutInflater inflater = LayoutInflater.from(context);
-                        View dialogView = inflater.inflate(R.layout.loading_dialog, null);
-                        ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
-                        TextView textView = dialogView.findViewById(R.id.loading_textView);
-                        textView.setText("Deleting");
-                        CustomFpsInterpolator fpsInterpolator = new CustomFpsInterpolator(16);
-                        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
-                        objectAnimator.setDuration(500);
-                        objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                        objectAnimator.setInterpolator(fpsInterpolator);
-                        objectAnimator.start();
-                        customLoading.setContentView(dialogView);
-                        customLoading.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                        WindowManager.LayoutParams lp = customLoading.getWindow().getAttributes();
-                        lp.dimAmount = 0.5f;
-                        customLoading.setCancelable(false);
-                        customLoading.show();
-                    }
-
-                    @Override
-                    protected Boolean doInBackground(Void... voids) {
-                        try {
-                            dbHelper.deleteAll();
-                            deviceList.clear();
-                            itemAdapter.clearItems();
-                            return true;
-                        } catch (Exception e) {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean success) {
-                        customLoading.dismiss();
-
-                        if (success) {
-                            itemAdapter.setDeviceList(deviceList);
-                            Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
-                            Log.d("TAG", "onPostExecute: " + "All Data Deleted");
-                        } else {
-                            Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
-                            Log.d("TAG", "onPostExecute: " + "Failed to delete data");
-                        }
-                    }
-                }.execute();
+                new AsyncTaskDelete(context, itemAdapter).execute();
             }
         });
 
@@ -598,4 +546,71 @@ public class Utils {
     }
 
 
+    private static class AsyncTaskDelete extends AsyncTask<Void, Void, Boolean> {
+        private final Context context;
+        private final ItemAdapter itemAdapter;
+        Dialog customLoading;
+
+        public AsyncTaskDelete(Context context, ItemAdapter itemAdapter) {
+            this.context = context;
+            this.itemAdapter = itemAdapter;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("AsyncTask", "onPreExecute: Starting loading dialog");
+            // Show loading animation
+            customLoading = new Dialog(context);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View dialogView = inflater.inflate(R.layout.loading_dialog, null);
+            ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
+            TextView textView = dialogView.findViewById(R.id.loading_textView);
+            textView.setText("Deleting");
+            CustomFpsInterpolator fpsInterpolator = new CustomFpsInterpolator(16);
+            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
+            objectAnimator.setDuration(500);
+            objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            objectAnimator.setInterpolator(fpsInterpolator);
+            objectAnimator.start();
+            customLoading.setContentView(dialogView);
+            customLoading.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            WindowManager.LayoutParams lp = customLoading.getWindow().getAttributes();
+            lp.dimAmount = 0.5f;
+            customLoading.setCancelable(false);
+            customLoading.show();
+        }
+
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            Log.d("AsyncTask", "Starting deletion process");
+
+            try {
+                Log.d("AsyncTask", "Deleting data...");
+                dbHelper.deleteAll();
+                deviceList.clear();
+                itemAdapter.clearItems();
+                Log.d("AsyncTask", "Data deleted successfully");
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            customLoading.dismiss();
+
+            if (success) {
+                itemAdapter.setDeviceList(deviceList);
+                Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
+                Log.d("TAG", "onPostExecute: " + "All Data Deleted");
+            } else {
+                Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
+                Log.d("TAG", "onPostExecute: " + "Failed to delete data");
+            }
+        }
+    }
 }
