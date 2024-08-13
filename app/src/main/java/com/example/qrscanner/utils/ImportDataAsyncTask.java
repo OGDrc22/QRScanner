@@ -40,13 +40,17 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
-    private Dialog customLoading;
+
     private Context context;
+    private Dialog customLoading;
 
     private ConstraintLayout main;
     private View topSnackView;
     private ImageView topSnack_icon;
-    private TextView topSnackMessage, topSnackDesc;
+    private TextView topSnackMessage;
+    private TextView topSnackDesc;
+
+    private static final String pattern = "MM/dd/yy";
 
     public ImportDataAsyncTask(Context context, ConstraintLayout main, View topSnackView, ImageView topSnack_icon, TextView topSnackMessage, TextView topSnackDesc) {
         this.context = context;
@@ -56,8 +60,6 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
         this.topSnackMessage = topSnackMessage;
         this.topSnackDesc = topSnackDesc;
     }
-
-    private static final String pattern = "MM/dd/yy";
 
 
     @Override

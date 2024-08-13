@@ -71,6 +71,7 @@ import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.ExportDateBaseToExcel;
 import com.example.qrscanner.utils.ImportDataAsyncTask;
 import com.example.qrscanner.utils.Utils;
 
@@ -134,8 +135,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         applyTheme();
-
-//        checkStoragePermission();
 
         findViewById(R.id.main).bringToFront();
 
@@ -415,6 +414,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void loadDataFromDatabase() {
+        deviceList.clear();
+        deviceList.addAll(dbHelper.fetchDevice());
+        adapter.notifyDataSetChanged();
+
+    }
+
     private void openFileChooser() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*"); // Set MIME type to all types of files
@@ -428,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CREATE_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             selectedFileUri = data.getData();
-            exportDatabaseToExcel(fileNameToExport);
+            new ExportDateBaseToExcel(MainActivity.this, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUri);
         }
 
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
@@ -439,138 +445,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void exportDatabaseToExcel(String fileName) {
-        int cl1 = ContextCompat.getColor(MainActivity.this, R.color.txtTitleD);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("MainActivity", "Storage permission granted");
-                // Fetch data from the database
-                ArrayList<Assigned_to_User_Model> deviceList = dbHelper.fetchDevice();
-                Log.d("MainActivity", "Fetched " + deviceList.size() + " records from the database");
-
-                // Create an Excel workbook and sheet
-                Workbook workbook = new XSSFWorkbook();
-                Sheet sheet = workbook.createSheet("Devices");
-                CellStyle wrapStyle = workbook.createCellStyle();
-                wrapStyle.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
-                wrapStyle.setWrapText(true);
-
-                // Arrays to store the calculated widths
-                int[] cellLengthHeaders = new int[9];
-                int[] cellLengthContents = new int[9];
-
-                // Create header row
-                Row headerRow = sheet.createRow(0);
-                headerRow.createCell(0).setCellValue("Serial Number / Service Tag \n IMEI no. / Sim Number");
-//                headerRow.getCell(0).getCellStyle().setAlignment(HorizontalAlignment.CENTER);
-                headerRow.createCell(1).setCellValue("Assigned To / User \n Name");
-                headerRow.createCell(2).setCellValue("Department");
-                headerRow.createCell(3).setCellValue("Device Type \n / \n Asset Description");
-                headerRow.createCell(4).setCellValue("Device Model \n / \n Asset Type");
-                headerRow.createCell(5).setCellValue("Date Purchased \n / \n Ship Date");
-                headerRow.createCell(6).setCellValue("Date Expired");
-                headerRow.createCell(7).setCellValue("Status");
-                headerRow.createCell(8).setCellValue("Availability");
-
-                // Calculate header row widths
-                for (int i = 0; i <= 8; i++) {
-                    Cell cell = headerRow.getCell(i);
-                    int length = 0;
-
-                    // Check cell type to avoid exceptions
-                    if (cell.getCellType() == CellType.STRING) {
-                        length = cell.getStringCellValue().length() + 2;
-                    } else if (cell.getCellType() == CellType.NUMERIC) {
-                        length = String.valueOf(cell.getNumericCellValue()).length() + 2;
-                    }
-
-                    cellLengthHeaders[i] = length * 256;
-                    Log.d("TAG", "Header column " + i + " length: " + cellLengthHeaders[i]);
-                    cell.setCellStyle(wrapStyle);
-                    headerRow.getCell(i).getCellStyle().setAlignment(HorizontalAlignment.CENTER);
-                    headerRow.getCell(i).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
-                }
-
-                // Fill data rows and calculate content widths
-                int rowNum = 1;
-                for (Assigned_to_User_Model device : deviceList) {
-                    Row row = sheet.createRow(rowNum++);
-                    row.createCell(0).setCellValue(device.getSerialNumber());
-                    row.createCell(1).setCellValue(device.getName());
-                    row.createCell(2).setCellValue(device.getDepartment());
-                    row.createCell(3).setCellValue(device.getDeviceType());
-                    row.createCell(4).setCellValue(device.getDeviceBrand());
-                    row.createCell(5).setCellValue(device.getDatePurchased());
-                    row.createCell(6).setCellValue(device.getDateExpired());
-                    Log.d("MainActivity", "run: date expired " + row.getCell(6).getStringCellValue());
-                    row.createCell(7).setCellValue(device.getStatus());
-                    Log.d("MainActivity", "run: status " + row.getCell(7).getStringCellValue());
-                    row.createCell(8).setCellValue(device.getAvailability());
-                    Log.d("MainActivity", "Added row " + rowNum + " to the sheet");
-
-                    for (int i = 0; i <= 8; i++) {
-                        Cell cell = row.getCell(i);
-                        int length = 0;
-
-                        // Check cell type to avoid exceptions
-                        if (cell.getCellType() == CellType.STRING) {
-                            length = cell.getStringCellValue().length() + 2;
-                        } else if (cell.getCellType() == CellType.NUMERIC) {
-                            length = String.valueOf(cell.getNumericCellValue()).length() + 2;
-                        }
-
-                        cellLengthContents[i] = Math.max(cellLengthContents[i], length * 256);
-//                        Log.d("TAG", "Content column " + i + " length: " + cellLengthContents[i]);
-                    }
-                }
-
-                // Set the column width to the maximum of header and content width
-                for (int i = 0; i <= 8; i++) {
-                    int columnWidth = Math.max(cellLengthHeaders[i], cellLengthContents[i]);
-                    sheet.setColumnWidth(i, columnWidth);
-                    Log.d("TAG", "Final column " + i + " width: " + columnWidth);
-                }
-
-                try {
-                    if (selectedFileUri != null) {
-                        OutputStream outputStream = getContentResolver().openOutputStream(selectedFileUri);
-                        workbook.write(outputStream);
-                        outputStream.close();
-                        Log.d("MainActivity", "Excel file saved to: " + selectedFileUri.getPath());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                topSnack_icon.setImageResource(R.drawable.check);
-                                topSnackMessage.setText("Excel file saved to: " + selectedFileUri.getPath());
-                                TopSnack.createCustomTopSnack(MainActivity.this, main, topSnackView, null, null);
-                            }
-                        });
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    // Handle any errors that occur during file writing
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            topSnack_icon.setImageResource(R.drawable.warning_sign);
-                            topSnackMessage.setText("Failed to export data");
-                            TopSnack.createCustomTopSnack(MainActivity.this, main, topSnackView, null, null);
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("MainActivity", "Storage permission granted by user");
-                exportDatabaseToExcel(fileNameToExport);  // Retry exporting now that permission is granted
+                new ExportDateBaseToExcel(MainActivity.this, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUri);  // Retry exporting now that permission is granted
             } else {
                 Log.d("MainActivity", "Storage permission denied by user");
                 Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
@@ -587,12 +468,56 @@ public class MainActivity extends AppCompatActivity {
     public void onDeleteClick(int position) {
     }
 
+    // Show Dialog to put file name
+    private void promptExportWithFileName() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.layout_export_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+        builder.setView(view);
 
-    private void loadDataFromDatabase() {
-        deviceList.clear();
-        deviceList.addAll(dbHelper.fetchDevice());
-        adapter.notifyDataSetChanged();
+        // Set up the input
+        final EditText input = view.findViewById(R.id.editText);
+        final Button actionOK = view.findViewById(R.id.actionOK);
+        final Button actionCancel = view.findViewById(R.id.actionCancel);
 
+        final AlertDialog alertDialog = builder.create();
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+
+
+        // Set up the buttons
+        actionOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String fileName = input.getText().toString();
+                if (!fileName.isEmpty()) {
+                    fileNameToExport = fileName;
+                    checkStoragePermission();
+                    createFile();
+                    new ExportDateBaseToExcel(MainActivity.this, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUri);
+                    alertDialog.hide();
+                } else {
+                    Toast.makeText(MainActivity.this, "File name cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        actionCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+
+    private void createFile() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        intent.putExtra(Intent.EXTRA_TITLE, fileNameToExport );
+        startActivityForResult(intent, CREATE_FILE_REQUEST_CODE);
     }
 
     private void checkStoragePermission() {
@@ -623,57 +548,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    // Show Dialog to put file name
-    private void promptExportWithFileName() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.layout_export_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
-        builder.setView(view);
-
-        // Set up the input
-        final EditText input = view.findViewById(R.id.editText);
-        final Button actionOK = view.findViewById(R.id.actionOK);
-        final Button actionCancel = view.findViewById(R.id.actionCancel);
-
-        final AlertDialog alertDialog = builder.create();
-        if (alertDialog.getWindow() != null) {
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-        }
-        alertDialog.show();
-
-
-        // Set up the buttons
-        actionOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String fileName = input.getText().toString();
-                if (!fileName.isEmpty()) {
-                    fileNameToExport = fileName;
-                    checkStoragePermission();
-                    createFile();
-                    exportDatabaseToExcel(fileNameToExport);
-                    alertDialog.hide();
-                } else {
-                    Toast.makeText(MainActivity.this, "File name cannot be empty", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        actionCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
-    }
-
-
-    private void createFile() {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        intent.putExtra(Intent.EXTRA_TITLE, fileNameToExport );
-        startActivityForResult(intent, CREATE_FILE_REQUEST_CODE);
-    }
-
 }
