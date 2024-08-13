@@ -127,7 +127,7 @@ public class TabletActivity extends AppCompatActivity {
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
                         String identifier = "tablets";
-                        Utils.showDeleteAllDialog(TabletActivity.this, identifier);
+                        Utils.showDeleteAllDialog(TabletActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(TabletActivity.this, "Tablet is empty", Toast.LENGTH_SHORT).show();

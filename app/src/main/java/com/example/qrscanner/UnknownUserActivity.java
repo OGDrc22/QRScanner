@@ -138,7 +138,7 @@ public class UnknownUserActivity extends AppCompatActivity {
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
                         String identifier = "unknown user device";
-                        Utils.showDeleteAllDialog(UnknownUserActivity.this, identifier);
+//                        Utils.showDeleteAllDialog(UnknownUserActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
                     }else {
                         Toast.makeText(UnknownUserActivity.this, "Unknown user is empty", Toast.LENGTH_SHORT).show();

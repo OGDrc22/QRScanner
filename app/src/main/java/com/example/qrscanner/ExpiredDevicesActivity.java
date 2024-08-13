@@ -135,7 +135,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
                         String identifier = "expired device";
-                        Utils.showDeleteAllDialog(ExpiredDevicesActivity.this, identifier);
+                        Utils.showDeleteAllDialog(ExpiredDevicesActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
                     }else {
                         Toast.makeText(ExpiredDevicesActivity.this, "Expired Devices is empty", Toast.LENGTH_SHORT).show();

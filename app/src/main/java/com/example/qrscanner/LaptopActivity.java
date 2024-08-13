@@ -127,7 +127,7 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
                         String identifier = "laptops";
-                        Utils.showDeleteAllDialog(LaptopActivity.this, identifier);
+                        Utils.deleteDataByDeviceType(LaptopActivity.this, "Laptop", adapter);
                         adapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(LaptopActivity.this, "Laptop is empty", Toast.LENGTH_SHORT).show();

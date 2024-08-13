@@ -1,11 +1,11 @@
 package com.example.qrscanner.utils;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,21 +14,23 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.os.AsyncTask;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -36,6 +38,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
+import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -44,9 +47,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 public class Utils {
 
+
+    // Expiration calculator
+    private static final String pattern = "MM/dd/yy";
+    private static DBHelper dbHelper;
+    private static ArrayList<Assigned_to_User_Model> deviceList;
 
     public static byte[] imageViewToByte(Context context, ImageView imageView) {
         Drawable drawable = imageView.getDrawable();
@@ -135,12 +144,9 @@ public class Utils {
         return Bitmap.createScaledBitmap(originalBitmap, newWidth, intNewHeight, true);
     }
 
+    public static void deleteDataByDeviceType(Context context, String filterKey, ItemAdapter itemAdapter) {
 
-
-    public static void showDeleteAllDialog(Context context, String identifier) {
-
-        DBHelper dbHelper = new DBHelper(context);
-        ArrayList<Assigned_to_User_Model> deviceList;
+        dbHelper = new DBHelper(context);
 
         deviceList = dbHelper.fetchDevice();
 
@@ -149,19 +155,81 @@ public class Utils {
         View view = inflater.inflate(R.layout.layout_delete_dialog, null);
         builder.setView(view);
 
-        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All " + identifier  +" ] ?" + "\n" + "\n" + "This action cannot be undone.");
+        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All " + filterKey + " ] ?" + "\n" + "\n" + "This action cannot be undone.");
 
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
+
         // function
         view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("StaticFieldLeak")
             @Override
             public void onClick(View v) {
-                dbHelper.deleteAll();
-                deviceList.clear();
-                Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
                 alertDialog.dismiss();
+
+                new AsyncTask<Void, Void, Boolean>() {
+                    Dialog customLoading;
+
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        // Show loading animation
+                        customLoading = new Dialog(context);
+                        LayoutInflater inflater = LayoutInflater.from(context);
+                        View dialogView = inflater.inflate(R.layout.loading_dialog, null);
+                        ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
+                        TextView textView = dialogView.findViewById(R.id.loading_textView);
+                        textView.setText("Deleting");
+                        Utils.CustomFpsInterpolator fpsInterpolator = new Utils.CustomFpsInterpolator(16);
+                        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
+                        objectAnimator.setDuration(500);
+                        objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+                        objectAnimator.setInterpolator(fpsInterpolator);
+                        objectAnimator.start();
+                        customLoading.setContentView(dialogView);
+                        customLoading.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                        WindowManager.LayoutParams lp = customLoading.getWindow().getAttributes();
+                        lp.dimAmount = 0.5f;
+                        customLoading.setCancelable(false);
+                        customLoading.show();
+                    }
+
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        try {
+                            // Iterate through the original list and remove items that match the gadget name
+                            Iterator<Assigned_to_User_Model> iterator = deviceList.iterator();
+                            while (iterator.hasNext()) {
+                                Assigned_to_User_Model device = iterator.next();
+                                // Assuming getDeviceName() returns the name of the device
+                                String filterKey2 = filterKey.toLowerCase();
+                                if (device.getDeviceType().equalsIgnoreCase(filterKey2)) {
+                                    // Remove the item from the list
+                                    iterator.remove();
+                                    dbHelper.deleteDevice(device);
+                                }
+                            }
+                            itemAdapter.setDeviceList(deviceList);
+                            itemAdapter.notifyDataSetChanged();
+                            return true;
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean success) {
+                        customLoading.dismiss();
+
+                        if (success) {
+                            itemAdapter.notifyDataSetChanged();
+                            Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }.execute();
             }
         });
 
@@ -180,8 +248,101 @@ public class Utils {
         }
     }
 
-    // Expiration calculator
-    private static final String pattern = "MM/dd/yy";
+    // TODO Fix this method - only works on second call
+    public static void showDeleteAllDialog(Context context, String identifier, ItemAdapter itemAdapter) {
+
+        dbHelper = new DBHelper(context);
+
+        deviceList = dbHelper.fetchDevice();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.layout_delete_dialog, null);
+        builder.setView(view);
+
+        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All " + identifier + " ] ?" + "\n" + "\n" + "This action cannot be undone.");
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+
+        // function
+        view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+
+                new AsyncTask<Void, Void, Boolean>() {
+                    Dialog customLoading;
+
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        // Show loading animation
+                        customLoading = new Dialog(context);
+                        LayoutInflater inflater = LayoutInflater.from(context);
+                        View dialogView = inflater.inflate(R.layout.loading_dialog, null);
+                        ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
+                        TextView textView = dialogView.findViewById(R.id.loading_textView);
+                        textView.setText("Deleting");
+                        CustomFpsInterpolator fpsInterpolator = new CustomFpsInterpolator(16);
+                        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
+                        objectAnimator.setDuration(500);
+                        objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+                        objectAnimator.setInterpolator(fpsInterpolator);
+                        objectAnimator.start();
+                        customLoading.setContentView(dialogView);
+                        customLoading.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                        WindowManager.LayoutParams lp = customLoading.getWindow().getAttributes();
+                        lp.dimAmount = 0.5f;
+                        customLoading.setCancelable(false);
+                        customLoading.show();
+                    }
+
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        try {
+                            dbHelper.deleteAll();
+                            deviceList.clear();
+                            itemAdapter.clearItems();
+                            return true;
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean success) {
+                        customLoading.dismiss();
+
+                        if (success) {
+                            itemAdapter.setDeviceList(deviceList);
+                            Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
+                            Log.d("TAG", "onPostExecute: " + "All Data Deleted");
+                        } else {
+                            Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
+                            Log.d("TAG", "onPostExecute: " + "Failed to delete data");
+                        }
+                    }
+                }.execute();
+            }
+        });
+
+
+        // For Cancel Button
+        view.findViewById(R.id.actionCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+    }
 
     public static void calculateExpirationAndStatus(Date inputDate, TextView dateExpired, TextView status) {
         // Calculate expiration date
@@ -217,31 +378,26 @@ public class Utils {
         Calendar currentDate = Calendar.getInstance();
 
         boolean result = false;
-        if (currentDate.after(expirationDate)) {
-            result = true;
-        } else {
-            result = false;
+
+
+        if (filterKey.equals("For Refresh")) {
+            if (currentDate.after(expirationDate)) {
+                result = true;
+            } else {
+                result = false;
+            }
+            Log.d("Utils", "calculateExpiration: " + filterKey + " = FR--Expired--?: " + result);
         }
-        
+        if (filterKey.equals("Fresh")) {
+            if (currentDate.before(expirationDate)) {
+                result = true;
+            } else {
+                result = false;
+            }
+            Log.d("Utils", "calculateExpiration: " + filterKey + " = F--Expired--?: " + result);
+        }
+
         return result;
-    }
-
-    public static class ExpirationResult {
-        private String formattedExpirationDate;
-        private String stringStatus;
-
-        public ExpirationResult(String formattedExpirationDate, String stringStatus) {
-            this.formattedExpirationDate = formattedExpirationDate;
-            this.stringStatus = stringStatus;
-        }
-
-        public String getFormattedExpirationDate() {
-            return formattedExpirationDate;
-        }
-
-        public String getStringStatus() {
-            return stringStatus;
-        }
     }
 
     public static ExpirationResult calculateExpirationString(Date inputDate, String filterKey) {
@@ -259,7 +415,7 @@ public class Utils {
         Calendar currentDate = Calendar.getInstance();
         String stringStatus;
 
-            if (currentDate.after(expirationDate)) {
+        if (currentDate.after(expirationDate)) {
             stringStatus = "For Refresh";
         } else {
             stringStatus = "Fresh";
@@ -268,7 +424,6 @@ public class Utils {
         // Return both formattedExpirationDate and stringStatus
         return new ExpirationResult(formattedExpirationDate, stringStatus);
     }
-
 
     // Check Availability
     public static void updateAvailabilityStatus(EditText wantToCheck, TextView textResultHolder) {
@@ -285,6 +440,7 @@ public class Utils {
         objectAnimator.start();
 
     }
+
     public static void rotateDown(ImageView icon) {
         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(icon, "rotation", 180f, 0f);
         objectAnimator.setDuration(500);
@@ -303,6 +459,7 @@ public class Utils {
 
         TransitionManager.beginDelayedTransition(constraintHolder, transition);
     }
+
     public static void scaleUpAnimator(View whatToScale, float from, float to, int duration) {
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(whatToScale, "scaleX", from, to);
@@ -406,6 +563,23 @@ public class Utils {
         }
     }
 
+    public static class ExpirationResult {
+        private String formattedExpirationDate;
+        private String stringStatus;
+
+        public ExpirationResult(String formattedExpirationDate, String stringStatus) {
+            this.formattedExpirationDate = formattedExpirationDate;
+            this.stringStatus = stringStatus;
+        }
+
+        public String getFormattedExpirationDate() {
+            return formattedExpirationDate;
+        }
+
+        public String getStringStatus() {
+            return stringStatus;
+        }
+    }
 
     //    FPS Adjuster    //
     public static class CustomFpsInterpolator implements TimeInterpolator {

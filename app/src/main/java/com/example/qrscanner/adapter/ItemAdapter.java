@@ -81,6 +81,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
     private OnEditClickListener editClickListener;
 
+    public void clearItems() {
+        deviceList.clear();
+    }
+
     public void editItem(Context context, int position) {
         Assigned_to_User_Model device = deviceList.get(position);
         Intent intent = new Intent(context, UpdateData.class); // Use context instead of this
@@ -98,6 +102,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         ((Activity) context).startActivityForResult(intent, YOUR_REQUEST_CODE); // Use context to start activity
         notifyItemChanged(position);
     }
+
 
     public ItemAdapter(int itemLayoutId, Context context, ArrayList<Assigned_to_User_Model> deviceList, ArrayList serialNum_id, ArrayList assignedTo_id, ArrayList department_id, ArrayList device_id, ArrayList deviceModel_id, ArrayList datePurchased_id, ArrayList dateExpire_id, ArrayList status_id, ArrayList availability_id, OnDeleteClickListener onDeleteClickListener, OnEditClickListener onEditClickListener) {
         this.filteredData = new ArrayList<>(deviceList);
@@ -127,59 +132,60 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         data = deviceList.get(position);
 
-        holder.serialNum_tv.setText(String.valueOf(data.getSerialNumber()));
-        holder.textHolderAssignedTo.setText(String.valueOf(data.getName()));
-        holder.textHolderDepartment.setText(String.valueOf(data.getDepartment()));
-        holder.textHolderDeviceType.setText(data.getDeviceType());
-        holder.textHolderDeviceModel.setText(String.valueOf(data.getDeviceBrand()));
-        holder.textHolderDatePur.setText(String.valueOf(data.getDatePurchased()));
+        viewHolder.serialNum_tv.setText(String.valueOf(data.getSerialNumber()));
+        viewHolder.textHolderAssignedTo.setText(String.valueOf(data.getName()));
+        viewHolder.textHolderDepartment.setText(String.valueOf(data.getDepartment()));
+        viewHolder.textHolderDeviceType.setText(data.getDeviceType());
+        viewHolder.textHolderDeviceModel.setText(String.valueOf(data.getDeviceBrand()));
+        viewHolder.textHolderDatePur.setText(String.valueOf(data.getDatePurchased()));
 
-        holder.subHeader.setText(data.getSerialNumber());
+        viewHolder.subHeader.setText(data.getSerialNumber());
 
         if (data.getName().isEmpty()) {
-            holder.imgScan.setImageResource(R.drawable.qr_icon_48);
-            holder.topUserF.setVisibility(View.VISIBLE);
-            holder.headerF.setVisibility(View.GONE);
-            holder.textHolderAvailability.setText("In Stock");
+            viewHolder.imgScan.setImageResource(R.drawable.qr_icon_48);
+            viewHolder.topUserF.setVisibility(View.VISIBLE);
+            viewHolder.headerF.setVisibility(View.GONE);
+            viewHolder.textHolderAvailability.setText("In Stock");
 
             ConstraintSet constraintSet = new ConstraintSet();
-            constraintSet.clone(holder.constraintHolder);
+            constraintSet.clone(viewHolder.constraintHolder);
             constraintSet.setVerticalBias(R.id.subHeaderF, 0.5f);
-            constraintSet.applyTo(holder.constraintHolder);
+            constraintSet.applyTo(viewHolder.constraintHolder);
 
             int color = ContextCompat.getColor(this.context, R.color.txtHeader);
             int colorInDarkMode = ContextCompat.getColor(this.context, R.color.txtHeaderLight);
             if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                holder.subHeader.setTextColor(colorInDarkMode);
+                viewHolder.subHeader.setTextColor(colorInDarkMode);
             } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
-                holder.subHeader.setTextColor(color);
+                viewHolder.subHeader.setTextColor(color);
             }
 
         } else {
-            holder.imgScan.setImageResource(R.drawable.user_bulk_48);
-            holder.serialNum_tv.setText(data.getName());
-            holder.topUserF.setVisibility(View.GONE);
-            holder.headerF.setVisibility(View.VISIBLE);
+            viewHolder.imgScan.setImageResource(R.drawable.user_bulk_48);
+            viewHolder.serialNum_tv.setText(data.getName());
+            viewHolder.topUserF.setVisibility(View.GONE);
+            viewHolder.headerF.setVisibility(View.VISIBLE);
 
             ConstraintSet constraintSet = new ConstraintSet();
-            constraintSet.clone(holder.constraintHolder);
+            constraintSet.clone(viewHolder.constraintHolder);
 
             constraintSet.setVerticalBias(R.id.subHeaderF, 0.8f);
 
-            constraintSet.applyTo(holder.constraintHolder);
+            constraintSet.applyTo(viewHolder.constraintHolder);
 
             int color2 = ContextCompat.getColor(this.context, R.color.txtSubHeader);
             int colorInDarkMode2 = ContextCompat.getColor(this.context, R.color.txtSubHeaderLight);
             if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                holder.subHeader.setTextColor(colorInDarkMode2);
+                viewHolder.subHeader.setTextColor(colorInDarkMode2);
             } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
-                holder.subHeader.setTextColor(color2);
+                viewHolder.subHeader.setTextColor(color2);
             }
-            holder.subHeader.setTextSize(0, holder.textSize_for_textHolderAssigned);
+            viewHolder.subHeader.setTextSize(0, viewHolder.textSize_for_textHolderAssigned);
         }
+
 
         // Call calculate ExpirationAndStatus method
         try {
@@ -187,10 +193,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 ////            Date inputDate = dateFormat.parse(data.getDatePurchased());
             dateFormat = new SimpleDateFormat("MM/dd/yy");
             inputDate = dateFormat.parse(data.getDatePurchased());
-            Utils.calculateExpirationAndStatus(inputDate, holder.textHolderDateExpired, holder.textHolderStatus);
+            Utils.calculateExpirationAndStatus(inputDate, viewHolder.textHolderDateExpired, viewHolder.textHolderStatus);
 
             // Get the status text to determine visibility
-            String status = holder.textHolderStatus.getText().toString();
+            String status = viewHolder.textHolderStatus.getText().toString();
 
             // Set visibility of indicator based on status
             int clExpired = ContextCompat.getColor(context, R.color.clExpired);
@@ -198,36 +204,43 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             int clDark = ContextCompat.getColor(context, R.color.itemBg2);
             int clGreen = ContextCompat.getColor(context, R.color.primary);
             int clRed = ContextCompat.getColor(context, R.color.clError);
-            ObjectAnimator rotationAnimator = new ObjectAnimator();
-            if (status.equals("For Refresh")) {
-                holder.topExpiration.setVisibility(View.VISIBLE);
-                holder.textHolderStatus.setTextColor(clRed);
-//                rotationAnimator = ObjectAnimator.ofFloat(holder.imgVwStatus, "rotation", new float[]{0.0f, 180.0f});
-//                rotationAnimator.setDuration(1000);
-//                rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            if (status.equals("Fresh")) {
+                viewHolder.topExpiration.setVisibility(View.GONE);
+                viewHolder.textHolderStatus.setTextColor(clGreen);
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                    viewHolder.cardViewMain.setCardBackgroundColor(clDark);
+                } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                    viewHolder.cardViewMain.setCardBackgroundColor(clLight);
+                }
+//                ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(viewHolder.imgVwStatus, "rotation", 0.0f, 180.0f);
+//                rotationAnimator.setDuration(0);
 //                rotationAnimator.start();
             } else {
-                holder.topExpiration.setVisibility(View.GONE);
-                holder.textHolderStatus.setTextColor(clGreen);
-                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                    holder.cardViewMain.setCardBackgroundColor(clDark);
-                } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
-                    holder.cardViewMain.setCardBackgroundColor(clLight);
-                }
-
-                if (rotationAnimator != null && rotationAnimator.isRunning()) {
-                    rotationAnimator.cancel();
-                }
-                holder.imgVwStatus.setRotation(0);
+                viewHolder.topExpiration.setVisibility(View.VISIBLE);
+                viewHolder.textHolderStatus.setTextColor(clRed);
+                
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        holder.textHolderAvailability.setText(String.valueOf(data.getAvailability()));
+
+        if (Utils.calculateExpiration(inputDate, "For Refresh")){
+            ObjectAnimator rotationAnimator2 = ObjectAnimator.ofFloat(viewHolder.imgVwStatus, "rotation", 0.0f, 180.0f);
+            rotationAnimator2.setDuration(1000);
+            rotationAnimator2.setRepeatCount(ValueAnimator.INFINITE);
+            rotationAnimator2.start();
+        }
+        if (Utils.calculateExpiration(inputDate, "Fresh")) {
+            ObjectAnimator rotationAnimator2 = ObjectAnimator.ofFloat(viewHolder.imgVwStatus, "rotation", 0.0f, 0.0001f);
+            rotationAnimator2.setDuration(1000);
+            rotationAnimator2.setRepeatCount(ValueAnimator.INFINITE);
+            rotationAnimator2.start();
+        }
+        viewHolder.textHolderAvailability.setText(String.valueOf(data.getAvailability()));
 
 //        Delete Button
-        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+        viewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (deleteClickListener != null) {
@@ -239,7 +252,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         });
 
 //        Edit Button
-        holder.editBtn.setOnClickListener(new View.OnClickListener() {
+        viewHolder.editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (editClickListener != null) {
@@ -251,43 +264,43 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         });
 
         if (String.valueOf(data.getDeviceType()).equals("Laptop")) {
-            holder.deviceTypeIC.setImageResource(R.drawable.laptop_icon);
-            holder.deviceModelIC.setImageResource(R.drawable.laptop_icon);
+            viewHolder.deviceTypeIC.setImageResource(R.drawable.laptop_icon);
+            viewHolder.deviceModelIC.setImageResource(R.drawable.laptop_icon);
         } else if (String.valueOf(data.getDeviceType()).equals("Desktop")) {
-            holder.deviceTypeIC.setImageResource(R.drawable.ic_pc_computer);
-            holder.deviceModelIC.setImageResource(R.drawable.ic_pc_computer);
+            viewHolder.deviceTypeIC.setImageResource(R.drawable.ic_pc_computer);
+            viewHolder.deviceModelIC.setImageResource(R.drawable.ic_pc_computer);
         } else if (String.valueOf(data.getDeviceType()).equals("Phone")) {
-            holder.deviceTypeIC.setImageResource(R.drawable.ic_mobile_phone);
-            holder.deviceModelIC.setImageResource(R.drawable.ic_mobile_phone);
+            viewHolder.deviceTypeIC.setImageResource(R.drawable.ic_mobile_phone);
+            viewHolder.deviceModelIC.setImageResource(R.drawable.ic_mobile_phone);
         } else if (String.valueOf(data.getDeviceType()).equals("Tablet")) {
-            holder.deviceTypeIC.setImageResource(R.drawable.ic_tablet);
-            holder.deviceModelIC.setImageResource(R.drawable.ic_tablet);
+            viewHolder.deviceTypeIC.setImageResource(R.drawable.ic_tablet);
+            viewHolder.deviceModelIC.setImageResource(R.drawable.ic_tablet);
         } else if (String.valueOf(data.getDeviceType()).equals(data.getDeviceType())) {
             if (data.image != null){
                 // Convert byte array to Bitmap/int
                 byte[] imageBytes = data.getImage();
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                holder.deviceTypeIC.setImageBitmap(bitmap);
-                holder.deviceModelIC.setImageBitmap(bitmap);
+                viewHolder.deviceTypeIC.setImageBitmap(bitmap);
+                viewHolder.deviceModelIC.setImageBitmap(bitmap);
             } else {
-                Log.d("ItemAdapter", "onBindViewHolder: Null Image");
+                Log.d("ItemAdapter", "onBindViewviewHolder: Null Image");
             }
         } else {
             if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-                holder.deviceModelIC.setImageResource(R.drawable.ic_unknown_device_light);
-                holder.deviceTypeIC.setVisibility(View.GONE);
+                viewHolder.deviceModelIC.setImageResource(R.drawable.ic_unknown_device_light);
+                viewHolder.deviceTypeIC.setVisibility(View.GONE);
             } else {
-                holder.deviceModelIC.setImageResource(R.drawable.ic_unknown_device);
-                holder.deviceTypeIC.setVisibility(View.GONE);
+                viewHolder.deviceModelIC.setImageResource(R.drawable.ic_unknown_device);
+                viewHolder.deviceTypeIC.setVisibility(View.GONE);
             }
         }
 
 
-//        Utils.smoothTransition(holder.otherInfo, animationDuration);
-        Utils.smoothTransition(holder.actions, animationDuration);
-//        Utils.smoothTransition(holder.linearLayout2, animationDuration);
-//        Utils.smoothTransition();(holder.linearLayoutIndicators, animationDuration);
-        Utils.smoothTransition(holder.imgScan_Frame, animationDuration);
+//        Utils.smoothTransition(viewHolder.otherInfo, animationDuration);
+        Utils.smoothTransition(viewHolder.actions, animationDuration);
+//        Utils.smoothTransition(viewHolder.linearLayout2, animationDuration);
+//        Utils.smoothTransition();(viewHolder.linearLayoutIndicators, animationDuration);
+        Utils.smoothTransition(viewHolder.imgScan_Frame, animationDuration);
 
 
     }
@@ -456,7 +469,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 Utils.smoothTransition(headerF, animationDuration);
                 Utils.smoothTransition(subHeaderF, animationDuration);
                 Utils.smoothTransition(imgScan_Frame, animationDuration);
-
                 if (actions.getVisibility() == View.GONE) {
                     Log.d("ItemAdapter", "otherInfo is VISIBLE");
 

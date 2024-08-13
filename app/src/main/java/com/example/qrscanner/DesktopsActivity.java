@@ -123,7 +123,7 @@ public class DesktopsActivity extends AppCompatActivity {
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
                         String identifier = "desktop";
-                        Utils.showDeleteAllDialog(DesktopsActivity.this, identifier);
+                        Utils.showDeleteAllDialog(DesktopsActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
                     }else {
                         Toast.makeText(DesktopsActivity.this, "Desktop is empty", Toast.LENGTH_SHORT).show();
