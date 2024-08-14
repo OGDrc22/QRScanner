@@ -129,7 +129,7 @@ public class MobileActivity extends AppCompatActivity {
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
                         String identifier = "smart phones";
-                        Utils.showDeleteAllDialog(MobileActivity.this, identifier, adapter);
+//                        Utils.showDeleteAllDialog(MobileActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(MobileActivity.this, "Mobile Phones is empty", Toast.LENGTH_SHORT).show();

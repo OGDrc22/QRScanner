@@ -2,6 +2,7 @@ package com.example.qrscanner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,7 +42,11 @@ public class allDevice extends AppCompatActivity {
     private CardView cardView_options;
     private ImageView currentActivity, settingsIcon, backBtn;
     private ConstraintLayout constraintLayoutDeleteAll;
-    private LinearLayout cardViewContent;
+    private LinearLayout main, cardViewContent;
+
+    private View topSnackView;
+    private ImageView topSnack_icon;
+    private TextView topSnackMessage, topSnackDesc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,8 @@ public class allDevice extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        main = findViewById(R.id.main);
 
         settingsIcon = findViewById(R.id.settingsIcon);
         settingsIcon.setImageResource(R.drawable.drop_down);
@@ -128,13 +135,20 @@ public class allDevice extends AppCompatActivity {
         currentActivity = findViewById(R.id.currentActivity);
         currentActivity.setImageResource(R.drawable.device_model);
 
+
+        LayoutInflater inflater = (LayoutInflater) allDevice.this.getSystemService(allDevice.this.LAYOUT_INFLATER_SERVICE);
+        topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
+        topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
+        topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
+        topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
+
         constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
         constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
                     String identifier = "device";
-                    Utils.showDeleteAllDialog(allDevice.this, identifier, adapter);
+                    Utils.showDeleteAllDialog(allDevice.this, identifier, adapter, textViewItemCount, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc);
                 }else {
                     Toast.makeText(allDevice.this, "There's no Data", Toast.LENGTH_SHORT).show();
                 }

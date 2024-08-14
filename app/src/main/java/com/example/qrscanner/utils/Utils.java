@@ -28,6 +28,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
@@ -142,154 +144,6 @@ public class Utils {
 
         // Resize the Bitmap
         return Bitmap.createScaledBitmap(originalBitmap, newWidth, intNewHeight, true);
-    }
-
-    public static void deleteDataByDeviceType(Context context, String filterKey, ItemAdapter itemAdapter) {
-
-        dbHelper = new DBHelper(context);
-
-        deviceList = dbHelper.fetchDevice();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.layout_delete_dialog, null);
-        builder.setView(view);
-
-        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All " + filterKey + " ] ?" + "\n" + "\n" + "This action cannot be undone.");
-
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
-
-        // function
-        view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-
-                new AsyncTask<Void, Void, Boolean>() {
-                    Dialog customLoading;
-
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        // Show loading animation
-                        customLoading = new Dialog(context);
-                        LayoutInflater inflater = LayoutInflater.from(context);
-                        View dialogView = inflater.inflate(R.layout.loading_dialog, null);
-                        ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
-                        TextView textView = dialogView.findViewById(R.id.loading_textView);
-                        textView.setText("Deleting");
-                        Utils.CustomFpsInterpolator fpsInterpolator = new Utils.CustomFpsInterpolator(16);
-                        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
-                        objectAnimator.setDuration(500);
-                        objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                        objectAnimator.setInterpolator(fpsInterpolator);
-                        objectAnimator.start();
-                        customLoading.setContentView(dialogView);
-                        customLoading.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                        WindowManager.LayoutParams lp = customLoading.getWindow().getAttributes();
-                        lp.dimAmount = 0.5f;
-                        customLoading.setCancelable(false);
-                        customLoading.show();
-                    }
-
-                    @Override
-                    protected Boolean doInBackground(Void... voids) {
-                        try {
-                            // Iterate through the original list and remove items that match the gadget name
-                            Iterator<Assigned_to_User_Model> iterator = deviceList.iterator();
-                            while (iterator.hasNext()) {
-                                Assigned_to_User_Model device = iterator.next();
-                                // Assuming getDeviceName() returns the name of the device
-                                String filterKey2 = filterKey.toLowerCase();
-                                if (device.getDeviceType().equalsIgnoreCase(filterKey2)) {
-                                    // Remove the item from the list
-                                    iterator.remove();
-                                    dbHelper.deleteDevice(device);
-                                }
-                            }
-                            itemAdapter.setDeviceList(deviceList);
-                            itemAdapter.notifyDataSetChanged();
-                            return true;
-                        } catch (Exception e) {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean success) {
-                        customLoading.dismiss();
-
-                        if (success) {
-                            itemAdapter.notifyDataSetChanged();
-                            Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }.execute();
-            }
-        });
-
-
-        // For Cancel Button
-        view.findViewById(R.id.actionCancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show();
-                alertDialog.dismiss();
-            }
-        });
-
-        if (alertDialog.getWindow() != null) {
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-        }
-    }
-
-    // TODO Fix this method - only works on second call
-    public static void showDeleteAllDialog(Context context, String identifier, ItemAdapter itemAdapter) {
-
-        dbHelper = new DBHelper(context);
-
-        deviceList = dbHelper.fetchDevice();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.layout_delete_dialog, null);
-        builder.setView(view);
-
-        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All " + identifier + " ] ?" + "\n" + "\n" + "This action cannot be undone.");
-
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
-
-        // function
-        view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-
-                new AsyncTaskDelete(context, itemAdapter).execute();
-            }
-        });
-
-
-        // For Cancel Button
-        view.findViewById(R.id.actionCancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show();
-                alertDialog.dismiss();
-            }
-        });
-
-        if (alertDialog.getWindow() != null) {
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-        }
     }
 
     public static void calculateExpirationAndStatus(Date inputDate, TextView dateExpired, TextView status) {
@@ -546,20 +400,218 @@ public class Utils {
     }
 
 
-    private static class AsyncTaskDelete extends AsyncTask<Void, Void, Boolean> {
+    public static void deleteDataByDeviceType(Context context, String filterKey, ItemAdapter itemAdapter, TextView itemCounter, LinearLayout main, View topSnackView, ImageView topSnack_icon, TextView topSnackMessage, TextView topSnackDesc) {
+
+        dbHelper = new DBHelper(context);
+
+        deviceList = dbHelper.fetchDevice();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.layout_delete_dialog, null);
+        builder.setView(view);
+
+        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All " + filterKey + " ] ?" + "\n" + "\n" + "This action cannot be undone.");
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+
+        // function
+        view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+
+                new AsyncTaskDeleteByDeviceType(context, filterKey, itemAdapter, itemCounter, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute();
+            }
+        });
+
+
+        // For Cancel Button
+        view.findViewById(R.id.actionCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+    }
+
+    private static class AsyncTaskDeleteByDeviceType extends AsyncTask<Void, Void, Boolean> {
         private final Context context;
+        private final String filterKey;
         private final ItemAdapter itemAdapter;
+        private final TextView itemCounter;
         Dialog customLoading;
 
-        public AsyncTaskDelete(Context context, ItemAdapter itemAdapter) {
+        private final LinearLayout main;
+        private final View topSnackView;
+        private final ImageView topSnack_icon;
+        private final TextView topSnackMessage;
+        private final TextView topSnackDesc;
+
+        public AsyncTaskDeleteByDeviceType(Context context, String filterKey, ItemAdapter itemAdapter, TextView itemCounter, LinearLayout main, View topSnackView, ImageView topSnack_icon, TextView topSnackMessage, TextView topSnackDesc) {
             this.context = context;
+            this.filterKey = filterKey;
             this.itemAdapter = itemAdapter;
+            this.itemCounter = itemCounter;
+            this.main = main;
+            this.topSnackView = topSnackView;
+            this.topSnack_icon = topSnack_icon;
+            this.topSnackMessage = topSnackMessage;
+            this.topSnackDesc = topSnackDesc;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d("AsyncTask", "onPreExecute: Starting loading dialog");
+            // Show loading animation
+            customLoading = new Dialog(context);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View dialogView = inflater.inflate(R.layout.loading_dialog, null);
+            ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
+            TextView textView = dialogView.findViewById(R.id.loading_textView);
+            textView.setText("Deleting");
+            CustomFpsInterpolator fpsInterpolator = new CustomFpsInterpolator(16);
+            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
+            objectAnimator.setDuration(500);
+            objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            objectAnimator.setInterpolator(fpsInterpolator);
+            objectAnimator.start();
+            customLoading.setContentView(dialogView);
+            customLoading.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            WindowManager.LayoutParams lp = customLoading.getWindow().getAttributes();
+            lp.dimAmount = 0.5f;
+            customLoading.setCancelable(false);
+            customLoading.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                // Iterate through the original list and remove items that match the gadget name
+                Iterator<Assigned_to_User_Model> iterator = deviceList.iterator();
+                while (iterator.hasNext()) {
+                    Assigned_to_User_Model device = iterator.next();
+                    // Assuming getDeviceName() returns the name of the device
+                    String filterKey2 = filterKey.toLowerCase();
+                    if (device.getDeviceType().equalsIgnoreCase(filterKey2)) {
+                        // Remove the item from the list
+                        iterator.remove();
+                        dbHelper.deleteDevice(device);
+                    }
+                }
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            customLoading.dismiss();
+
+            if (success) {
+                itemAdapter.setDeviceList(deviceList);
+                itemAdapter.clearItems();
+//                itemCounter.setText(itemAdapter.getItemCount());
+                itemAdapter.notifyDataSetChanged();
+//                Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
+                topSnack_icon.setImageResource(R.drawable.check);
+                topSnackMessage.setText("Success");
+                topSnackDesc.setVisibility(View.VISIBLE);
+                topSnackDesc.setText("All " + filterKey + " is deleted");
+                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null);
+            } else {
+//                Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
+                topSnack_icon.setImageResource(R.drawable.warning_sign);
+                topSnackMessage.setText("Failed");
+                topSnackDesc.setVisibility(View.VISIBLE);
+                topSnackDesc.setText("Failed to delete " + filterKey);
+                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null);
+            }
+        }
+    }
+
+
+
+
+    public static void showDeleteAllDialog(Context context, String identifier, ItemAdapter itemAdapter, TextView itemCounter, LinearLayout main, View topSnackView, ImageView topSnack_icon, TextView topSnackMessage, TextView topSnackDesc) {
+
+        dbHelper = new DBHelper(context);
+
+        deviceList = dbHelper.fetchDevice();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.layout_delete_dialog, null);
+        builder.setView(view);
+
+        ((TextView) view.findViewById(R.id.messageText)).setText("Do you want to [ All " + identifier + " ] ?" + "\n" + "\n" + "This action cannot be undone.");
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+
+        // function
+        view.findViewById(R.id.actionDelete).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+
+                new AsyncTaskDeleteAll(context, itemAdapter, itemCounter, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute();
+            }
+        });
+
+
+        // For Cancel Button
+        view.findViewById(R.id.actionCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Canceled", Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+    }
+
+    private static class AsyncTaskDeleteAll extends AsyncTask<Void, Void, Boolean> {
+        private final Context context;
+        private final ItemAdapter itemAdapter;
+        Dialog customLoading;
+
+        private final TextView itemCounter;
+
+        private final LinearLayout main;
+        private final View topSnackView;
+        private final ImageView topSnack_icon;
+        private final TextView topSnackMessage;
+        private final TextView topSnackDesc;
+
+        public AsyncTaskDeleteAll(Context context, ItemAdapter itemAdapter, TextView itemCounter, LinearLayout main, View topSnackView, ImageView topSnack_icon, TextView topSnackMessage, TextView topSnackDesc) {
+            this.context = context;
+            this.itemAdapter = itemAdapter;
+            this.itemCounter = itemCounter;
+            this.main = main;
+            this.topSnackView = topSnackView;
+            this.topSnack_icon = topSnack_icon;
+            this.topSnackMessage = topSnackMessage;
+            this.topSnackDesc = topSnackDesc;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
             // Show loading animation
             customLoading = new Dialog(context);
             LayoutInflater inflater = LayoutInflater.from(context);
@@ -584,14 +636,11 @@ public class Utils {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Log.d("AsyncTask", "Starting deletion process");
 
             try {
-                Log.d("AsyncTask", "Deleting data...");
                 dbHelper.deleteAll();
                 deviceList.clear();
-                itemAdapter.clearItems();
-                Log.d("AsyncTask", "Data deleted successfully");
+//                itemAdapter.clearItems();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -605,12 +654,19 @@ public class Utils {
 
             if (success) {
                 itemAdapter.setDeviceList(deviceList);
-                Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
-                Log.d("TAG", "onPostExecute: " + "All Data Deleted");
+                itemAdapter.notifyDataSetChanged();
+//                itemCounter.setText(itemAdapter.getItemCount());
+//                Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
+                topSnack_icon.setImageResource(R.drawable.check);
+                topSnackMessage.setText("All Data Deleted");
+                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null);
             } else {
-                Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
-                Log.d("TAG", "onPostExecute: " + "Failed to delete data");
+//                Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
+                topSnack_icon.setImageResource(R.drawable.warning_sign);
+                topSnackMessage.setText("Failed to delete data");
+                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null);
             }
         }
     }
+
 }
