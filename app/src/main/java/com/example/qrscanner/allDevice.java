@@ -148,7 +148,7 @@ public class allDevice extends AppCompatActivity {
             public void onClick(View v) {
                 if (dbHelper != null) {
                     String identifier = "device";
-                    Utils.showDeleteAllDialog(allDevice.this, identifier, adapter, textViewItemCount, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc);
+                    Utils.showDeleteAllDialog(allDevice.this, identifier, adapter, main);
                 }else {
                     Toast.makeText(allDevice.this, "There's no Data", Toast.LENGTH_SHORT).show();
                 }

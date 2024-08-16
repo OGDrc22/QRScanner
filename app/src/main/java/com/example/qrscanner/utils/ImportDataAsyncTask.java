@@ -39,7 +39,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
+public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
 
     private Context context;
     private Dialog customLoading;
@@ -51,6 +51,9 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
     private TextView topSnackDesc;
 
     private static final String pattern = "MM/dd/yy";
+
+    private int itemCount = 0;
+    private static String serialNum;
 
     public ImportDataAsyncTask(Context context, ConstraintLayout main, View topSnackView, ImageView topSnack_icon, TextView topSnackMessage, TextView topSnackDesc) {
         this.context = context;
@@ -134,7 +137,9 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
             rowIterator.next(); // Skip header row
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
-                String serialNum = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "serial")));
+
+                // Make "serialNum" Global
+                serialNum = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "serial")));
 
                 String name;
                 if (containsKeyword(headerMap, "user")) {
@@ -205,23 +210,23 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
                 Utils.ExpirationResult result = Utils.calculateExpirationString(inputDate, "For Refresh");
                 if (containsKeyword(headerMap, "date expired")) {
                     dateExpired = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "date expired")));
-                    Log.d("TAG", "doInBackground_p: " + datePurchased);
-                    Log.d("TAG", "doInBackground:_e " + dateExpired);
+//                    Log.d("TAG", "doInBackground_p: " + datePurchased);
+//                    Log.d("TAG", "doInBackground:_e " + dateExpired);
                     if (dateExpired.isEmpty() && !datePurchased.isEmpty()) {
                         dateExpired = result.getFormattedExpirationDate();
                         status = result.getStringStatus();
-                        Log.d("TAG", "doInBackground_p: " + datePurchased);
-                        Log.d("TAG", "doInBackground_e " + dateExpired);
+//                        Log.d("TAG", "doInBackground_p: " + datePurchased);
+//                        Log.d("TAG", "doInBackground_e " + dateExpired);
                     }
                 } else if (containsKeyword(headerMap, "expiry date")) {
                     dateExpired = getCellValueAsString(row.getCell(getColumnIndex(headerMap, "expiry date")));
-                    Log.d("TAG", "doInBackground_p: " + datePurchased);
-                    Log.d("TAG", "doInBackground_e: " + dateExpired);
+//                    Log.d("TAG", "doInBackground_p: " + datePurchased);
+//                    Log.d("TAG", "doInBackground_e: " + dateExpired);
                     if (dateExpired.isEmpty() && !datePurchased.isEmpty()) {
                         dateExpired = result.getFormattedExpirationDate();
                         status = result.getStringStatus();
-                        Log.d("TAG", "doInBackground_p: " + datePurchased);
-                        Log.d("TAG", "doInBackground_e: " + dateExpired + " " + status);
+//                        Log.d("TAG", "doInBackground_p: " + datePurchased);
+//                        Log.d("TAG", "doInBackground_e: " + dateExpired + " " + status);
                     }
                 } else {
                     dateExpired = "00/00/00";
@@ -234,6 +239,9 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
                 }
 
                 dbHelper.addDevice(serialNum, name, department, deviceType, deviceModel, datePurchased, dateExpired, status, availability);
+                Thread.sleep(50);
+                itemCount++;
+                publishProgress(itemCount);
             }
 
             return true; // Indicate successful completion
@@ -247,6 +255,15 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
         }
     }
 
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+        // Update UI with current itemCount
+        int currentItemCount = values[0];
+        TextView loadingText = customLoading.findViewById(R.id.loading_textView);
+        Log.d("TAG", "onProgressUpdate: " + currentItemCount + serialNum);
+        loadingText.setText("Processing... " + currentItemCount + " items processed");
+    }
+
     @Override
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
@@ -258,11 +275,17 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Void, Boolean> {
         if (result) {
             topSnack_icon.setImageResource(R.drawable.check);
             topSnackMessage.setText("Data imported successfully");
-            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null);
+            String item = "Item";
+            if (itemCount >= 1){
+                item = "Items";
+            }
+            topSnackDesc.setVisibility(View.VISIBLE);
+            topSnackDesc.setText(itemCount + " " + item + " Imported");
+            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
         } else {
             topSnack_icon.setImageResource(R.drawable.warning_sign);
             topSnackMessage.setText("Error importing data");
-            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null);
+            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
         }
     }
 

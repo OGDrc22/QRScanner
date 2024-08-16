@@ -49,7 +49,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class ExportDateBaseToExcel extends AsyncTask<Uri, Void, Boolean> {
+public class ExportDateBaseToExcel extends AsyncTask<Uri, Integer, Boolean> {
 
     private Uri selectedFileUri;
 
@@ -170,6 +170,7 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Void, Boolean> {
                 Log.d("MainActivity", "run: status " + row.getCell(7).getStringCellValue());
                 row.createCell(8).setCellValue(device.getAvailability());
                 Log.d("MainActivity", "Added row " + rowNum + " to the sheet");
+                publishProgress(rowNum);
 
                 for (int i = 0; i <= 8; i++) {
                     Cell cell = row.getCell(i);
@@ -215,6 +216,13 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Void, Boolean> {
         return success; // Indicate successful completion
     }
 
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+        int currentItemCount = values[0];
+        TextView loadingText = customLoading.findViewById(R.id.loading_textView);
+        loadingText.setText("Processing... " + currentItemCount + " items added to file.");
+    }
+
     @Override
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
@@ -227,11 +235,11 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Void, Boolean> {
         if (result) {
             topSnack_icon.setImageResource(R.drawable.check);
             topSnackMessage.setText("Excel file saved to: " + selectedFileUri.getPath());
-            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null);
+            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
         } else {
             topSnack_icon.setImageResource(R.drawable.warning_sign);
             topSnackMessage.setText("Failed to export data");
-            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null);
+            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
         }
     }
 }

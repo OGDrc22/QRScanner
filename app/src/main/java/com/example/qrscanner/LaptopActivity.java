@@ -125,13 +125,6 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         currentActivity = findViewById(R.id.currentActivity);
         currentActivity.setImageResource(R.drawable.laptop_icon);
 
-
-        LayoutInflater inflater = (LayoutInflater) LaptopActivity.this.getSystemService(LaptopActivity.this.LAYOUT_INFLATER_SERVICE);
-        topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
-        topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
-        topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
-        topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
-
         constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
         constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +132,7 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
                         String identifier = "laptop";
-                        Utils.deleteDataByDeviceType(LaptopActivity.this, identifier, adapter, textViewItemCount, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc);
+                        Utils.deleteDataByDeviceType(LaptopActivity.this, identifier, adapter, main);
                     } else {
                         Toast.makeText(LaptopActivity.this, "Laptop is empty", Toast.LENGTH_SHORT).show();
                     }

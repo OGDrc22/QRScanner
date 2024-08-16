@@ -42,7 +42,7 @@ public class DesktopsActivity extends AppCompatActivity {
     private CardView cardView_options;
     private ImageView currentActivity, settingsIcon, backBtn;
     private ConstraintLayout constraintLayoutDeleteAll;
-    private LinearLayout cardViewContent;
+    private LinearLayout main, cardViewContent;
 
 
 
@@ -56,6 +56,8 @@ public class DesktopsActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        main = findViewById(R.id.main);
 
         settingsIcon = findViewById(R.id.settingsIcon);
         settingsIcon.setImageResource(R.drawable.drop_down);
@@ -123,7 +125,7 @@ public class DesktopsActivity extends AppCompatActivity {
                 if (dbHelper != null) {
                     if (!filteredList.isEmpty()) {
                         String identifier = "desktop";
-//                        Utils.showDeleteAllDialog(DesktopsActivity.this, identifier, adapter);
+                        Utils.deleteDataByDeviceType(DesktopsActivity.this, identifier, adapter, main);
                         adapter.notifyDataSetChanged();
                     }else {
                         Toast.makeText(DesktopsActivity.this, "Desktop is empty", Toast.LENGTH_SHORT).show();
