@@ -490,7 +490,7 @@
                         public void run() {
                             finish();
                         }
-                    }, 5000);
+                    }, 6000);
                     Log.d("TAG", "onPostExecute: " + result);
 
                 }
