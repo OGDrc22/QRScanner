@@ -6,7 +6,7 @@
     style="@style/ScreenBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UpdateData">
+    tools:context=".UpdateDataActivity">
 
     <include
         android:id="@+id/navBar"

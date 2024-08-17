@@ -1,7 +1,8 @@
     package com.example.qrscanner;
 
-    import static com.example.qrscanner.adapter.ItemAdapter.EXTRA_POSITION;
-
+    import android.animation.ObjectAnimator;
+    import android.animation.ValueAnimator;
+    import android.app.Dialog;
     import android.content.Context;
     import android.content.Intent;
     import android.graphics.Bitmap;
@@ -9,6 +10,7 @@
     import android.graphics.drawable.ColorDrawable;
     import android.graphics.drawable.Drawable;
     import android.graphics.drawable.TransitionDrawable;
+    import android.os.AsyncTask;
     import android.os.Bundle;
     import android.os.Handler;
     import android.text.Editable;
@@ -16,6 +18,7 @@
     import android.util.Log;
     import android.view.LayoutInflater;
     import android.view.View;
+    import android.view.WindowManager;
     import android.widget.AdapterView;
     import android.widget.Button;
     import android.widget.EditText;
@@ -36,6 +39,7 @@
     import androidx.core.view.ViewCompat;
     import androidx.core.view.WindowInsetsCompat;
 
+    import com.drc.mytopsnacklibrary.TopSnack;
     import com.example.qrscanner.DB.DBHelper;
     import com.example.qrscanner.adapter.DepartmentAdapter;
     import com.example.qrscanner.adapter.GadgetsAdapter;
@@ -50,20 +54,18 @@
     import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
     import com.google.android.material.textfield.TextInputEditText;
     import com.google.android.material.textfield.TextInputLayout;
-    import com.google.android.material.textview.MaterialTextView;
 
-    import java.text.ParseException;
     import java.text.SimpleDateFormat;
     import java.util.ArrayList;
     import java.util.Date;
     import java.util.List;
     import java.util.Locale;
 
-    public class UpdateData extends AppCompatActivity {
+    public class UpdateDataActivity extends AppCompatActivity {
 
         private TextView titleTextView;
-        private TextInputEditText qrText, assignedTo, chooserDepartment,chooserDevice, deviceModel, datePurchased, dateExpired, status, availability;
-        private TextInputLayout textInputLayoutQRText, textInputLayoutAssignedTo, textInputLayoutDep, textInputLayoutDevice, textInputLayoutDeviceModel, textInputLayoutDatePurchased, textInputLayoutExpired, textInputLayoutStatus;
+        public static TextInputEditText qrText, assignedTo, chooserDepartment,chooserDevice, deviceModel, datePurchased, dateExpired, status, availability;
+        public static TextInputLayout textInputLayoutQRText, textInputLayoutAssignedTo, textInputLayoutDep, textInputLayoutDevice, textInputLayoutDeviceModel, textInputLayoutDatePurchased, textInputLayoutExpired, textInputLayoutStatus;
         private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewSave;
         private CardView saveBtn, cancelBtn;
         private GadgetsAdapter gadgetsAdapter;
@@ -73,6 +75,7 @@
         private DBHelper dbHelper;
         private static final String pattern = "MM/dd/yy";
 
+        private ConstraintLayout main;
 
         private Department departmentPosition;
 
@@ -89,8 +92,13 @@
         private static List<String> differences;
         private static StringBuilder sb;
 
+        private static View topSnackView;
+        private static ImageView topSnack_icon;
+        private static TextView topSnackMessage;
+        private static TextView topSnackDesc;
+
         // Constructor to accept ItemAdapter reference
-        public UpdateData() {
+        public UpdateDataActivity() {
 
         }
 
@@ -127,6 +135,8 @@
                 return insets;
             });
 
+            main = findViewById(R.id.main);
+
 
             currentActivity = findViewById(R.id.currentActivity);
             currentActivity.setImageResource(R.drawable.ic_edit);
@@ -146,7 +156,7 @@
             settings.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(UpdateData.this, Settings.class);
+                    Intent intent = new Intent(UpdateDataActivity.this, Settings.class);
                     startActivity(intent);
 //                    Log.d("TAG", "Clicked Success");
                 }
@@ -302,11 +312,12 @@
                     deviceModel.clearFocus();
                     textInputLayoutDeviceModel.clearFocus();
 
-                    boolean allFieldsFilled = true;
+                    final boolean[] allFieldsFilled = {true};
 
+//
                     if (qrText.getText().toString().isEmpty()) {
                         textInputLayoutQRText.setError("Please fill up");
-                        allFieldsFilled = false;
+                        allFieldsFilled[0] = false;
                     }
 
 //                if (assignedTo.getText().toString().isEmpty()) {
@@ -317,24 +328,24 @@
 
                     if (chooserDepartment.getText().toString().isEmpty()) {
                         textInputLayoutDep.setError("Please fill up");
-                        allFieldsFilled = false;
+                        allFieldsFilled[0] = false;
                     }
 
                     if (chooserDevice.getText().toString().isEmpty()) {
                         textInputLayoutDevice.setError("Please pick \"Unknown\", if you don't know what type of device is.");
-                        allFieldsFilled = false;
+                        allFieldsFilled[0] = false;
                     }
 
                     if (deviceModel.getText().toString().isEmpty()) {
                         textInputLayoutDeviceModel.setError("Please fill up");
-                        allFieldsFilled = false;
+                        allFieldsFilled[0] = false;
                     } else {
                         textInputLayoutDeviceModel.setError(null);
                     }
 
                     if (datePurchased.getText().toString().isEmpty()) {
                         textInputLayoutDatePurchased.setError("Please fill up");
-                        allFieldsFilled = false;
+                        allFieldsFilled[0] = false;
                     }
 
 //                if (dateExpired.getText().toString().isEmpty()) {
@@ -347,42 +358,144 @@
 //                    allFieldsFilled = false;
 //                }
 
-                    if (!allFieldsFilled) {
-                        Toast.makeText(UpdateData.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+                    if (!allFieldsFilled[0]) {
+                        Toast.makeText(UpdateDataActivity.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
                     }
 
                     CompareMethod compareMethod = new CompareMethod(dbHelper, differences, sb, qrText, assignedTo, chooserDepartment, chooserDevice, deviceModel, datePurchased, keyIdentical, keyDifferent, keyNew);
-                    String result = compareMethod.compare();
-
-                    if (result.equals(keyIdentical)) {
-                        Toast.makeText(UpdateData.this, keyIdentical, Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-
-                    if (result.equals(keyDifferent)) {
-                        CompareMethod.overrideItem(UpdateData.this, dateExpired, status, availability, () -> {
-                            if (CompareMethod.getNextActionRes()) {
-                                Drawable[] layers = new Drawable[]{
-                                        imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
-                                };
-                                TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                                imageViewSave.setImageDrawable(transitionDrawable);
-                                transitionDrawable.startTransition(700);
-
-                                Intent intent = new Intent();
-                                intent.putExtra("dataRefreshed", true);
-                                setResult(RESULT_OK, intent);
-                                new Handler().postDelayed(() -> {
-                                    finish();
-                                }, 500);
+                    compareMethod.compare(UpdateDataActivity.this, new CompareMethod.CompareCallBack() {
+                        @Override
+                        public void onCompareComplete(String result) {
+                            if (result.equals(keyIdentical)) {
+                                Toast.makeText(UpdateDataActivity.this, keyIdentical, Toast.LENGTH_SHORT).show();
+                                finish();
                             }
-                        });
+                            if (result.equals(keyDifferent)) {
+                                CompareMethod.overrideItem(UpdateDataActivity.this, dateExpired, status, availability, () -> {
+                                    new exeKeyDifferent(UpdateDataActivity.this, allFieldsFilled).execute();
+                                });
+                                Log.d("TAG", "onCompareComplete: call override method");
 
-                    }
-
-
+                            }
+                        }
+                    });
                 }
             });
+        }
+
+
+        private static void getView(Context context, View root) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
+            topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
+            topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
+            topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
+        }
+
+
+
+        private class exeKeyDifferent extends AsyncTask<Void, Integer, Boolean> {
+
+            private Context context;
+            private final boolean[] allFieldsFilled;
+            Dialog customLoading;
+
+
+            public exeKeyDifferent(Context context, boolean[] allFieldsFilled) {
+                this.allFieldsFilled = allFieldsFilled;
+                this.context = context;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                // Show loading animation
+                customLoading = new Dialog(context);
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View dialogView = inflater.inflate(R.layout.loading_dialog, null);
+                ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
+                TextView textView = dialogView.findViewById(R.id.title_textView);
+                textView.setText("Serial No. [" + qrText.getText().toString() + "]");
+                Utils.CustomFpsInterpolator fpsInterpolator = new Utils.CustomFpsInterpolator(16);
+                ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
+                objectAnimator.setDuration(500);
+                objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+                objectAnimator.setInterpolator(fpsInterpolator);
+                objectAnimator.start();
+                customLoading.setContentView(dialogView);
+                customLoading.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                WindowManager.LayoutParams lp = customLoading.getWindow().getAttributes();
+                lp.dimAmount = 0.5f;
+                customLoading.setCancelable(false);
+                customLoading.show();
+            }
+
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                int update = 0;
+                try {
+                    if (CompareMethod.getNextActionResult()) {
+
+                        Drawable[] layers = new Drawable[]{
+                                imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
+                        };
+                        TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+                        imageViewSave.setImageDrawable(transitionDrawable);
+                        transitionDrawable.startTransition(700);
+
+                        Log.d("UpdateActivity", "doInBackground: " + CompareMethod.getNextActionResult());
+
+                        for (int i = 0; i <= 100; i++) {
+                            update = i;
+                            Thread.sleep(100);
+                            publishProgress(update);
+                        }
+
+                    }
+
+                    return true;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+
+            }
+
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+                // Update UI with current itemCount
+                int newVal = values[0];
+                TextView loadingText = customLoading.findViewById(R.id.loading_textView);
+                loadingText.setVisibility(View.VISIBLE);
+                loadingText.setText("Overriding in progress[" + newVal + "%]");
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                super.onPostExecute(result);
+
+                if (result) {
+                    Intent intent = new Intent();
+                    intent.putExtra("dataRefreshed", true);
+                    setResult(RESULT_OK, intent);if (customLoading.isShowing()) {
+                        customLoading.dismiss();
+                    }
+                    getView(context, main);
+                    topSnackMessage.setText("Updated Successfully");
+                    TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    }, 5000);
+                    Log.d("TAG", "onPostExecute: " + result);
+
+                }
+
+            }
 
         }
 
@@ -390,17 +503,16 @@
 
 
 
-
         private void openGadgetCategoryOption(int parentHeight) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
-            View customView = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateDataActivity.this, R.style.AlertDialogTheme);
+            View customView = LayoutInflater.from(UpdateDataActivity.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
 
             // Find the ListView in your custom layout
             listView = customView.findViewById(R.id.list_item_option);
 
             // Set the adapter for the ListView
-            listView.setAdapter(new GadgetsAdapter(UpdateData.this, getGadgetsCategoryFromDatabase()));
+            listView.setAdapter(new GadgetsAdapter(UpdateDataActivity.this, getGadgetsCategoryFromDatabase()));
 
             // Set the custom view to the AlertDialog.Builder
             builder.setView(customView);
@@ -430,13 +542,13 @@
                         itemDialog.dismiss();
                         chooserDevice.setText(gadgetCategoryName);
                         int positionNew = position+1;
-                        Utils.displayGadgetImageInt(UpdateData.this, dbHelper, textInputLayoutDevice, positionNew, parentHeight);
+                        Utils.displayGadgetImageInt(UpdateDataActivity.this, dbHelper, textInputLayoutDevice, positionNew, parentHeight);
 
-                        Toast.makeText(UpdateData.this, "Selected " + gadgetCategoryName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateDataActivity.this, "Selected " + gadgetCategoryName, Toast.LENGTH_SHORT).show();
                     } else {
                         //TODO fix this
                         gadgetCategoryName = "Unknown";
-                        Toast.makeText(UpdateData.this, "Null pos", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateDataActivity.this, "Null pos", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -446,15 +558,15 @@
                     gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
                     showEditDialog(gadgetPosition);
                     gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
-                    Toast.makeText(UpdateData.this, gadgetCategoryName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateDataActivity.this, gadgetCategoryName, Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
         }
 
         private void showEditDialog(final Gadgets gadgets) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
-            View view = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateDataActivity.this, R.style.AlertDialogTheme);
+            View view = LayoutInflater.from(UpdateDataActivity.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
             builder.setView(view);
 
             // Set up the input
@@ -494,19 +606,19 @@
                 @Override
                 public void onClick(View v) {
                     String newGadgetCategoryName = input.getText().toString();
-                    byte[] newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
+                    byte[] newGadgetImage = Utils.imageViewToByte(UpdateDataActivity.this, iconICPick);
 
 //                Toast.makeText(UpdateData.this, "Gadget to ic_edit ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
 
                     if (newGadgetCategoryName.isEmpty()) {
-                        Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateDataActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                     } else {
                         if (newGadgetImage == null) {
                             if (gImage != null) {
                                 newGadgetImage = gImage;
                             }
                         } else {
-                            newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
+                            newGadgetImage = Utils.imageViewToByte(UpdateDataActivity.this, iconICPick);
                         }
                         dbHelper.updateGadgetCategory(gadgets, newGadgetCategoryName, newGadgetImage);
                         updateGadgetList();
@@ -519,13 +631,13 @@
             actionDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(UpdateData.this, "Gadget to delete ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateDataActivity.this, "Gadget to delete ID:" + gadgets.getId(), Toast.LENGTH_SHORT).show();
 //                gadgetsAdapter = new GadgetsAdapter(UpdateData.this, getGadgetsFromDatabase());
                     dbHelper.deleteGadgetCategory(gadgets);
 //                gadgetsAdapter.notifyDataSetChanged();
                     updateGadgetList();
                     deviceChooserDialog.dismiss();
-                    Toast.makeText(UpdateData.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateDataActivity.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -539,8 +651,8 @@
 
 
         private void showAddNewGadgetDialog() {
-            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
-            View view = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_add_new_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateDataActivity.this, R.style.AlertDialogTheme);
+            View view = LayoutInflater.from(UpdateDataActivity.this).inflate(R.layout.layout_add_new_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
             builder.setView(view);
 
             final ImageView imageView = view.findViewById(R.id.warning);
@@ -565,7 +677,7 @@
             iconICPick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(UpdateData.this, "Add image clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateDataActivity.this, "Add image clicked", Toast.LENGTH_SHORT).show();
                     pickMedia.launch(new PickVisualMediaRequest.Builder()
                             .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                             .build());
@@ -578,14 +690,14 @@
                 @Override
                 public void onClick(View v) {
                     String newGadgetCategoryName = input.getText().toString();
-                    byte[] newGadgetImage = Utils.imageViewToByte(UpdateData.this, iconICPick);
+                    byte[] newGadgetImage = Utils.imageViewToByte(UpdateDataActivity.this, iconICPick);
 
                     if (newGadgetCategoryName.isEmpty()) {
-                        Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateDataActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                     } else {
 
                         if (newGadgetImage == null) {
-                            newGadgetImage = Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.device_model);
+                            newGadgetImage = Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.device_model);
                         }
                         dbHelper.addGadgetCategory(newGadgetCategoryName, newGadgetImage);
                         updateGadgetList();
@@ -606,7 +718,7 @@
 
         private void updateGadgetList() {
             List<Gadgets> gadgetsList = getGadgetsCategoryFromDatabase();
-            gadgetsAdapter = new GadgetsAdapter(UpdateData.this, gadgetsList);
+            gadgetsAdapter = new GadgetsAdapter(UpdateDataActivity.this, gadgetsList);
             listView.setAdapter(gadgetsAdapter);
             gadgetsAdapter.notifyDataSetChanged();
         }
@@ -617,15 +729,15 @@
             // Add default gadgets if database is empty
             if (gadgetsList.isEmpty()) {
 
-                dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_unknown_device));
-                dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.laptop_icon));
-                dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_mobile_phone));
-                dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_tablet));
-                dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_pc_computer));
-                dbHelper.addGadgetCategory("Monitor", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_monitor));
-                dbHelper.addGadgetCategory("Mouse", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_mouse));
-                dbHelper.addGadgetCategory("Keyboard", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_keyboard));
-                dbHelper.addGadgetCategory("Headset", Utils.getDefaultImageByteArray(UpdateData.this, R.drawable.ic_headset));
+                dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_unknown_device));
+                dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.laptop_icon));
+                dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_mobile_phone));
+                dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_tablet));
+                dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_pc_computer));
+                dbHelper.addGadgetCategory("Monitor", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_monitor));
+                dbHelper.addGadgetCategory("Mouse", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_mouse));
+                dbHelper.addGadgetCategory("Keyboard", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_keyboard));
+                dbHelper.addGadgetCategory("Headset", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_headset));
 
                 gadgetsList = dbHelper.getAllGadgetsCategory();
             }
@@ -648,8 +760,8 @@
 
         private void openDepartmentCategoryOption() {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
-            View customView = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateDataActivity.this, R.style.AlertDialogTheme);
+            View customView = LayoutInflater.from(UpdateDataActivity.this).inflate(R.layout.layout_show_option, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
 
             TextView titleText = customView.findViewById(R.id.titleText);
             String title = "Select Department";
@@ -660,7 +772,7 @@
 
             // Set the adapter for the ListView
             List<Department> departmentList = getDepartmentCategoryFromDatabase();
-            departmentAdapter = new DepartmentAdapter(UpdateData.this, departmentList);
+            departmentAdapter = new DepartmentAdapter(UpdateDataActivity.this, departmentList);
             listView.setAdapter(departmentAdapter);
 
             // Set the custom view to the AlertDialog.Builder
@@ -692,10 +804,10 @@
                         itemDialogGadgetsCategory.dismiss();
                         chooserDepartment.setText(departmentCategoryName);
 
-                        Toast.makeText(UpdateData.this, "Selected " + departmentCategoryName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateDataActivity.this, "Selected " + departmentCategoryName, Toast.LENGTH_SHORT).show();
                     } else {
                         departmentCategoryName = "Unknown";
-                        Toast.makeText(UpdateData.this, "Null pos", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateDataActivity.this, "Null pos", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -705,7 +817,7 @@
                     departmentPosition = (Department) parent.getItemAtPosition(position);
                     showEditDepartmentCategoryDialog(departmentPosition);
                     gadgetCategoryName = departmentPosition.getDepartmentCategoryName();
-                    Toast.makeText(UpdateData.this, departmentCategoryName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateDataActivity.this, departmentCategoryName, Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -730,15 +842,15 @@
 
         private void updateDepartmentList() {
             List<Department> departmentList = getDepartmentCategoryFromDatabase();
-            departmentAdapter = new DepartmentAdapter(UpdateData.this, departmentList);
+            departmentAdapter = new DepartmentAdapter(UpdateDataActivity.this, departmentList);
             listView.setAdapter(departmentAdapter);
             departmentAdapter.notifyDataSetChanged();
         }
 
 
         private void showAddNewDepartmentDialog() {
-            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
-            View view = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_add_new_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateDataActivity.this, R.style.AlertDialogTheme);
+            View view = LayoutInflater.from(UpdateDataActivity.this).inflate(R.layout.layout_add_new_dialog, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
             builder.setView(view);
 
             final ImageView imageView = view.findViewById(R.id.warning);
@@ -767,7 +879,7 @@
                     String newDepartmentCategoryName = input.getText().toString();
 
                     if (newDepartmentCategoryName.isEmpty()) {
-                        Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateDataActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                     } else {
 
                         dbHelper.addDepartmentCategory(newDepartmentCategoryName);
@@ -788,8 +900,8 @@
 
 
         private void showEditDepartmentCategoryDialog(final Department department) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateData.this, R.style.AlertDialogTheme);
-            View view = LayoutInflater.from(UpdateData.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
+            AlertDialog.Builder builder = new AlertDialog.Builder(UpdateDataActivity.this, R.style.AlertDialogTheme);
+            View view = LayoutInflater.from(UpdateDataActivity.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
             builder.setView(view);
 
             // Set up the input
@@ -828,7 +940,7 @@
                     String newDepartmentCategoryName = input.getText().toString();
 
                     if (newDepartmentCategoryName.isEmpty()) {
-                        Toast.makeText(UpdateData.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateDataActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                     } else {
 
                         dbHelper.editDepartmentCategory(departmentId, newDepartmentCategoryName);
@@ -842,11 +954,11 @@
             actionDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(UpdateData.this, "Gadget to delete ID:" + department.getDepartmentCategoryId(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateDataActivity.this, "Gadget to delete ID:" + department.getDepartmentCategoryId(), Toast.LENGTH_SHORT).show();
                     dbHelper.deleteDepartmentCategory(department);
                     updateDepartmentList();
                     departmentChooserDialog.dismiss();
-                    Toast.makeText(UpdateData.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateDataActivity.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
                 }
             });
 

@@ -59,7 +59,6 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.android.material.textview.MaterialTextView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -69,11 +68,8 @@ import com.google.mlkit.vision.common.InputImage;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 
@@ -483,80 +479,84 @@ public class ScanQR extends AppCompatActivity {
 //                sb = new StringBuilder();
 
                 CompareMethod compareMethod = new CompareMethod(dbHelper, differences, sb, qrText, assignedTo, chooserDepartment, chooserDevice, deviceModel, datePurchased, keyIdentical, keyDifferent, keyNew);
-                String result = compareMethod.compare();
+                boolean finalAllFieldsFilled = allFieldsFilled;
+                compareMethod.compare(ScanQR.this, new CompareMethod.CompareCallBack() {
+                    @Override
+                    public void onCompareComplete(String result) {
+                        if (result.equals(keyNew)) {
 
-                if (result.equals(keyNew)) {
+                            if (!finalAllFieldsFilled) {
+                                Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+                            }
+                            // Proceed with saving data
+                            dbHelper.addDevice(
+                                    qrText.getText().toString(),
+                                    assignedTo.getText().toString(),
+                                    chooserDepartment.getText().toString(),
+                                    chooserDevice.getText().toString(),
+                                    deviceModel.getText().toString(),
+                                    datePurchased.getText().toString(),
+                                    dateExpired.getText().toString(),
+                                    status.getText().toString(),
+                                    availability.getText().toString()
+                            );
 
-                    if (!allFieldsFilled) {
-                        Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
-                    }
-                    // Proceed with saving data
-                    dbHelper.addDevice(
-                            qrText.getText().toString(),
-                            assignedTo.getText().toString(),
-                            chooserDepartment.getText().toString(),
-                            chooserDevice.getText().toString(),
-                            deviceModel.getText().toString(),
-                            datePurchased.getText().toString(),
-                            dateExpired.getText().toString(),
-                            status.getText().toString(),
-                            availability.getText().toString()
-                    );
-
-                    // Reset other fields
-                    qrText.setText(null);
-                    assignedTo.setText(null);
-                    deviceModel.setText(null);
-                    datePurchased.setText(null);
-                    dateExpired.setText(null);
-                    status.setText(null);
-                    availability.setText(null);
-
-
-
-                    Drawable[] layers = new Drawable[] {
-                            imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
-                    };
-                    TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                    imageViewSave.setImageDrawable(transitionDrawable);
-                    transitionDrawable.startTransition(700);
+                            // Reset other fields
+                            qrText.setText(null);
+                            assignedTo.setText(null);
+                            deviceModel.setText(null);
+                            datePurchased.setText(null);
+                            dateExpired.setText(null);
+                            status.setText(null);
+                            availability.setText(null);
 
 
-                    new Handler().postDelayed(() -> {
-                        bottomSheetDialog.dismiss();
-                    }, 1000);
 
-
-                } else if (result.equals(keyDifferent)) {
-
-                    if (!allFieldsFilled) {
-                        Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    CompareMethod.overrideItem(ScanQR.this, dateExpired, status, availability, () -> {
-                        if (CompareMethod.getNextActionRes()) {
-                            Drawable[] layers = new Drawable[]{
+                            Drawable[] layers = new Drawable[] {
                                     imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
                             };
                             TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
                             imageViewSave.setImageDrawable(transitionDrawable);
                             transitionDrawable.startTransition(700);
 
-                            Intent intent = new Intent();
-                            intent.putExtra("dataRefreshed", true);
-                            setResult(RESULT_OK, intent);
+
                             new Handler().postDelayed(() -> {
-                                finish();
-                            }, 500);
+                                bottomSheetDialog.dismiss();
+                            }, 1000);
+
+
+                        } else if (result.equals(keyDifferent)) {
+
+                            if (!finalAllFieldsFilled) {
+                                Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                            CompareMethod.overrideItem(ScanQR.this, dateExpired, status, availability, () -> {
+                                if (CompareMethod.getNextActionResult()) {
+                                    Drawable[] layers = new Drawable[]{
+                                            imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
+                                    };
+                                    TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+                                    imageViewSave.setImageDrawable(transitionDrawable);
+                                    transitionDrawable.startTransition(700);
+
+                                    Intent intent = new Intent();
+                                    intent.putExtra("dataRefreshed", true);
+                                    setResult(RESULT_OK, intent);
+                                    new Handler().postDelayed(() -> {
+                                        finish();
+                                    }, 500);
+                                }
+                            });
+
+                        } else if (result.equals(keyIdentical)) {
+
+                            bottomSheetDialog.dismiss();
+
                         }
-                    });
-
-                } else if (result.equals(keyIdentical)) {
-
-                    bottomSheetDialog.dismiss();
-
-                }
+                    }
+                });
             }
         });
         

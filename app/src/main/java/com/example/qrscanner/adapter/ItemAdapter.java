@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
-import com.example.qrscanner.UpdateData;
+import com.example.qrscanner.UpdateDataActivity;
 import com.example.qrscanner.utils.Utils;
 
 import org.apache.logging.log4j.LogManager;
@@ -87,7 +87,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     public void editItem(Context context, int position) {
         Assigned_to_User_Model device = deviceList.get(position);
-        Intent intent = new Intent(context, UpdateData.class); // Use context instead of this
+        Intent intent = new Intent(context, UpdateDataActivity.class); // Use context instead of this
         intent.putExtra(EXTRA_POSITION, position);
 //        intent.putExtra("device", String.valueOf(device));
         intent.putExtra("serialNumber", String.valueOf(device.getSerialNumber()));
