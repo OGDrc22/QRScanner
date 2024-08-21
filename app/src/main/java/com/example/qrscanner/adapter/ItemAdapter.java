@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
-import com.example.qrscanner.UpdateDataActivity;
+import com.example.qrscanner.activities.UpdateDataActivity;
 import com.example.qrscanner.utils.Utils;
 
 import org.apache.logging.log4j.LogManager;
@@ -62,13 +63,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private int position;
     Assigned_to_User_Model data;
 
-
     SimpleDateFormat dateFormat;
     Date inputDate;
 
     private DBHelper dbHelper;
 
     private int animationDuration = 300;
+
+    private ArrayList imgScanH = new ArrayList();
+    private ArrayList imgScanW = new ArrayList();
+
+    private static int imageScanH;
+    private static int imageScanW;
 
     // Define an interface for delete action
     public interface OnDeleteClickListener {
@@ -424,7 +430,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) topUserF.getLayoutParams();
             topUser_marginEnd = lp.rightMargin;
 
+            // ** ---- Use ArrayList to store the original size of "imgScan" to be able to modify its dimension ---- ** //
+            int height = imgScan.getDrawable().getIntrinsicHeight();
+            imgScanH.add(height);
+            int width = imgScan.getDrawable().getIntrinsicWidth();
+            imgScanW.add(width);
 
+            imageScanH = (int) imgScanH.get(imgScanH.size() - 1);
+            imageScanW = (int) imgScanW.get(imgScanW.size() - 1);
+
+            Log.d("ItemAdapter", "A Values: H=" + imageScanH + " W=" + imageScanW);
 
             itemView.setOnClickListener(this);
 
@@ -439,9 +454,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
             position = getAdapterPosition();
             data = deviceList.get(position);
-
-            int originalImgSizeH = imgScan.getHeight();
-            int originalImgSizeW = imgScan.getWidth();
 
             String input = data.getDatePurchased();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yy");
@@ -461,7 +473,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
             if (actions != null) {
 
-//                Utils.smoothTransition(otherInfo, animationDuration);
                 Utils.smoothTransition(actions, animationDuration);
                 Utils.smoothTransition(textSN_F, animationDuration);
                 Utils.smoothTransition(topUserF, animationDuration);
@@ -469,6 +480,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 Utils.smoothTransition(headerF, animationDuration);
                 Utils.smoothTransition(subHeaderF, animationDuration);
                 Utils.smoothTransition(imgScan_Frame, animationDuration);
+
                 if (actions.getVisibility() == View.GONE) {
                     Log.d("ItemAdapter", "otherInfo is VISIBLE");
 
@@ -558,9 +570,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         subHeader.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize_for_header);
 
 
-                        Log.d("ItemAdapter", "Expand: Before Setting Text Sizes: serialNum_tv TextSZ " + serialNum_tv.getTextSize());
+//                        Log.d("ItemAdapter", "Expand: Before Setting Text Sizes: serialNum_tv TextSZ " + serialNum_tv.getTextSize());
                         serialNum_tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize_for_textHolderAssigned);
-                        Log.d("ItemAdapter", "Expand: After Setting Text Sizes: serialNum_tv TextSZ " + serialNum_tv.getTextSize());
+//                        Log.d("ItemAdapter", "Expand: After Setting Text Sizes: serialNum_tv TextSZ " + serialNum_tv.getTextSize());
 
 
                     } else {
@@ -576,6 +588,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.clear(R.id.topUserF, ConstraintSet.BOTTOM);
                         constraintSet.clear(R.id.topUserF, ConstraintSet.END);
 
+                        // Connect to new view
                         constraintSet.connect(R.id.topUserF, ConstraintSet.TOP, R.id.assignedToIC, ConstraintSet.TOP);
                         constraintSet.connect(R.id.topUserF, ConstraintSet.BOTTOM, R.id.assignedToIC, ConstraintSet.BOTTOM);
                         constraintSet.connect(R.id.topUserF, ConstraintSet.END, R.id.center, ConstraintSet.START, Utils.dpToPxOrDirectPx(context, 16));
@@ -587,8 +600,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.applyTo(constraintHolder);
                     }
 
-//                    imgScan.setImageResource(R.drawable.qr_icon_24);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(originalImgSizeW / 2, originalImgSizeH / 2);
+                    // Make "imgScan" half a size
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageScanW / 2 , imageScanH / 2);
                     imgScan.setLayoutParams(params);
 
                     if (Utils.calculateExpiration(inputDate, "For Refresh")) {
@@ -601,6 +614,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.clear(R.id.topExpirationF, ConstraintSet.BOTTOM);
                         constraintSet.clear(R.id.topExpirationF, ConstraintSet.END);
 
+                        // Connect to new view
                         constraintSet.connect(R.id.topExpirationF, ConstraintSet.TOP, R.id.imgVwDateExpired, ConstraintSet.TOP);
                         constraintSet.connect(R.id.topExpirationF, ConstraintSet.BOTTOM, R.id.imgVwDateExpired, ConstraintSet.BOTTOM);
                         constraintSet.connect(R.id.topExpirationF, ConstraintSet.END, R.id.constraintHolder, ConstraintSet.END, Utils.dpToPxOrDirectPx(context, 16));
@@ -612,7 +626,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
                     Utils.expandCardViewItemAdapter(cardViewMain, animationDuration);
 
-
+                    Log.d("ItemAdapter", "B Values: H=" + imageScanH + " W=" + imageScanW);
 
 
 //===========================================////===========================================////===========================================////===========================================//
@@ -679,6 +693,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.clear(R.id.headerF, ConstraintSet.BOTTOM);
                         constraintSet.clear(R.id.headerF, ConstraintSet.END);
 
+                        // Connect to new view
                         constraintSet.connect(R.id.headerF, ConstraintSet.TOP, R.id.imgScan_Frame, ConstraintSet.TOP);
                         constraintSet.connect(R.id.headerF, ConstraintSet.BOTTOM, R.id.imgScan_Frame, ConstraintSet.BOTTOM);
                         constraintSet.connect(R.id.headerF, ConstraintSet.START, R.id.linearLayout5, ConstraintSet.END);
@@ -689,6 +704,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.clear(R.id.subHeaderF, ConstraintSet.BOTTOM);
                         constraintSet.clear(R.id.subHeaderF, ConstraintSet.END);
 
+                        // Connect to new view
                         constraintSet.connect(R.id.subHeaderF, ConstraintSet.TOP, R.id.textSN_F, ConstraintSet.BOTTOM);
                         constraintSet.connect(R.id.subHeaderF, ConstraintSet.BOTTOM, R.id.imgScan_Frame, ConstraintSet.BOTTOM);
                         constraintSet.connect(R.id.subHeaderF, ConstraintSet.START, R.id.textSN_F, ConstraintSet.START);
@@ -718,6 +734,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.clear(R.id.topUserF, ConstraintSet.BOTTOM);
                         constraintSet.clear(R.id.topUserF, ConstraintSet.END);
 
+                        // Connect to new view
                         constraintSet.connect(R.id.topUserF, ConstraintSet.TOP, R.id.topExpirationF, ConstraintSet.TOP);
                         constraintSet.connect(R.id.topUserF, ConstraintSet.BOTTOM, R.id.topExpirationF, ConstraintSet.BOTTOM);
                         constraintSet.connect(R.id.topUserF, ConstraintSet.END, R.id.topExpirationF, ConstraintSet.START, topUser_marginEnd);
@@ -742,6 +759,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.clear(R.id.topExpirationF, ConstraintSet.BOTTOM);
                         constraintSet.clear(R.id.topExpirationF, ConstraintSet.END);
 
+                        // Connect to new view
                         constraintSet.connect(R.id.topExpirationF, ConstraintSet.TOP, R.id.linearLayout6, ConstraintSet.TOP);
                         constraintSet.connect(R.id.topExpirationF, ConstraintSet.BOTTOM, R.id.linearLayout6, ConstraintSet.BOTTOM);
                         constraintSet.connect(R.id.topExpirationF, ConstraintSet.END, R.id.linearLayout6, ConstraintSet.START, topUser_marginEnd);
@@ -750,8 +768,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     }
 
 
-                    // Reset Size
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(originalImgSizeW * 2, originalImgSizeH * 2);
+                    // Reset the size of "imgScan"
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageScanW, imageScanH);
                     imgScan.setLayoutParams(params);
 
                     Utils.collapseCardViewItemAdapter(cardViewMain, cardViewMain, animationDuration);

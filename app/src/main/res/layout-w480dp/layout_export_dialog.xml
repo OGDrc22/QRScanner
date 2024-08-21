@@ -47,7 +47,7 @@
                     android:id="@+id/warning"
                     style="@style/icConstantColor1"
                     android:layout_marginVertical="12dp"
-                    android:src="@drawable/ic_export"/>
+                    android:src="@drawable/ic_export_docs"/>
 
                 <TextView
                     android:id="@+id/titleText"

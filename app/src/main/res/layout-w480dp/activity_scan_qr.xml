@@ -8,7 +8,7 @@
     android:transitionName="@string/transition"
     style="@style/ScreenBackground"
     android:id="@+id/main"
-    tools:context=".ScanQR">
+    tools:context=".activities.ScanQR">
 
 
     <include

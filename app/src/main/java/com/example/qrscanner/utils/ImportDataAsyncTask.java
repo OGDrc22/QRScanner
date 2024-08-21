@@ -12,13 +12,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
-import com.example.qrscanner.MainActivity;
 import com.example.qrscanner.R;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -31,7 +29,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;

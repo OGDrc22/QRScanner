@@ -2,7 +2,6 @@ package com.example.qrscanner.utils;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -11,17 +10,13 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.models.Assigned_to_User_Model;
@@ -33,8 +28,8 @@ import java.util.List;
 
 public class CompareMethod {
 
+    static Dialog customLoading;
     private static DBHelper dbHelper;
-    private List<String> differences;
     private static StringBuilder stringBuilder;
     private static TextInputEditText serialNumber;
     private static TextInputEditText name;
@@ -42,13 +37,12 @@ public class CompareMethod {
     private static TextInputEditText device;
     private static TextInputEditText deviceModel;
     private static TextInputEditText datePurchased;
+    private static boolean allowNextAction = false;
+    private List<String> differences;
     private String keyIdentical;
     private String keyDifferent;
     private String keyNew;
     private String result;
-    private static boolean nextAction = false;
-
-    static Dialog customLoading;
 
     public CompareMethod(DBHelper dbHelper, List<String> differences, StringBuilder stringBuilder, TextInputEditText serialNumber, TextInputEditText name, TextInputEditText department, TextInputEditText device, TextInputEditText deviceModel, TextInputEditText datePurchased, String keyIdentical, String keyDifferent, String keyNew) {
         CompareMethod.dbHelper = dbHelper;
@@ -64,13 +58,6 @@ public class CompareMethod {
         this.keyDifferent = keyDifferent;
         this.keyNew = keyNew;
     }
-
-    public String compare(Context context, CompareCallBack callback) {
-        new compareAsync(context, callback).execute();
-        return result;
-    }
-
-
 
     public static void overrideItem(Context context, TextInputEditText dateExpired, TextInputEditText status, TextInputEditText availability, Runnable onOKClicked) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
@@ -121,13 +108,13 @@ public class CompareMethod {
                 availability.setText(null);
 
                 alertDialog.dismiss();
-                nextAction = true;
+                allowNextAction = true;
 
-                Log.d("CompareMethod", "onClick: next action " + nextAction);
+                Log.d("CompareMethod", "onClick: next action " + allowNextAction);
 
                 if (onOKClicked != null) {
                     onOKClicked.run();
-                    nextAction = false;
+                    allowNextAction = false;
                 }
             }
         });
@@ -142,10 +129,15 @@ public class CompareMethod {
     }
 
     public static boolean getNextActionResult() {
-        boolean currentNextAction = nextAction;
-        // Reset nextAction after returning the value
+        boolean currentallowNextAction = allowNextAction;
+        // Reset allowNextAction after returning the value
 
-        return currentNextAction;
+        return currentallowNextAction;
+    }
+
+    public String compare(Context context, CompareCallBack callback) {
+        new compareAsync(context, callback).execute();
+        return result;
     }
 
     public interface CompareCallBack {
@@ -172,6 +164,8 @@ public class CompareMethod {
             ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
             TextView textView = dialogView.findViewById(R.id.title_textView);
             textView.setText("Comparing.");
+            TextView textView1 = dialogView.findViewById(R.id.loading_textView);
+            textView1.setText("Please wait.");
             Utils.CustomFpsInterpolator fpsInterpolator = new Utils.CustomFpsInterpolator(16);
             ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
             objectAnimator.setDuration(500);
@@ -233,36 +227,41 @@ public class CompareMethod {
                         } else {
                             result = keyDifferent;
                             switch (differences.size()) {
-                                case 1: for (int i = 0; i <= 100; i++){
-                                            prog = i;
-                                            Thread.sleep(50);
-                                            publishProgress(prog);
-                                        }
-                                        break;
-                                case 2: for (int i = 0; i <= 100; i++){
-                                            prog = i;
-                                            Thread.sleep(70);
-                                            publishProgress(prog);
-                                        }
-                                        break;
-                                case 3: for (int i = 0; i <= 100; i++){
-                                            prog = i;
-                                            Thread.sleep(100);
-                                            publishProgress(prog);
-                                        }
-                                        break;
-                                case 4: for (int i = 0; i <= 100; i++){
-                                            prog = i;
-                                            Thread.sleep(120);
-                                            publishProgress(prog);
-                                        }
-                                        break;
-                                case 5: for (int i = 0; i <= 100; i++){
-                                            prog = i;
-                                            Thread.sleep(140);
-                                            publishProgress(prog);
-                                        }
-                                        break;
+                                case 1:
+                                    for (int i = 0; i <= 100; i++) {
+                                        prog = i;
+                                        Thread.sleep(50);
+                                        publishProgress(prog);
+                                    }
+                                    break;
+                                case 2:
+                                    for (int i = 0; i <= 100; i++) {
+                                        prog = i;
+                                        Thread.sleep(70);
+                                        publishProgress(prog);
+                                    }
+                                    break;
+                                case 3:
+                                    for (int i = 0; i <= 100; i++) {
+                                        prog = i;
+                                        Thread.sleep(100);
+                                        publishProgress(prog);
+                                    }
+                                    break;
+                                case 4:
+                                    for (int i = 0; i <= 100; i++) {
+                                        prog = i;
+                                        Thread.sleep(120);
+                                        publishProgress(prog);
+                                    }
+                                    break;
+                                case 5:
+                                    for (int i = 0; i <= 100; i++) {
+                                        prog = i;
+                                        Thread.sleep(140);
+                                        publishProgress(prog);
+                                    }
+                                    break;
                             }
 //                    Toast.makeText(ScanQR.this, "Differences found: " + differences, Toast.LENGTH_SHORT).show();
                         }
@@ -286,21 +285,16 @@ public class CompareMethod {
             super.onProgressUpdate(values);
 
             int newProgress = values[0];
-            TextView loadingText = customLoading.findViewById(R.id.loading_textView);
+            TextView loadingText = customLoading.findViewById(R.id.title_textView);
             loadingText.setVisibility(View.VISIBLE);
-            loadingText.setText("Proccessing...[" + newProgress + "%]");
+            loadingText.setText("Comparing...[" + newProgress + "%]");
         }
 
         protected void onPostExecute(String res) {
             super.onPostExecute(res);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (customLoading.isShowing()) {
-                        customLoading.dismiss();
-                    }
-                }
-            }, 5000);
+            if (customLoading.isShowing()) {
+                customLoading.dismiss();
+            }
 
             if (callBack != null) {
                 callBack.onCompareComplete(res);
