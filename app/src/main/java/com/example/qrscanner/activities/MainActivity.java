@@ -232,14 +232,29 @@ public class MainActivity extends AppCompatActivity {
                 String serialNum = item.getSerialNumber();
                 String serialNumString = String.valueOf(serialNum);
                 // Perform case-insensitive search by converting both text and item data to lowercase
-                if (serialNumString.toLowerCase().contains(searchText)
-                        || item.getName().toLowerCase().contains(searchText) || item.getName().toLowerCase().contains(".")
-                        || item.getDepartment().contains(searchText) || item.getDepartment().contains(".")
-                        || item.getDeviceBrand().contains(searchText) || item.getDatePurchased().contains(searchText) || item.getDateExpired().contains(searchText)) {
-
+                if (serialNumString.toLowerCase().contains(searchText) ) {
+                    filteredList.add(item);
+                } else if (item.getUserName().toLowerCase().contains(searchText)) {
+                    filteredList.add(item);
+                } else if (item.getDepartment().toLowerCase().contains(searchText)) {
+                    filteredList.add(item);
+                } else if (item.getDeviceType().toLowerCase().contains(searchText)) {
+                    filteredList.add(item);
+                } else if (item.getDeviceBrand().toLowerCase().contains(searchText)) {
+                    filteredList.add(item);
+                } else if (item.getDatePurchased().toLowerCase().contains(searchText)) {
+                    filteredList.add(item);
+                } else if (item.getDateExpired().toLowerCase().contains(searchText)) {
                     filteredList.add(item);
                 }
             }
+
+//            for (Assigned_to_User_Model item : deviceList) {
+//                if (matchesSearchCriteria(item, searchText)) {
+//                    filteredList.add(item);
+//                }
+//            }
+
         }
         // Update the dataset used by the adapter with the filtered results
         adapter.setDeviceList(filteredList);
@@ -247,6 +262,17 @@ public class MainActivity extends AppCompatActivity {
         // Notify the adapter of dataset changes
         adapter.notifyDataSetChanged();
     }
+
+//    private boolean matchesSearchCriteria(Assigned_to_User_Model item, String searchText) {
+//        String lowerCaseSearchText = searchText.toLowerCase();
+//        return item.getSerialNumber().toLowerCase().contains(lowerCaseSearchText)
+//                || item.getUserName().toLowerCase().contains(lowerCaseSearchText)
+//                || item.getDepartment().toLowerCase().contains(lowerCaseSearchText)
+//                || item.getDeviceType().toLowerCase().contains(lowerCaseSearchText)
+//                || item.getDeviceBrand().toLowerCase().contains(lowerCaseSearchText)
+//                || item.getDatePurchased().toLowerCase().contains(lowerCaseSearchText)
+//                || item.getDateExpired().toLowerCase().contains(lowerCaseSearchText);
+//    }
 
     private void setUpButtons() {
         addBtn = findViewById(R.id.addBtn);
@@ -371,13 +397,6 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(MainActivity.this, "To be Added", Toast.LENGTH_SHORT).show();
             }
         });
-
-    }
-
-    private void loadDataFromDatabase() {
-        deviceList.clear();
-        deviceList.addAll(dbHelper.fetchDevice());
-        adapter.notifyDataSetChanged();
 
     }
 

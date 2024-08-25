@@ -192,7 +192,7 @@ public class Utils {
             } else {
                 result = false;
             }
-            Log.d("Utils", "calculateExpiration: " + filterKey + " = FR--Expired--?: " + result);
+//            Log.d("Utils", "calculateExpiration: " + filterKey + " = FR--Expired--?: " + result);
         }
         if (filterKey.equals("Fresh")) {
             if (currentDate.before(expirationDate)) {
@@ -200,7 +200,7 @@ public class Utils {
             } else {
                 result = false;
             }
-            Log.d("Utils", "calculateExpiration: " + filterKey + " = F--Expired--?: " + result);
+//            Log.d("Utils", "calculateExpiration: " + filterKey + " = F--Expired--?: " + result);
         }
 
         return result;

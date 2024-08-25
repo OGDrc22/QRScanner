@@ -288,7 +288,7 @@ public class ScanQR extends AppCompatActivity {
                             if (scannedData.equals(serialNumString)) {
                                 bottomSheetDialog.show();
                                 qrText.setText(item.getSerialNumber());
-                                assignedTo.setText(item.getName());
+                                assignedTo.setText(item.getUserName());
                                 chooserDepartment.setText(item.getDepartment());
                                 chooserDevice.setText(item.getDeviceType());
                                 deviceModel.setText(item.getDeviceBrand());

@@ -227,7 +227,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void deleteDeviceNoUser(Assigned_to_User_Model device) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = KEY_NAME + " = ?";
-        String[] selectionArgs = {device.getName()};
+        String[] selectionArgs = {device.getUserName()};
         db.delete(TABLE_ASSIGNED_TO_USER, selection, selectionArgs);
         db.close();
     }

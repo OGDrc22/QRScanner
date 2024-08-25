@@ -169,7 +169,7 @@ public class allDevice extends AppCompatActivity {
             Collections.reverse(deviceList);
             for (Assigned_to_User_Model devices : deviceList) {
                 serialNum.add(String.valueOf(devices.getSerialNumber()));
-                assignedTo.add(devices.getName());
+                assignedTo.add(devices.getUserName());
                 department.add(devices.getDepartment());
                 device.add(devices.getDeviceType());
                 deviceModel.add(devices.getDeviceBrand());

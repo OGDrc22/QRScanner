@@ -25,7 +25,7 @@ public class Assigned_to_User_Model {
         return serial_number;
     }
 
-    public String getName() {
+    public String getUserName() {
         return name;
     }
 

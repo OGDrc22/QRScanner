@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -76,6 +75,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private static int imageScanH;
     private static int imageScanW;
 
+    private String stsExtra;
+
     // Define an interface for delete action
     public interface OnDeleteClickListener {
         void onDeleteClick(int position);
@@ -97,13 +98,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         intent.putExtra(EXTRA_POSITION, position);
 //        intent.putExtra("device", String.valueOf(device));
         intent.putExtra("serialNumber", String.valueOf(device.getSerialNumber()));
-        intent.putExtra("name", String.valueOf(device.getName()));
+        intent.putExtra("name", String.valueOf(device.getUserName()));
         intent.putExtra("department", String.valueOf(device.getDepartment()));
-        intent.putExtra("device", String.valueOf(device.getDeviceType()));
+        intent.putExtra("deviceType", String.valueOf(device.getDeviceType()));
+        byte[] byteArray = data.getImage();
+        intent.putExtra("deviceTypeImg", byteArray);
         intent.putExtra("deviceModel", String.valueOf(device.getDeviceBrand()));
         intent.putExtra("datePurchased", String.valueOf(device.getDatePurchased()));
         intent.putExtra("dateExpired", String.valueOf(device.getDateExpired()));
-        intent.putExtra("status", String.valueOf(device.getStatus()));
+        intent.putExtra("status", stsExtra);
         intent.putExtra("availability", String.valueOf(device.getAvailability()));
         ((Activity) context).startActivityForResult(intent, YOUR_REQUEST_CODE); // Use context to start activity
         notifyItemChanged(position);
@@ -142,7 +145,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         data = deviceList.get(position);
 
         viewHolder.serialNum_tv.setText(String.valueOf(data.getSerialNumber()));
-        viewHolder.textHolderAssignedTo.setText(String.valueOf(data.getName()));
+        viewHolder.textHolderAssignedTo.setText(String.valueOf(data.getUserName()));
         viewHolder.textHolderDepartment.setText(String.valueOf(data.getDepartment()));
         viewHolder.textHolderDeviceType.setText(data.getDeviceType());
         viewHolder.textHolderDeviceModel.setText(String.valueOf(data.getDeviceBrand()));
@@ -150,7 +153,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         viewHolder.subHeader.setText(data.getSerialNumber());
 
-        if (data.getName().isEmpty()) {
+        if (data.getUserName().isEmpty()) {
             viewHolder.imgScan.setImageResource(R.drawable.qr_icon_48);
             viewHolder.topUserF.setVisibility(View.VISIBLE);
             viewHolder.headerF.setVisibility(View.GONE);
@@ -171,7 +174,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         } else {
             viewHolder.imgScan.setImageResource(R.drawable.user_bulk_48);
-            viewHolder.serialNum_tv.setText(data.getName());
+            viewHolder.serialNum_tv.setText(data.getUserName());
             viewHolder.topUserF.setVisibility(View.GONE);
             viewHolder.headerF.setVisibility(View.VISIBLE);
 
@@ -202,7 +205,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             Utils.calculateExpirationAndStatus(inputDate, viewHolder.textHolderDateExpired, viewHolder.textHolderStatus);
 
             // Get the status text to determine visibility
-            String status = viewHolder.textHolderStatus.getText().toString();
+            stsExtra = viewHolder.textHolderStatus.getText().toString();
 
             // Set visibility of indicator based on status
             int clExpired = ContextCompat.getColor(context, R.color.clExpired);
@@ -210,7 +213,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             int clDark = ContextCompat.getColor(context, R.color.itemBg2);
             int clGreen = ContextCompat.getColor(context, R.color.primary);
             int clRed = ContextCompat.getColor(context, R.color.clError);
-            if (status.equals("Fresh")) {
+            if (stsExtra.equals("Fresh")) {
                 viewHolder.topExpiration.setVisibility(View.GONE);
                 viewHolder.textHolderStatus.setTextColor(clGreen);
                 if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
@@ -269,19 +272,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             }
         });
 
-        if (String.valueOf(data.getDeviceType()).equals("Laptop")) {
-            viewHolder.deviceTypeIC.setImageResource(R.drawable.laptop_icon);
-            viewHolder.deviceModelIC.setImageResource(R.drawable.laptop_icon);
-        } else if (String.valueOf(data.getDeviceType()).equals("Desktop")) {
-            viewHolder.deviceTypeIC.setImageResource(R.drawable.ic_pc_computer);
-            viewHolder.deviceModelIC.setImageResource(R.drawable.ic_pc_computer);
-        } else if (String.valueOf(data.getDeviceType()).equals("Phone")) {
-            viewHolder.deviceTypeIC.setImageResource(R.drawable.ic_mobile_phone);
-            viewHolder.deviceModelIC.setImageResource(R.drawable.ic_mobile_phone);
-        } else if (String.valueOf(data.getDeviceType()).equals("Tablet")) {
-            viewHolder.deviceTypeIC.setImageResource(R.drawable.ic_tablet);
-            viewHolder.deviceModelIC.setImageResource(R.drawable.ic_tablet);
-        } else if (String.valueOf(data.getDeviceType()).equals(data.getDeviceType())) {
+        if (String.valueOf(data.getDeviceType()).equals(data.getDeviceType())) {
             if (data.image != null){
                 // Convert byte array to Bitmap/int
                 byte[] imageBytes = data.getImage();
@@ -450,7 +441,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
             // Debugging
 //            Log.d("ItemAdapter", "onClick triggered");
-//            Log.d("ItemAdapter", "getName: " + data.getName());
+            Log.d("ItemAdapter", "getName: " + data.getUserName());
 
             position = getAdapterPosition();
             data = deviceList.get(position);
@@ -525,7 +516,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
                     Utils.rotateUp(dropDownArrow);
 
-                    if (!data.getName().isEmpty()) {
+                    if (!data.getUserName().isEmpty()) {
 
                         imgScan.setImageResource(R.drawable.qr_icon_48);
                         imgScan_Frame.setPadding(
@@ -674,7 +665,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
                     Utils.rotateDown(dropDownArrow);
 
-                    if (!data.getName().isEmpty()) {
+                    if (!data.getUserName().isEmpty()) {
 
                         imgScan.setImageResource(R.drawable.user_bulk_48);
                         imgScan_Frame.setPadding(

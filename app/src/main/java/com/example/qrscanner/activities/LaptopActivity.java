@@ -1,10 +1,10 @@
 package com.example.qrscanner.activities;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -12,25 +12,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.AfterAsyncListener;
+import com.example.qrscanner.utils.FilteredDataLoader;
 import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
-
-import java.util.Collections;
 
 public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnDeleteClickListener {
 
@@ -48,6 +52,12 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
     private ImageView currentActivity, settingsIcon, backBtn;
     private ConstraintLayout constraintLayoutDeleteAll;
     private LinearLayout main, cardViewContent;
+
+    private static View topSnackView;
+    private static ImageView topSnack_icon;
+    private static TextView topSnackMessage;
+    private static TextView topSnackDesc;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +128,9 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        FilteredDataLoader.DeviceFilteredDataLoader filter = (FilteredDataLoader.DeviceFilteredDataLoader) new FilteredDataLoader.DeviceFilteredDataLoader(LaptopActivity.this, dbHelper, main, adapter,"laptop",  deviceList, textViewItemCount);
+
+
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("Laptops");
         currentActivity = findViewById(R.id.currentActivity);
@@ -128,17 +141,16 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
-                    if (!filteredList.isEmpty()) {
+                    if (!filter.isEmpty()) {
                         String identifier = "laptop";
                         Utils.deleteDataByDeviceType(LaptopActivity.this, identifier, adapter, main);
-                    } else {
-                        Toast.makeText(LaptopActivity.this, "Laptop is empty", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
 
-        filterDeviceList();
+        filter.execute();
+
     }
 
 
@@ -149,64 +161,71 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
     public void onDeleteClick(int position) {
     }
 
-    // TODO replace onActivityResult -> onResume
-    // For Edit Button and Update RecyclerView
+    private static void getView(Context context) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
+        topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
+        topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
+        topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
+    }
+
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences preferences = getSharedPreferences("Identical", MODE_PRIVATE);
-        loadDataFromDatabase();
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String keyIdentical = "No differences found";
+        String keyDifferent = "Difference found";
 
-        String messageI = preferences.getString("keyIdentical", "Identical");
-        Log.d("Laptop", "onCreate: " + messageI);
-        String messageD = preferences.getString("keyDifferent", "Different");
-        Log.d("Laptop", "onCreate: " + messageD);
-
-    }
-
-
-
-    // TODO make this method Asynchronous
-    private void loadDataFromDatabase() {
-        deviceList.clear();
-        deviceList.addAll(dbHelper.fetchDevice());
-        filterDeviceList();
-        adapter.notifyDataSetChanged();
-
-    }
-
-
-    // Show the item that has a "Laptop" in the Device column
-    private void filterDeviceList() {
-        filteredList = new ArrayList<>();
-        filteredList.clear();
-        if (deviceList.isEmpty()) {
-            // Show a toast message or handle empty list case
-        } else {
-            // Iterate through the original list and add items that match the criteria to the filtered list
-            for (Assigned_to_User_Model device : deviceList) {
-                // Assuming device contains the name of the gadget
-                String deviceName = device.getDeviceType();
-                // Check if the device name contains "laptop" (case-insensitive)
-                if (deviceName.toLowerCase().contains("laptop")) {
-                    filteredList.add(device);
-                }
+        if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            getView(LaptopActivity.this);
+            if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES) {
+                topSnack_icon.setImageResource(R.drawable.qr_icon_48);
+                int getColorLight = ContextCompat.getColor(LaptopActivity.this, R.color.txtHeaderLight);
+                topSnack_icon.setColorFilter(getColorLight);
+            } else {
+                topSnack_icon.setImageResource(R.drawable.qr_icon_48);
             }
 
-            String deviceCount = String.valueOf(filteredList.size());
-            textViewItemCount.setText("Item Count: " + deviceCount);
+//            Get the passed Data from UpdateActivity
+            String ser = data.getStringExtra("serial");
+            String resA = data.getStringExtra("keyIdentical");
+            String resB = data.getStringExtra("keyDifferent");
 
-            if (filteredList.isEmpty()) {
-                textViewNoData.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+            if (resA != null && resA.equals(keyIdentical)) {
+
+                topSnackMessage.setText(data.getStringExtra("keyIdentical"));
+                TopSnack.createCustomTopSnack(LaptopActivity.this, main, topSnackView, null, null, true);
+                Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyIdentical"));
+
+            } else if (resB != null && resB.equals(keyDifferent)) {
+
+                FilteredDataLoader.DeviceFilteredDataLoader loader = getItemAdapterDataLoader(data, ser);
+
+                loader.execute();
+
             } else {
-                textViewNoData.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                Log.d("result", "onActivityResult: resA & resB is null" );
             }
         }
+    }
 
-        Collections.reverse(deviceList);
-        adapter.setDeviceList(filteredList);
+//    After the Item data has change, show this Notification
+    private @NonNull FilteredDataLoader.DeviceFilteredDataLoader getItemAdapterDataLoader(@NonNull Intent data, String ser) {
+        FilteredDataLoader.DeviceFilteredDataLoader loader = new FilteredDataLoader.DeviceFilteredDataLoader(LaptopActivity.this, dbHelper, main, adapter, "laptop", deviceList, textViewItemCount);
+
+        loader.setOnAfterAsync(new AfterAsyncListener() {
+            @Override
+            public void after(int delay) {
+
+                topSnackMessage.setText(ser);
+                topSnackDesc.setVisibility(View.VISIBLE);
+                topSnackDesc.setText("Updated Successfully");
+                TopSnack.createCustomTopSnack(LaptopActivity.this, main, topSnackView, null, null, true);
+                Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyDifferent"));
+
+            }
+        });
+        return loader;
     }
 
 }

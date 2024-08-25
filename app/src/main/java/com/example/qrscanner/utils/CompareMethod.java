@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -195,8 +194,8 @@ public class CompareMethod {
                         differences.clear();
                         stringBuilder.setLength(0);
 
-                        if (!items.getName().equals(name.getText().toString())) {
-                            differences.add("Name: " + items.getName() + " -> " + name.getText().toString() + "\n");
+                        if (!items.getUserName().equals(name.getText().toString())) {
+                            differences.add("Name: " + items.getUserName() + " -> " + name.getText().toString() + "\n");
                         }
                         if (items.getDepartment() != null && !items.getDepartment().equals(department.getText().toString())) {
                             differences.add("Department: " + items.getDepartment() + " -> " + department.getText().toString() + "\n");

@@ -1,9 +1,11 @@
 package com.example.qrscanner.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,26 +13,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.AfterAsyncListener;
+import com.example.qrscanner.utils.FilteredDataLoader;
 import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 
 public class UnknownUserActivity extends AppCompatActivity {
 
@@ -47,8 +52,12 @@ public class UnknownUserActivity extends AppCompatActivity {
     private CardView cardView_options;
     private ImageView currentActivity, currentActivity2, settingsIcon, backBtn;
     private ConstraintLayout constraintLayoutDeleteAll;
-    private LinearLayout cardViewContent;
+    private LinearLayout main, cardViewContent;
 
+    private static View topSnackView;
+    private static ImageView topSnack_icon;
+    private static TextView topSnackMessage;
+    private static TextView topSnackDesc;
 
 
 
@@ -62,6 +71,8 @@ public class UnknownUserActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        main = findViewById(R.id.main);
 
         settingsIcon = findViewById(R.id.settingsIcon);
         settingsIcon.setImageResource(R.drawable.drop_down);
@@ -119,6 +130,8 @@ public class UnknownUserActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        FilteredDataLoader.UnknownUserFilteredDataLoader filter = (FilteredDataLoader.UnknownUserFilteredDataLoader) new FilteredDataLoader.UnknownUserFilteredDataLoader(UnknownUserActivity.this, dbHelper, main, adapter, deviceList, textViewItemCount);
+
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("No User");
         currentActivity = findViewById(R.id.currentActivity);
@@ -137,18 +150,16 @@ public class UnknownUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
-                    if (!filteredList.isEmpty()) {
+                    if (!filter.isEmpty()) {
                         String identifier = "unknown user device";
-//                        Utils.showDeleteAllDialog(UnknownUserActivity.this, identifier, adapter);
+                        Utils.showDeleteAllDialog(UnknownUserActivity.this, identifier, adapter, main);
                         adapter.notifyDataSetChanged();
-                    }else {
-                        Toast.makeText(UnknownUserActivity.this, "Unknown user is empty", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
 
-        filterDeviceList();
+        filter.execute();
 
     }
 
@@ -158,82 +169,72 @@ public class UnknownUserActivity extends AppCompatActivity {
     public void onDeleteClick(int position) {
     }
 
-    private void deleteByFilter() {
-        // Iterate through the original list and remove items that match the gadget name
-        Iterator<Assigned_to_User_Model> iterator = deviceList.iterator();
-        while (iterator.hasNext()) {
-            Assigned_to_User_Model device = iterator.next();
-            // Assuming getDeviceName() returns the name of the device
-            if (device.getName().isEmpty()) {
-                // Remove the item from the list
-                Log.d("TAG", "deleteByFilter: " + device.getSerialNumber());
-                Toast.makeText(this, "Deleted: " + device.getSerialNumber(), Toast.LENGTH_SHORT).show();
-                iterator.remove();
-                dbHelper.deleteDeviceNoUser(device);
-            }
-        }
 
-        // Update the dataset used by the adapter with the modified list
-        adapter.setDeviceList(deviceList);
 
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
+    private static void getView(Context context) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
+        topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
+        topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
+        topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
     }
 
 
-
-
-    // For Edit Button and Update RecyclerView
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Refresh the UI here, for example, reload data from the database
-            loadDataFromDatabase();
-            Collections.reverse(deviceList);
-            adapter.notifyDataSetChanged(); // Notify the adapter of dataset changes
-        }
-    }
+        String keyIdentical = "No differences found";
+        String keyDifferent = "Difference found";
 
-    private void loadDataFromDatabase() {
-        deviceList.clear();
-        deviceList.addAll(dbHelper.fetchDevice());
-        filterDeviceList();
-        adapter.notifyDataSetChanged();
-
-    }
-
-    // Show the item that has a no user column
-    private void filterDeviceList() {
-        filteredList = new ArrayList<>();
-        filteredList.clear();
-        if (deviceList.isEmpty()) {
-            // Show a toast message or handle empty list case
-        } else {
-            // Iterate through the original list and add items that match the criteria to the filtered list
-            for (Assigned_to_User_Model device : deviceList) {
-                // Assuming device contains the name of the gadget
-                String userName = device.getName();
-                // Check if the device name contains "laptop" (case-insensitive)
-                if (userName.isEmpty()) {
-                    filteredList.add(device);
-                }
-            }
-
-            String deviceCount = String.valueOf(filteredList.size());
-            textViewItemCount.setText("Item Count: " + deviceCount);
-
-            if (filteredList.isEmpty()) {
-                textViewNoData.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+        if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            getView(UnknownUserActivity.this);
+            if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES) {
+                topSnack_icon.setImageResource(R.drawable.qr_icon_48);
+                int getColorLight = ContextCompat.getColor(UnknownUserActivity.this, R.color.txtHeaderLight);
+                topSnack_icon.setColorFilter(getColorLight);
             } else {
-                textViewNoData.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                topSnack_icon.setImageResource(R.drawable.qr_icon_48);
+            }
+
+//            Get the passed Data from UpdateActivity
+            String ser = data.getStringExtra("serial");
+            String resA = data.getStringExtra("keyIdentical");
+            String resB = data.getStringExtra("keyDifferent");
+
+            if (resA != null && resA.equals(keyIdentical)) {
+
+                topSnackMessage.setText(data.getStringExtra("keyIdentical"));
+                TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true);
+                Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyIdentical"));
+
+            } else if (resB != null && resB.equals(keyDifferent)) {
+
+                FilteredDataLoader.UnknownUserFilteredDataLoader loader = getItemAdapterDataLoader(data, ser);
+
+                loader.execute();
+
+            } else {
+                Log.d("result", "onActivityResult: resA & resB is null" );
             }
         }
+    }
 
-        Collections.reverse(filteredList);
-        adapter.setDeviceList(filteredList);
+    private @NonNull FilteredDataLoader.UnknownUserFilteredDataLoader getItemAdapterDataLoader(@NonNull Intent data, String ser) {
+        FilteredDataLoader.UnknownUserFilteredDataLoader loader = new FilteredDataLoader.UnknownUserFilteredDataLoader(UnknownUserActivity.this, dbHelper, main, adapter, deviceList, textViewItemCount);
+
+        loader.setOnAfterAsync(new AfterAsyncListener() {
+            @Override
+            public void after(int delay) {
+
+                topSnackMessage.setText(ser);
+                topSnackDesc.setVisibility(View.VISIBLE);
+                topSnackDesc.setText("Updated Successfully");
+                TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true);
+                Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyDifferent"));
+
+            }
+        });
+        return loader;
     }
 
 }

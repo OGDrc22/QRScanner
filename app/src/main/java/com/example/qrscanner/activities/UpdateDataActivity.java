@@ -8,6 +8,7 @@
     import android.content.SharedPreferences;
     import android.graphics.Bitmap;
     import android.graphics.BitmapFactory;
+    import android.graphics.drawable.BitmapDrawable;
     import android.graphics.drawable.ColorDrawable;
     import android.graphics.drawable.Drawable;
     import android.graphics.drawable.TransitionDrawable;
@@ -88,7 +89,7 @@
 
 
         private final String keyNew = "New";
-        private final String keyIdentical = "No differences found.";
+        private final String keyIdentical = "No differences found";
         private final String keyDifferent = "Difference found";
 
         private static List<String> differences;
@@ -226,7 +227,12 @@
             assignedTo.setText(getIntent().getStringExtra("name"));
             chooserDepartment.setText(getIntent().getStringExtra("department"));
 
-            chooserDevice.setText(getIntent().getStringExtra("device"));
+            chooserDevice.setText(getIntent().getStringExtra("deviceType"));
+            byte[] byteExtras = getIntent().getByteArrayExtra("deviceTypeImg");
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteExtras, 0, byteExtras.length);
+            Drawable imgDrawable = new BitmapDrawable(getResources(), bitmap);
+            textInputLayoutDevice.setStartIconDrawable(imgDrawable);
+
             deviceModel.setText(getIntent().getStringExtra("deviceModel"));
             datePurchased.setText(getIntent().getStringExtra("datePurchased"));
             dateExpired.setText(getIntent().getStringExtra("dateExpired"));
@@ -378,20 +384,21 @@
                         @Override
                         public void onCompareComplete(String result) {
 
+                            String sr = String.valueOf(getIntent().getStringExtra("serialNumber"));
                             if (result.equals(keyIdentical)) {
-                                SharedPreferences preferences = getSharedPreferences("Identical", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("keyIdentical", keyIdentical);
-                                editor.apply();
+                                Intent intent = new Intent();
+//                                intent.putExtra("dataRefreshed", true);
+                                intent.putExtra("serial", sr);
+                                intent.putExtra("keyIdentical", keyIdentical);
+                                setResult(RESULT_OK, intent);
                                 finish();
-                            }
-
-                            if (result.equals(keyDifferent)) {
+                            } else if (result.equals(keyDifferent)) {
                                 CompareMethod.overrideItem(UpdateDataActivity.this, dateExpired, status, availability, () -> {
-                                    SharedPreferences preferences = getSharedPreferences("Identical", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = preferences.edit();
-                                    editor.putString("keyDifferent", keyDifferent);
-                                    editor.apply();
+                                    Intent intent = new Intent();
+                                    intent.putExtra("dataRefreshed", true);
+                                    intent.putExtra("serial", sr);
+                                    intent.putExtra("keyDifferent", keyDifferent);
+                                    setResult(RESULT_OK, intent);
                                     finish();
                                 });
 
@@ -402,114 +409,6 @@
                 }
             });
         }
-
-
-
-        private class exeKeyDifferent extends AsyncTask<Void, Integer, Boolean> {
-
-            private Context context;
-            private final boolean[] allFieldsFilled;
-            Dialog customLoading;
-
-
-            public exeKeyDifferent(Context context, boolean[] allFieldsFilled) {
-                this.allFieldsFilled = allFieldsFilled;
-                this.context = context;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                // Show loading animation
-                customLoading = new Dialog(context);
-                LayoutInflater inflater = LayoutInflater.from(context);
-                View dialogView = inflater.inflate(R.layout.loading_dialog, null);
-                ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
-                TextView textView = dialogView.findViewById(R.id.title_textView);
-                textView.setText("Serial No. [" + qrText.getText().toString() + "]");
-                Utils.CustomFpsInterpolator fpsInterpolator = new Utils.CustomFpsInterpolator(16);
-                ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
-                objectAnimator.setDuration(500);
-                objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                objectAnimator.setInterpolator(fpsInterpolator);
-                objectAnimator.start();
-                customLoading.setContentView(dialogView);
-                customLoading.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                WindowManager.LayoutParams lp = customLoading.getWindow().getAttributes();
-                lp.dimAmount = 0.5f;
-                customLoading.setCancelable(false);
-                customLoading.show();
-            }
-
-
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                int update = 0;
-                try {
-                    if (CompareMethod.getNextActionResult()) {
-
-                        Drawable[] layers = new Drawable[]{
-                                imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
-                        };
-                        TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                        imageViewSave.setImageDrawable(transitionDrawable);
-                        transitionDrawable.startTransition(700);
-
-                        Log.d("UpdateActivity", "doInBackground: " + CompareMethod.getNextActionResult());
-
-                        for (int i = 0; i <= 100; i++) {
-                            update = i;
-                            Thread.sleep(100);
-                            publishProgress(update);
-                        }
-
-                    }
-
-                    return true;
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return false;
-                }
-
-            }
-
-            protected void onProgressUpdate(Integer... values) {
-                super.onProgressUpdate(values);
-                // Update UI with current itemCount
-                int newVal = values[0];
-                TextView loadingText = customLoading.findViewById(R.id.loading_textView);
-                loadingText.setVisibility(View.VISIBLE);
-                loadingText.setText("Overriding in progress[" + newVal + "%]");
-            }
-
-            @Override
-            protected void onPostExecute(Boolean result) {
-                super.onPostExecute(result);
-
-                if (result) {
-                    Intent intent = new Intent();
-                    intent.putExtra("dataRefreshed", true);
-                    setResult(RESULT_OK, intent);if (customLoading.isShowing()) {
-                        customLoading.dismiss();
-                    }
-                    getView(context, main);
-                    topSnackMessage.setText("Update Successfully");
-                    TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    }, TopSnack.getDuration());
-                    Log.d("TAG", "onPostExecute: " + result);
-
-                }
-
-            }
-
-        }
-
 
 
 

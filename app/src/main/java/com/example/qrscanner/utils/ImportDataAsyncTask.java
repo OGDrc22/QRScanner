@@ -39,6 +39,7 @@ import java.util.Map;
 public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
 
     private Context context;
+
     private Dialog customLoading;
 
     private ConstraintLayout main;

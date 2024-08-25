@@ -1,7 +1,10 @@
 package com.example.qrscanner.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -9,21 +12,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.AfterAsyncListener;
+import com.example.qrscanner.utils.FilteredDataLoader;
 import com.example.qrscanner.utils.Utils;
 
 import java.text.ParseException;
@@ -47,7 +55,12 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
     private CardView cardView_options;
     private ImageView currentActivity, currentActivity2, settingsIcon, backBtn;
     private ConstraintLayout constraintLayoutDeleteAll;
-    private LinearLayout cardViewContent;
+    private LinearLayout main, cardViewContent;
+
+    private static View topSnackView;
+    private static ImageView topSnack_icon;
+    private static TextView topSnackMessage;
+    private static TextView topSnackDesc;
 
 
 
@@ -62,6 +75,8 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        main = findViewById(R.id.main);
 
         settingsIcon = findViewById(R.id.settingsIcon);
         settingsIcon.setImageResource(R.drawable.drop_down);
@@ -117,6 +132,8 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        FilteredDataLoader.ExpiredDevice filter = (FilteredDataLoader.ExpiredDevice) new FilteredDataLoader.ExpiredDevice(ExpiredDevicesActivity.this, dbHelper, main, adapter, deviceList, textViewItemCount);
+
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("Expired Devices");
         currentActivity = findViewById(R.id.currentActivity);
@@ -134,22 +151,16 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
-                    if (!filteredList.isEmpty()) {
+                    if (!filter.isEmpty()) {
                         String identifier = "expired device";
 //                        Utils.showDeleteAllDialog(ExpiredDevicesActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
-                    }else {
-                        Toast.makeText(ExpiredDevicesActivity.this, "Expired Devices is empty", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
 
-        try {
-            filterDeviceList();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        filter.execute();
 
     }
 
@@ -163,61 +174,71 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
 
 
 
-    // For Edit Button and Update RecyclerView
+    private static void getView(Context context) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
+        topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
+        topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
+        topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Refresh the UI here, for example, reload data from the database
-            try {
-                loadDataFromDatabase();
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-            Collections.reverse(deviceList);
-            adapter.notifyDataSetChanged(); // Notify the adapter of dataset changes
-        }
-    }
+        String keyIdentical = "No differences found";
+        String keyDifferent = "Difference found";
 
-    private void loadDataFromDatabase() throws ParseException {
-        deviceList.clear();
-        deviceList.addAll(dbHelper.fetchDevice());
-        filterDeviceList();
-        adapter.notifyDataSetChanged();
-
-    }
-
-    // Show the item that is Expired Device column
-    private void filterDeviceList() throws ParseException {
-        filteredList = new ArrayList<>();
-        filteredList.clear();
-        if (deviceList.isEmpty()) {
-            // Show a toast message or handle empty list case
-        } else {
-            // Iterate through the original list and add items that match the criteria to the filtered list
-            for (Assigned_to_User_Model device : deviceList) {
-                String input = device.getDatePurchased();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
-                Date dateInput = dateFormat.parse(input);
-                if (Utils.calculateExpiration(dateInput,  "For Refresh")) {
-                    filteredList.add(device);
-                }
-            }
-
-            String deviceCount = String.valueOf(filteredList.size());
-            textViewItemCount.setText("Item Count: " + deviceCount);
-
-            if (filteredList.isEmpty()) {
-                textViewNoData.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+        if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            getView(ExpiredDevicesActivity.this);
+            if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES) {
+                topSnack_icon.setImageResource(R.drawable.qr_icon_48);
+                int getColorLight = ContextCompat.getColor(ExpiredDevicesActivity.this, R.color.txtHeaderLight);
+                topSnack_icon.setColorFilter(getColorLight);
             } else {
-                textViewNoData.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                topSnack_icon.setImageResource(R.drawable.qr_icon_48);
+            }
+
+//            Get the passed Data from UpdateActivity
+            String ser = data.getStringExtra("serial");
+            String resA = data.getStringExtra("keyIdentical");
+            String resB = data.getStringExtra("keyDifferent");
+
+            if (resA != null && resA.equals(keyIdentical)) {
+
+                topSnackMessage.setText(data.getStringExtra("keyIdentical"));
+                TopSnack.createCustomTopSnack(ExpiredDevicesActivity.this, main, topSnackView, null, null, true);
+                Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyIdentical"));
+
+            } else if (resB != null && resB.equals(keyDifferent)) {
+
+                FilteredDataLoader.ExpiredDevice loader = getItemAdapterDataLoader(data, ser);
+
+                loader.execute();
+
+            } else {
+                Log.d("result", "onActivityResult: resA & resB is null" );
             }
         }
-
-        Collections.reverse(deviceList);
-        adapter.setDeviceList(filteredList);
     }
+
+    private @NonNull FilteredDataLoader.ExpiredDevice getItemAdapterDataLoader(@NonNull Intent data, String ser) {
+        FilteredDataLoader.ExpiredDevice loader = new FilteredDataLoader.ExpiredDevice(ExpiredDevicesActivity.this, dbHelper, main, adapter, deviceList, textViewItemCount);
+
+        loader.setOnAfterAsync(new AfterAsyncListener() {
+            @Override
+            public void after(int delay) {
+
+                topSnackMessage.setText(ser);
+                topSnackDesc.setVisibility(View.VISIBLE);
+                topSnackDesc.setText("Updated Successfully");
+                TopSnack.createCustomTopSnack(ExpiredDevicesActivity.this, main, topSnackView, null, null, true);
+                Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyDifferent"));
+
+            }
+        });
+        return loader;
+    }
+
 
 }

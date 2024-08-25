@@ -145,7 +145,7 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Integer, Boolean> {
             for (Assigned_to_User_Model device : deviceList) {
                 Row row = sheet.createRow(rowNum++);
                 row.createCell(0).setCellValue(device.getSerialNumber());
-                row.createCell(1).setCellValue(device.getName());
+                row.createCell(1).setCellValue(device.getUserName());
                 row.createCell(2).setCellValue(device.getDepartment());
                 row.createCell(3).setCellValue(device.getDeviceType());
                 row.createCell(4).setCellValue(device.getDeviceBrand());
