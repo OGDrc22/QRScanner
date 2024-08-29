@@ -45,9 +45,9 @@
 
                 <ImageView
                     android:id="@+id/warning"
-                    style="@style/sizeICScan"
+                    style="@style/icConstantColor1"
                     android:layout_marginVertical="12dp"
-                    android:src="@drawable/ic_edit"/>
+                    android:src="@drawable/ic_export_docs"/>
 
                 <TextView
                     android:id="@+id/titleText"
@@ -55,60 +55,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="8dp"
-                    android:text="Overide Item"/>
+                    android:text="Export Data"/>
 
             </LinearLayout>
 
-            <com.google.android.material.textview.MaterialTextView
+            <EditText
                 android:id="@+id/editText"
                 style="@style/textStyle1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="36dp"
-                android:layout_marginTop="@dimen/padding_16"
-                android:text="Do you want to override/update this ?"
+                android:layout_marginTop="32dp"
+                android:hint="  File Name.xlsx"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layoutTitle" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/diff"
-                style="@style/textStyle1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="36dp"
-                android:layout_marginTop="@dimen/padding_16"
-                android:hint="Diffeences"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editText" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/warning_sign"
-                app:layout_constraintBottom_toBottomOf="@+id/thisA"
-                app:layout_constraintStart_toStartOf="@+id/diff"
-                app:layout_constraintTop_toTopOf="@+id/thisA" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/thisA"
-                style="@style/textStyle1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="36dp"
-                android:layout_marginTop="@dimen/padding_16"
-                android:text="This action cannot be undone."
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
-                app:layout_constraintTop_toBottomOf="@+id/diff" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                app:layout_constraintTop_toBottomOf="@+id/thisA">
+                app:layout_constraintTop_toBottomOf="@+id/editText">
 
                 <Button
                     android:id="@+id/actionCancel"
@@ -118,7 +85,7 @@
                     android:layout_marginEnd="1dp"
                     android:paddingVertical="18dp"
                     android:backgroundTint="@android:color/transparent"
-                    android:text="No"
+                    android:text="Cancel"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/view2"
                     app:layout_constraintStart_toStartOf="parent"
@@ -152,7 +119,7 @@
                     android:layout_marginStart="1dp"
                     android:paddingVertical="18dp"
                     android:backgroundTint="@android:color/transparent"
-                    android:text="Yes"
+                    android:text="Export"
                     style="@style/ExportBTNTextStyle"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

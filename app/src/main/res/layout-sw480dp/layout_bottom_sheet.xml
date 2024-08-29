@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    style="@style/ScreenBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.UpdateDataActivity">
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/navBar"
-        layout="@layout/nav_bar"
+    <ImageView
+        android:id="@+id/imageView4"
+        style="@style/bottomSheetBg"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:src="@drawable/bottom_sheet_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout3"
+    <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="64dp"
-        android:padding="16dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/navBar">
+        app:layout_constraintTop_toTopOf="@+id/imageView4">
 
+        <View
+            style="@style/divider"
+            android:layout_width="48dp"
+            android:layout_height="4dp"
+            android:layout_marginVertical="@dimen/padding_16" />
 
         <LinearLayout
             android:id="@+id/linearLayout2"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_16"
             android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="32dp">
+            android:paddingHorizontal="@dimen/padding_16">
 
 
             <com.google.android.material.textfield.TextInputLayout
@@ -50,12 +56,12 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/qrText"
-                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -73,9 +79,9 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/assignedTo"
-                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -92,11 +98,11 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/chooserDepartment"
-                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusableInTouchMode="false"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -114,11 +120,11 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/chooserDevice"
-                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusableInTouchMode="false"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -140,9 +146,9 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/deviceModel"
-                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -161,12 +167,12 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textDatePurchased"
-                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -178,18 +184,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Expiration Date"
-                app:errorIconDrawable="@drawable/warning_sign"
                 app:helperText="Auto Compute —5 years"
+                app:errorIconDrawable="@drawable/warning_sign"
                 app:startIconDrawable="@drawable/expiration">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textDateExpired"
-                    style="@style/TextInputEditText"
+                    android:id="@+id/textdateExpired"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -201,18 +207,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Status"
-                app:errorIconDrawable="@drawable/warning_sign"
                 app:helperText="Autogenerated"
+                app:errorIconDrawable="@drawable/warning_sign"
                 app:startIconDrawable="@drawable/ic_reload">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/status"
-                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -222,102 +228,86 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="availabilty"
-                app:errorIconDrawable="@drawable/warning_sign"
                 app:helperText="Autogenerated"
+                app:errorIconDrawable="@drawable/warning_sign"
                 app:startIconDrawable="@drawable/ic_stocks">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/availability"
-                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/actions"
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/saveBtn"
+            style="@style/btnStyleSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/padding_16"
-            app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
-            app:layout_constraintStart_toStartOf="@+id/linearLayout2"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+            android:layout_marginHorizontal="@dimen/padding_32"
+            android:layout_marginBottom="@dimen/padding_32">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/saveBtn"
-                style="@style/btnStyleSave"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="4dp"
-                android:layout_marginVertical="4dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cancelBtn"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="40dp"
+                android:paddingVertical="12dp">
 
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/saveIC"
+                    style="@style/sizeICScanM"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/save" />
+
+                <TextView
+                    style="@style/cardBtnTxtStyleScan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="40dp"
-                    android:paddingVertical="@dimen/padding_12">
+                    android:text="Save" />
+            </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/imageViewSave"
-                        style="@style/sizeICScanM"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/save" />
+        </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        style="@style/SaveText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Save" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cancelButton"
+            android:visibility="gone"
+            style="@style/btnStyleCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/padding_32"
+            android:layout_marginBottom="@dimen/padding_32">
 
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cancelBtn"
-                style="@style/btnStyleCancel"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/saveBtn"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="40dp"
+                android:paddingVertical="@dimen/padding_18">
 
-                <LinearLayout
+
+                <TextView
+                    style="@style/CancelBTNTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="40dp"
-                    android:paddingVertical="18dp">
+                    android:text="Cancel" />
 
-                    <TextView
-                        style="@style/CancelBTNTextStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cancel" />
-                </LinearLayout>
+            </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
 
 
-        </LinearLayout>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

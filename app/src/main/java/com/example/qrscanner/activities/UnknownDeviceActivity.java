@@ -143,8 +143,13 @@ public class UnknownDeviceActivity extends AppCompatActivity {
                         String identifier = "unknown device";
 //                        Utils.showDeleteAllDialog(UnknownDeviceActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
+                    } else if (adapter.getItemCount() == 0) {
+                        getView(UnknownDeviceActivity.this);
+                        topSnack_icon.setImageResource(R.drawable.warning_sign);
+                        topSnackMessage.setText("Unknown Devices is already empty.");
+                        TopSnack.createCustomTopSnack(UnknownDeviceActivity.this, main, topSnackView, null, null, true);
                     } else {
-                        Toast.makeText(UnknownDeviceActivity.this, "Unknown Device is empty", Toast.LENGTH_SHORT).show();
+                        Log.d("Laptop", "onClick: adapter" + adapter.getItemCount());
                     }
                 }
             }

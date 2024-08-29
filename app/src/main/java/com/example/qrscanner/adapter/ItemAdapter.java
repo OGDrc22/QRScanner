@@ -1,3 +1,4 @@
+
 package com.example.qrscanner.adapter;
 
 import android.animation.ObjectAnimator;
@@ -227,7 +228,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             } else {
                 viewHolder.topExpiration.setVisibility(View.VISIBLE);
                 viewHolder.textHolderStatus.setTextColor(clRed);
-                
+
             }
         } catch (ParseException e) {
             e.printStackTrace();

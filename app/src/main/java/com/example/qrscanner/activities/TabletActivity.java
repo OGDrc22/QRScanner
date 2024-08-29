@@ -129,6 +129,8 @@ public class TabletActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        FilteredDataLoader.DeviceFilteredDataLoader filter = new FilteredDataLoader.DeviceFilteredDataLoader(TabletActivity.this, dbHelper, main, adapter, "tablet", deviceList, textViewItemCount);
+
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("Tablets");
         currentActivity = findViewById(R.id.currentActivity);
@@ -139,18 +141,23 @@ public class TabletActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
-                    if (!filteredList.isEmpty()) {
+                    if (!filter.isEmpty()) {
                         String identifier = "tablets";
 //                        Utils.showDeleteAllDialog(TabletActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
+                    } else if (adapter.getItemCount() == 0) {
+                        getView(TabletActivity.this);
+                        topSnack_icon.setImageResource(R.drawable.warning_sign);
+                        topSnackMessage.setText("Tablets is already empty.");
+                        TopSnack.createCustomTopSnack(TabletActivity.this, main, topSnackView, null, null, true);
                     } else {
-                        Toast.makeText(TabletActivity.this, "Tablet is empty", Toast.LENGTH_SHORT).show();
+                        Log.d("Laptop", "onClick: adapter" + adapter.getItemCount());
                     }
                 }
             }
         });
 
-        new FilteredDataLoader.DeviceFilteredDataLoader(TabletActivity.this, dbHelper, main, adapter, "tablet", deviceList, textViewItemCount).execute();
+        filter.execute();
         // TODO update ^ that
 
     }

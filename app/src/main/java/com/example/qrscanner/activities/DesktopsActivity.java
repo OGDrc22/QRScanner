@@ -142,6 +142,13 @@ public class DesktopsActivity extends AppCompatActivity {
                         String identifier = "desktop";
                         Utils.deleteDataByDeviceType(DesktopsActivity.this, identifier, adapter, main);
                         adapter.notifyDataSetChanged();
+                    } else if (adapter.getItemCount() == 0) {
+                        getView(DesktopsActivity.this);
+                        topSnack_icon.setImageResource(R.drawable.warning_sign);
+                        topSnackMessage.setText("Desktops is already empty.");
+                        TopSnack.createCustomTopSnack(DesktopsActivity.this, main, topSnackView, null, null, true);
+                    } else {
+                        Log.d("Laptop", "onClick: adapter" + adapter.getItemCount());
                     }
                 }
             }

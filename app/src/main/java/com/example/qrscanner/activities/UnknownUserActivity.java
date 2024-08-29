@@ -154,6 +154,13 @@ public class UnknownUserActivity extends AppCompatActivity {
                         String identifier = "unknown user device";
                         Utils.showDeleteAllDialog(UnknownUserActivity.this, identifier, adapter, main);
                         adapter.notifyDataSetChanged();
+                    } else if (adapter.getItemCount() == 0) {
+                        getView(UnknownUserActivity.this);
+                        topSnack_icon.setImageResource(R.drawable.warning_sign);
+                        topSnackMessage.setText("NoUsers is already empty.");
+                        TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true);
+                    } else {
+                        Log.d("Laptop", "onClick: adapter" + adapter.getItemCount());
                     }
                 }
             }

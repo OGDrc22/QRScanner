@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.example.qrscanner.models.Assigned_to_User_Model;
 import com.example.qrscanner.models.Department;
-import com.example.qrscanner.models.Gadgets;
+import com.example.qrscanner.models.GadgetsList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // TABLE FOR ASSIGNED TO USER
         db.execSQL("CREATE TABLE " + TABLE_ASSIGNED_TO_USER + "("
-                + KEY_ID +" INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_SERIAL_NUMBER + " TEXT, "
                 + KEY_NAME + " TEXT, "
                 + KEY_DEPARTMENT + " TEXT, "
@@ -231,6 +231,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_ASSIGNED_TO_USER, selection, selectionArgs);
         db.close();
     }
+
     public void deleteExpiredDevice(Assigned_to_User_Model device) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = KEY_DATE_EXPIRED + " = ?";
@@ -282,8 +283,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_GADGETS_CATEGORY, null, values);
     }
 
-    public List<Gadgets> getAllGadgetsCategory() {
-        List<Gadgets> gadgetsList = new ArrayList<>();
+    public List<GadgetsList> getAllGadgetsCategory() {
+        List<GadgetsList> gadgetsList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_GADGETS_CATEGORY, null);
         if (cursor.moveToFirst()) {
@@ -291,7 +292,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 int id = cursor.getInt(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_ID));
                 String name = cursor.getString(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_NAME));
                 byte[] image = cursor.getBlob(cursor.getColumnIndex(KEY_GADGETS_CATEGORY_IMAGE));
-                Gadgets gadget = new Gadgets(id, name, image);
+                GadgetsList gadget = new GadgetsList(id, name, image);
                 gadgetsList.add(gadget);
             } while (cursor.moveToNext());
         }
@@ -299,7 +300,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return gadgetsList;
     }
 
-    public void updateGadgetCategory(Gadgets gadget, String newName, byte[] newImage) {
+    public void updateGadgetCategory(GadgetsList gadget, String newName, byte[] newImage) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -309,14 +310,14 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d("DBHelper", "Updating Gadget ID: " + gadget.getId() + " with Name: " + newName + " and Image: " + newImage);
 
         int rowsAffected = db.update(TABLE_GADGETS_CATEGORY, values, KEY_GADGETS_CATEGORY_ID + " = ?", new String[]{String.valueOf(gadget.getId())});
-        if (rowsAffected > 0){
+        if (rowsAffected > 0) {
             Log.d("DBHelper", "updateGadget: updated");
         } else {
             Log.d("DBHelper", "updateGadget: not affected");
         }
     }
 
-    public void deleteGadgetCategory(Gadgets gadget) {
+    public void deleteGadgetCategory(GadgetsList gadget) {
         SQLiteDatabase db = this.getWritableDatabase();
         String whereClause = KEY_GADGETS_CATEGORY_ID + " = ?";
 
@@ -349,7 +350,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public byte[] getGadgetCategoryImageInt(int gadgetIntId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT " + KEY_GADGETS_CATEGORY_IMAGE + " FROM " + TABLE_GADGETS_CATEGORY + " WHERE " + KEY_GADGETS_CATEGORY_ID + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[] { String.valueOf(gadgetIntId) });
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(gadgetIntId)});
 
         byte[] image = null;
         if (cursor != null) {
@@ -417,16 +418,3 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 }
-
-
-//    // Assuming you have the scanned content as 'qrContent'
-//    String[] parts = qrContent.split(",");
-//    String serialNumber = parts[0].trim();
-//    String name = parts[1].trim();
-//
-//    // Insert into the database
-//    SQLiteDatabase db = getWritableDatabase();
-//    ContentValues values = new ContentValues();
-//    values.put(KEY_SERIAL_NUMBER, serialNumber);
-//    values.put(KEY_NAME, name);
-//    long newRowId = db.insert(TABLE_ASSIGNED_TO_USER, null, values);

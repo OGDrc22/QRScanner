@@ -481,7 +481,7 @@ public class FilteredDataLoader {
                             itemAdapter.setDeviceList(filteredList);
                             prog += 1;
                             publishProgress(prog);
-                            Thread.sleep(25);
+                            Thread.sleep(sleepTime);
                             noFilterKey = false;
                             isEmpty = false;
                         } else if (!deviceName.contains(filterKey)){
@@ -528,7 +528,7 @@ public class FilteredDataLoader {
             int cl = ContextCompat.getColor(context, R.color.primary);
             int cl1 = ContextCompat.getColor(context, R.color.txtHeaderLight);
             if (currentItemCount == filteredList.size()) {
-                loadingText.setText("[" + currentItemCount + "] items processed");
+                loadingText.setText("[" + currentItemCount + "] items added.");
                 loadingText.setTextColor(cl);
             } else {
                 loadingText.setTextColor(cl1);
@@ -551,29 +551,11 @@ public class FilteredDataLoader {
                         customLoading.dismiss();
                     }
 
-                    String activity = "";
-                    switch (context.getClass().getSimpleName()) {
-                        case "LaptopActivity":
-                            activity = "Laptops";
-                            break;
-                        case "DesktopActivity":
-                            activity = "Desktops";
-                            break;
-                        case "TabletActivity":
-                            activity = "Tablets";
-                            break;
-                        case "MobileActivity":
-                            activity = "Phones";
-                            break;
-                        case "UnknownDeviceActivity":
-                            activity = "Unknown Devices";
-                            break;
-                    }
-
                     if (!result) {
                         getView(context);
                         topSnack_icon.setImageResource(R.drawable.warning_sign);
-                        topSnackMessage.setText("No data in here [" + activity + "]");
+                        String activityName = filterKey.substring(0, 1).toUpperCase() + filterKey.substring(1);// Capitalize the first letter of the word
+                        topSnackMessage.setText("No data in here [" + activityName + "]");
                         TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
                     }
 

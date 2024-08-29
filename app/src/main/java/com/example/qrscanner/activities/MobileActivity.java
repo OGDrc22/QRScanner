@@ -131,6 +131,8 @@ public class MobileActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        FilteredDataLoader.DeviceFilteredDataLoader filter = new FilteredDataLoader.DeviceFilteredDataLoader(MobileActivity.this, dbHelper, main, adapter, "phone", deviceList, textViewItemCount);
+
         textViewInfo = findViewById(R.id.titleTextView);
         textViewInfo.setText("Mobile Phones");
         currentActivity = findViewById(R.id.currentActivity);
@@ -141,18 +143,23 @@ public class MobileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
-                    if (!filteredList.isEmpty()) {
+                    if (!filter.isEmpty()) {
                         String identifier = "smart phones";
 //                        Utils.showDeleteAllDialog(MobileActivity.this, identifier, adapter);
                         adapter.notifyDataSetChanged();
+                    } else if (adapter.getItemCount() == 0) {
+                        getView(MobileActivity.this);
+                        topSnack_icon.setImageResource(R.drawable.warning_sign);
+                        topSnackMessage.setText("Phones is already empty.");
+                        TopSnack.createCustomTopSnack(MobileActivity.this, main, topSnackView, null, null, true);
                     } else {
-                        Toast.makeText(MobileActivity.this, "Mobile Phones is empty", Toast.LENGTH_SHORT).show();
+                        Log.d("Laptop", "onClick: adapter" + adapter.getItemCount());
                     }
                 }
             }
         });
 
-        new FilteredDataLoader.DeviceFilteredDataLoader(MobileActivity.this, dbHelper, main, adapter, "phone", deviceList, textViewItemCount).execute();
+        filter.execute();
 
     }
 

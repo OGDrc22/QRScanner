@@ -45,11 +45,12 @@ import android.widget.Toast;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.DepartmentAdapter;
-import com.example.qrscanner.adapter.GadgetsAdapter;
+import com.example.qrscanner.adapter.GadgetAdapterMainUI;
+import com.example.qrscanner.adapter.GadgetsAdapterList;
 import com.example.qrscanner.models.Assigned_to_User_Model;
 //import com.example.qrscanner.options.Data;
 import com.example.qrscanner.models.Department;
-import com.example.qrscanner.models.Gadgets;
+import com.example.qrscanner.models.GadgetsList;
 import com.example.qrscanner.utils.CompareMethod;
 import com.example.qrscanner.utils.Utils;
 import com.google.android.gms.tasks.Task;
@@ -80,7 +81,7 @@ public class ScanQR extends AppCompatActivity {
     private TextInputLayout textInputLayoutQRText, textInputLayoutAssignedTo, textInputLayoutDep, textInputLayoutDevice, textInputLayoutDeviceModel, textInputLayoutDatePurchased, textInputLayoutExpired, textInputLayoutStatus;
     private BottomSheetDialog bottomSheetDialog;
     private TextView titleText;
-    private GadgetsAdapter gadgetsAdapter;
+    private GadgetsAdapterList gadgetsAdapter;
     private DepartmentAdapter departmentAdapter;
     private CardView saveBtn;
     private PreviewView cameraPreview;
@@ -90,7 +91,7 @@ public class ScanQR extends AppCompatActivity {
 
     private MaterialCardView cancelButton;
 
-    private Gadgets gadgetPosition;
+    private GadgetsList gadgetPosition;
     private Department departmentPosition;
 
     private ListView listView;
@@ -181,6 +182,11 @@ public class ScanQR extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(ScanQR.this, MainActivity.class);
+//                Intent intent = new Intent();
+                intent.putExtra("gadgetsLists", "Updater");
+                setResult(RESULT_OK, intent);
+                Log.d("ScanQR", "onClick: ");
                 finish();
             }
         });
@@ -202,8 +208,6 @@ public class ScanQR extends AppCompatActivity {
                 Log.d("TAG", "Clicked Success");
             }
         });
-
-        //TODO WHEN A GADGET DELETED PUT "Unknown"
 
 
         if (ContextCompat.checkSelfPermission(ScanQR.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -488,42 +492,42 @@ public class ScanQR extends AppCompatActivity {
 
                             if (!finalAllFieldsFilled) {
                                 Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+                            } else {// Proceed with saving data
+                                dbHelper.addDevice(
+                                        qrText.getText().toString(),
+                                        assignedTo.getText().toString(),
+                                        chooserDepartment.getText().toString(),
+                                        chooserDevice.getText().toString(),
+                                        deviceModel.getText().toString(),
+                                        datePurchased.getText().toString(),
+                                        dateExpired.getText().toString(),
+                                        status.getText().toString(),
+                                        availability.getText().toString()
+                                );
+
+                                // Reset other fields
+                                qrText.setText(null);
+                                assignedTo.setText(null);
+                                deviceModel.setText(null);
+                                datePurchased.setText(null);
+                                dateExpired.setText(null);
+                                status.setText(null);
+                                availability.setText(null);
+
+
+                                Drawable[] layers = new Drawable[]{
+                                        imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
+                                };
+                                TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+                                imageViewSave.setImageDrawable(transitionDrawable);
+                                transitionDrawable.startTransition(700);
+
+
+                                new Handler().postDelayed(() -> {
+                                    bottomSheetDialog.dismiss();
+                                    Log.d("ScanQR", "onCompareComplete: keyNew dismissed it");
+                                }, 1000);
                             }
-                            // Proceed with saving data
-                            dbHelper.addDevice(
-                                    qrText.getText().toString(),
-                                    assignedTo.getText().toString(),
-                                    chooserDepartment.getText().toString(),
-                                    chooserDevice.getText().toString(),
-                                    deviceModel.getText().toString(),
-                                    datePurchased.getText().toString(),
-                                    dateExpired.getText().toString(),
-                                    status.getText().toString(),
-                                    availability.getText().toString()
-                            );
-
-                            // Reset other fields
-                            qrText.setText(null);
-                            assignedTo.setText(null);
-                            deviceModel.setText(null);
-                            datePurchased.setText(null);
-                            dateExpired.setText(null);
-                            status.setText(null);
-                            availability.setText(null);
-
-
-
-                            Drawable[] layers = new Drawable[] {
-                                    imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
-                            };
-                            TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                            imageViewSave.setImageDrawable(transitionDrawable);
-                            transitionDrawable.startTransition(700);
-
-
-                            new Handler().postDelayed(() -> {
-                                bottomSheetDialog.dismiss();
-                            }, 1000);
 
 
                         } else if (result.equals(keyDifferent)) {
@@ -531,30 +535,35 @@ public class ScanQR extends AppCompatActivity {
                             if (!finalAllFieldsFilled) {
                                 Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
 
+                            } else {
+                                CompareMethod.overrideItem(ScanQR.this, dateExpired, status, availability, () -> {
+                                    if (CompareMethod.getNextActionResult()) {
+                                        Drawable[] layers = new Drawable[]{
+                                                imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
+                                        };
+                                        TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+                                        imageViewSave.setImageDrawable(transitionDrawable);
+                                        transitionDrawable.startTransition(700);
+
+                                        Intent intent = new Intent();
+                                        intent.putExtra("dataRefreshed", true);
+                                        setResult(RESULT_OK, intent);
+                                        new Handler().postDelayed(() -> {
+                                            finish();
+                                        }, 500);
+                                    }
+                                });
                             }
-
-                            CompareMethod.overrideItem(ScanQR.this, dateExpired, status, availability, () -> {
-                                if (CompareMethod.getNextActionResult()) {
-                                    Drawable[] layers = new Drawable[]{
-                                            imageViewSave.getDrawable(), getResources().getDrawable(R.drawable.saved)
-                                    };
-                                    TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-                                    imageViewSave.setImageDrawable(transitionDrawable);
-                                    transitionDrawable.startTransition(700);
-
-                                    Intent intent = new Intent();
-                                    intent.putExtra("dataRefreshed", true);
-                                    setResult(RESULT_OK, intent);
-                                    new Handler().postDelayed(() -> {
-                                        finish();
-                                    }, 500);
-                                }
-                            });
 
                         } else if (result.equals(keyIdentical)) {
 
-                            bottomSheetDialog.dismiss();
+                            if (!finalAllFieldsFilled) {
+                                Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
 
+                            } else {
+                                bottomSheetDialog.dismiss();
+                                Log.d("ScanQR", "onCompareComplete: keyIdentical dismissed it");
+                            }
                         }
                     }
                 });
@@ -594,7 +603,7 @@ public class ScanQR extends AppCompatActivity {
         listView = customView.findViewById(R.id.list_item_option);
 
         // Set the adapter for the ListView
-        listView.setAdapter(new GadgetsAdapter(ScanQR.this, getGadgetsCategoryFromDatabase()));
+        listView.setAdapter(new GadgetsAdapterList(ScanQR.this, getGadgetsCategoryFromDatabase()));
 
         // Set the custom view to the AlertDialog.Builder
         builder.setView(customView);
@@ -618,7 +627,7 @@ public class ScanQR extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
+                gadgetPosition = (GadgetsList) parent.getItemAtPosition(position);
                 if (gadgetPosition != null) {
                     gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                     itemDialogGadgetsCategory.dismiss();
@@ -636,7 +645,7 @@ public class ScanQR extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
+                gadgetPosition = (GadgetsList) parent.getItemAtPosition(position);
                 showEditDialog(gadgetPosition);
                 gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                 Toast.makeText(ScanQR.this, gadgetCategoryName, Toast.LENGTH_SHORT).show();
@@ -645,7 +654,7 @@ public class ScanQR extends AppCompatActivity {
         });
     }
 
-    private void showEditDialog(final Gadgets gadgets) {
+    private void showEditDialog(final GadgetsList gadgets) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ScanQR.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ScanQR.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
         builder.setView(view);
@@ -724,7 +733,6 @@ public class ScanQR extends AppCompatActivity {
                 dbHelper.deleteGadgetCategory(gadgets);
                 updateGadgetList();
                 deviceChooserDialog.dismiss();
-                Toast.makeText(ScanQR.this, "Delete Btn Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -803,31 +811,14 @@ public class ScanQR extends AppCompatActivity {
     }
 
     private void updateGadgetList() {
-        List<Gadgets> gadgetsList = getGadgetsCategoryFromDatabase();
-        gadgetsAdapter = new GadgetsAdapter(ScanQR.this, gadgetsList);
+        List<GadgetsList> gadgetsList = getGadgetsCategoryFromDatabase();
+        gadgetsAdapter = new GadgetsAdapterList(ScanQR.this, gadgetsList);
         listView.setAdapter(gadgetsAdapter);
         gadgetsAdapter.notifyDataSetChanged();
     }
 
-    private List<Gadgets> getGadgetsCategoryFromDatabase() {
-        List<Gadgets> gadgetsList = dbHelper.getAllGadgetsCategory();
-
-        // Add default gadgets if database is empty
-        if (gadgetsList.isEmpty()) {
-
-            dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_unknown_device));
-            dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.laptop_icon));
-            dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_mobile_phone));
-            dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_tablet));
-            dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_pc_computer));
-            dbHelper.addGadgetCategory("Monitor", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_monitor));
-            dbHelper.addGadgetCategory("Mouse", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_mouse));
-            dbHelper.addGadgetCategory("Keyboard", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_keyboard));
-            dbHelper.addGadgetCategory("Headset", Utils.getDefaultImageByteArray(ScanQR.this, R.drawable.ic_headset));
-
-            gadgetsList = dbHelper.getAllGadgetsCategory();
-        }
-
+    private List<GadgetsList> getGadgetsCategoryFromDatabase() {
+        List<GadgetsList> gadgetsList = dbHelper.getAllGadgetsCategory();
         return gadgetsList;
     }
 

@@ -2,6 +2,10 @@ package com.example.qrscanner.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,7 +13,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -36,7 +39,7 @@ import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
 
-public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnDeleteClickListener {
+public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter.OnDeleteClickListener {
 
     private static final int YOUR_REQUEST_CODE = 1;
     private RecyclerView recyclerView;
@@ -57,6 +60,8 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
     private static ImageView topSnack_icon;
     private static TextView topSnackMessage;
     private static TextView topSnackDesc;
+
+    private String deviceType;
 
 
     @Override
@@ -91,7 +96,6 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         settingsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int initialHeight = cardView_options.getHeight();
                 int duration = 300;
                 Utils.smoothTransition(cardView_options, duration);
                 if (cardViewContent.getVisibility() == View.GONE) {
@@ -128,13 +132,21 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FilteredDataLoader.DeviceFilteredDataLoader filter = (FilteredDataLoader.DeviceFilteredDataLoader) new FilteredDataLoader.DeviceFilteredDataLoader(LaptopActivity.this, dbHelper, main, adapter,"laptop",  deviceList, textViewItemCount);
+        Intent intent = getIntent();
+        deviceType = intent.getStringExtra("deviceType");
+        byte[] byteArray = intent.getByteArrayExtra("img");
+        Log.d("GadgetsTypeActivity", "onCreate: " + deviceType);
+
+        FilteredDataLoader.DeviceFilteredDataLoader filter = (FilteredDataLoader.DeviceFilteredDataLoader) new FilteredDataLoader.DeviceFilteredDataLoader(GadgetTypeActivity.this, dbHelper, main, adapter, deviceType.toLowerCase(), deviceList, textViewItemCount);
 
 
         textViewInfo = findViewById(R.id.titleTextView);
-        textViewInfo.setText("Laptops");
+//        String title = deviceType.substring(0, 1).toUpperCase() + deviceType.substring(1);
+        textViewInfo.setText(deviceType);
         currentActivity = findViewById(R.id.currentActivity);
-        currentActivity.setImageResource(R.drawable.laptop_icon);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        Drawable drawable = new BitmapDrawable(bitmap);
+        currentActivity.setImageDrawable(drawable);
 
         constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
         constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
@@ -143,12 +155,13 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
                 if (dbHelper != null) {
                     if (!filter.isEmpty()) {
                         String identifier = "laptop";
-                        Utils.deleteDataByDeviceType(LaptopActivity.this, identifier, adapter, main);
+                        Utils.deleteDataByDeviceType(GadgetTypeActivity.this, identifier, adapter, main);
                     } else if (adapter.getItemCount() == 0) {
-                        getView(LaptopActivity.this);
+                        getView(GadgetTypeActivity.this);
                         topSnack_icon.setImageResource(R.drawable.warning_sign);
-                        topSnackMessage.setText("Laptops is already empty.");
-                        TopSnack.createCustomTopSnack(LaptopActivity.this, main, topSnackView, null, null, true);
+                        String emptyText = deviceType + " is already empty.";
+                        topSnackMessage.setText(emptyText);
+                        TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true);
                     } else {
                         Log.d("Laptop", "onClick: adapter" + adapter.getItemCount());
                     }
@@ -169,7 +182,7 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
     }
 
     private static void getView(Context context) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
         topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
         topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
@@ -184,10 +197,10 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         String keyDifferent = "Difference found";
 
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            getView(LaptopActivity.this);
+            getView(GadgetTypeActivity.this);
             if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES) {
                 topSnack_icon.setImageResource(R.drawable.qr_icon_48);
-                int getColorLight = ContextCompat.getColor(LaptopActivity.this, R.color.txtHeaderLight);
+                int getColorLight = ContextCompat.getColor(GadgetTypeActivity.this, R.color.txtHeaderLight);
                 topSnack_icon.setColorFilter(getColorLight);
             } else {
                 topSnack_icon.setImageResource(R.drawable.qr_icon_48);
@@ -201,7 +214,7 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
             if (resA != null && resA.equals(keyIdentical)) {
 
                 topSnackMessage.setText(data.getStringExtra("keyIdentical"));
-                TopSnack.createCustomTopSnack(LaptopActivity.this, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true);
                 Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyIdentical"));
 
             } else if (resB != null && resB.equals(keyDifferent)) {
@@ -216,9 +229,9 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
         }
     }
 
-//    After the Item data has change, show this Notification
+    //    After the Item data has change, show this Notification
     private @NonNull FilteredDataLoader.DeviceFilteredDataLoader getItemAdapterDataLoader(@NonNull Intent data, String ser) {
-        FilteredDataLoader.DeviceFilteredDataLoader loader = new FilteredDataLoader.DeviceFilteredDataLoader(LaptopActivity.this, dbHelper, main, adapter, "laptop", deviceList, textViewItemCount);
+        FilteredDataLoader.DeviceFilteredDataLoader loader = new FilteredDataLoader.DeviceFilteredDataLoader(GadgetTypeActivity.this, dbHelper, main, adapter, deviceType.toLowerCase(), deviceList, textViewItemCount);
 
         loader.setOnAfterAsync(new AfterAsyncListener() {
             @Override
@@ -226,8 +239,9 @@ public class LaptopActivity extends AppCompatActivity implements ItemAdapter.OnD
 
                 topSnackMessage.setText(ser);
                 topSnackDesc.setVisibility(View.VISIBLE);
-                topSnackDesc.setText("Updated Successfully");
-                TopSnack.createCustomTopSnack(LaptopActivity.this, main, topSnackView, null, null, true);
+                String updateSuccess = "Updated Successfully";
+                topSnackDesc.setText(updateSuccess);
+                TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true);
                 Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyDifferent"));
 
             }

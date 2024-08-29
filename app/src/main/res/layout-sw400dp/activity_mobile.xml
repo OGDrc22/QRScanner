@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/ScreenBackground"
+    tools:context=".activities.MobileActivity"
+    android:orientation="vertical">
+
+
+    <include
+        layout="@layout/nav_bar"/>
+
+
+    <TextView
+        android:id="@+id/textViewItemCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Item Count: "
+        style="@style/textStyleCounter"
+        android:layout_margin="16dp"
+        android:visibility="gone"/>
+
+
+    <TextView
+        android:id="@+id/textViewNoData"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No data in mobile phones"
+        style="@style/textStyle1"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"/>
+
+
+</LinearLayout>

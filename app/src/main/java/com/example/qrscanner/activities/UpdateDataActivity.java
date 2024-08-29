@@ -1,26 +1,18 @@
     package com.example.qrscanner.activities;
 
-    import android.animation.ObjectAnimator;
-    import android.animation.ValueAnimator;
-    import android.app.Dialog;
     import android.content.Context;
     import android.content.Intent;
-    import android.content.SharedPreferences;
     import android.graphics.Bitmap;
     import android.graphics.BitmapFactory;
     import android.graphics.drawable.BitmapDrawable;
     import android.graphics.drawable.ColorDrawable;
     import android.graphics.drawable.Drawable;
-    import android.graphics.drawable.TransitionDrawable;
-    import android.os.AsyncTask;
     import android.os.Bundle;
-    import android.os.Handler;
     import android.text.Editable;
     import android.text.TextWatcher;
     import android.util.Log;
     import android.view.LayoutInflater;
     import android.view.View;
-    import android.view.WindowManager;
     import android.widget.AdapterView;
     import android.widget.Button;
     import android.widget.EditText;
@@ -41,16 +33,15 @@
     import androidx.core.view.ViewCompat;
     import androidx.core.view.WindowInsetsCompat;
 
-    import com.drc.mytopsnacklibrary.TopSnack;
     import com.example.qrscanner.DB.DBHelper;
     import com.example.qrscanner.R;
     import com.example.qrscanner.adapter.DepartmentAdapter;
-    import com.example.qrscanner.adapter.GadgetsAdapter;
+    import com.example.qrscanner.adapter.GadgetsAdapterList;
     import com.example.qrscanner.adapter.ItemAdapter;
     import com.example.qrscanner.models.Assigned_to_User_Model;
     //    import com.example.qrscanner.options.Data;
     import com.example.qrscanner.models.Department;
-    import com.example.qrscanner.models.Gadgets;
+    import com.example.qrscanner.models.GadgetsList;
     import com.example.qrscanner.utils.CompareMethod;
     import com.example.qrscanner.utils.Utils;
     import com.google.android.material.datepicker.MaterialDatePicker;
@@ -71,7 +62,7 @@
         public static TextInputLayout textInputLayoutQRText, textInputLayoutAssignedTo, textInputLayoutDep, textInputLayoutDevice, textInputLayoutDeviceModel, textInputLayoutDatePurchased, textInputLayoutExpired, textInputLayoutStatus;
         private ImageView backBtn, settings, currentActivity, add_newGadget, currentIcon, currentIcon2, imageViewSave;
         private CardView saveBtn, cancelBtn;
-        private GadgetsAdapter gadgetsAdapter;
+        private GadgetsAdapterList gadgetsAdapter;
         private DepartmentAdapter departmentAdapter;
         private String gadgetCategoryName, departmentCategoryName;
         private ArrayList<String> serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
@@ -83,7 +74,7 @@
         private Department departmentPosition;
 
         private ItemAdapter itemAdapter;
-        private Gadgets gadgetPosition;
+        private GadgetsList gadgetPosition;
         private ListView listView;
         private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
@@ -232,6 +223,7 @@
             Bitmap bitmap = BitmapFactory.decodeByteArray(byteExtras, 0, byteExtras.length);
             Drawable imgDrawable = new BitmapDrawable(getResources(), bitmap);
             textInputLayoutDevice.setStartIconDrawable(imgDrawable);
+            textInputLayoutDeviceModel.setStartIconDrawable(imgDrawable);
 
             deviceModel.setText(getIntent().getStringExtra("deviceModel"));
             datePurchased.setText(getIntent().getStringExtra("datePurchased"));
@@ -422,7 +414,7 @@
             listView = customView.findViewById(R.id.list_item_option);
 
             // Set the adapter for the ListView
-            listView.setAdapter(new GadgetsAdapter(UpdateDataActivity.this, getGadgetsCategoryFromDatabase()));
+            listView.setAdapter(new GadgetsAdapterList(UpdateDataActivity.this, getGadgetsCategoryFromDatabase()));
 
             // Set the custom view to the AlertDialog.Builder
             builder.setView(customView);
@@ -446,7 +438,7 @@
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
+                    gadgetPosition = (GadgetsList) parent.getItemAtPosition(position);
                     if (gadgetPosition != null) {
                         gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                         itemDialog.dismiss();
@@ -465,7 +457,7 @@
             listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    gadgetPosition = (Gadgets) parent.getItemAtPosition(position);
+                    gadgetPosition = (GadgetsList) parent.getItemAtPosition(position);
                     showEditDialog(gadgetPosition);
                     gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                     Toast.makeText(UpdateDataActivity.this, gadgetCategoryName, Toast.LENGTH_SHORT).show();
@@ -474,7 +466,7 @@
             });
         }
 
-        private void showEditDialog(final Gadgets gadgets) {
+        private void showEditDialog(final GadgetsList gadgets) {
             AlertDialog.Builder builder = new AlertDialog.Builder(UpdateDataActivity.this, R.style.AlertDialogTheme);
             View view = LayoutInflater.from(UpdateDataActivity.this).inflate(R.layout.layout_edit_spinner_item, (ConstraintLayout) findViewById(R.id.layoutDialogContainer));
             builder.setView(view);
@@ -627,14 +619,14 @@
 
 
         private void updateGadgetList() {
-            List<Gadgets> gadgetsList = getGadgetsCategoryFromDatabase();
-            gadgetsAdapter = new GadgetsAdapter(UpdateDataActivity.this, gadgetsList);
+            List<GadgetsList> gadgetsList = getGadgetsCategoryFromDatabase();
+            gadgetsAdapter = new GadgetsAdapterList(UpdateDataActivity.this, gadgetsList);
             listView.setAdapter(gadgetsAdapter);
             gadgetsAdapter.notifyDataSetChanged();
         }
 
-        private List<Gadgets> getGadgetsCategoryFromDatabase() {
-            List<Gadgets> gadgetsList = dbHelper.getAllGadgetsCategory();
+        private List<GadgetsList> getGadgetsCategoryFromDatabase() {
+            List<GadgetsList> gadgetsList = dbHelper.getAllGadgetsCategory();
 
             // Add default gadgets if database is empty
             if (gadgetsList.isEmpty()) {
@@ -655,16 +647,16 @@
             return gadgetsList;
         }
 
-        public void displayGadgetImageInt(Context context, ImageView imageView, int gadgetId) {
-            byte[] imageBytes = dbHelper.getGadgetCategoryImageInt(gadgetId);
-            if (imageBytes != null) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                imageView.setImageBitmap(bitmap);
-            } else {
-                // Set a default image if no image is found
-                imageView.setImageResource(R.drawable.device_model);
-            }
-        }
+//        public void displayGadgetImageInt(Context context, ImageView imageView, int gadgetId) {
+//            byte[] imageBytes = dbHelper.getGadgetCategoryImageInt(gadgetId);
+//            if (imageBytes != null) {
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+//                imageView.setImageBitmap(bitmap);
+//            } else {
+//                // Set a default image if no image is found
+//                imageView.setImageResource(R.drawable.device_model);
+//            }
+//        }
 
 
 

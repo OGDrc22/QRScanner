@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,9 +66,13 @@ public class CompareMethod {
         builder.setView(view);
 
         // Set up the input
+
+        ImageView imageView = view.findViewById(R.id.warning);
+//        imageView.setImageResource(R.drawable.warning_sign);
+
         final MaterialTextView input = view.findViewById(R.id.diff);
 
-        input.setText(stringBuilder.toString());
+        input.setText(Html.fromHtml(stringBuilder.toString()));
         input.setFocusable(false);
         input.setClickable(false);
 
@@ -195,19 +200,19 @@ public class CompareMethod {
                         stringBuilder.setLength(0);
 
                         if (!items.getUserName().equals(name.getText().toString())) {
-                            differences.add("Name: " + items.getUserName() + " -> " + name.getText().toString() + "\n");
+                            differences.add("Name: <b>" + items.getUserName() + "</b> -> <b>" + name.getText().toString() + "</b>\n");
                         }
                         if (items.getDepartment() != null && !items.getDepartment().equals(department.getText().toString())) {
-                            differences.add("Department: " + items.getDepartment() + " -> " + department.getText().toString() + "\n");
+                            differences.add("Department: <b>" + items.getDepartment() + "</b> -> <b>" + department.getText().toString() + "</b>\n");
                         }
                         if (!items.getDeviceType().equals(device.getText().toString())) {
-                            differences.add("Device Type: " + items.getDeviceType() + " -> " + device.getText().toString() + "\n");
+                            differences.add("Device Type: <b>" + items.getDeviceType() + "</b> -> <b>" + device.getText().toString() + "</b>\n");
                         }
                         if (!items.getDeviceBrand().equals(deviceModel.getText().toString())) {
-                            differences.add("Device Model: " + items.getDeviceBrand() + " -> " + deviceModel.getText().toString() + "\n");
+                            differences.add("Device Model: <b>" + items.getDeviceBrand() + "</b> -> <b>" + deviceModel.getText().toString() + "</b>\n");
                         }
                         if (!items.getDatePurchased().equals(datePurchased.getText().toString())) {
-                            differences.add("Date Purchased: " + items.getDatePurchased() + " -> " + datePurchased.getText().toString() + "\n");
+                            differences.add("Date Purchased: <b>" + items.getDatePurchased() + "</b> -> <b>" + datePurchased.getText().toString() + "</b>\n");
                         }
 
                         // Combine differences into the StringBuilder
@@ -224,44 +229,44 @@ public class CompareMethod {
                             result = keyIdentical;
 //                    Toast.makeText(ScanQR.this, "No differences found.", Toast.LENGTH_SHORT).show();
                         } else {
-                            result = keyDifferent;
                             switch (differences.size()) {
                                 case 1:
                                     for (int i = 0; i <= 100; i++) {
                                         prog = i;
-                                        Thread.sleep(50);
+                                        Thread.sleep(5);
                                         publishProgress(prog);
                                     }
                                     break;
                                 case 2:
                                     for (int i = 0; i <= 100; i++) {
                                         prog = i;
-                                        Thread.sleep(70);
+                                        Thread.sleep(15);
                                         publishProgress(prog);
                                     }
                                     break;
                                 case 3:
                                     for (int i = 0; i <= 100; i++) {
                                         prog = i;
-                                        Thread.sleep(100);
+                                        Thread.sleep(25);
                                         publishProgress(prog);
                                     }
                                     break;
                                 case 4:
                                     for (int i = 0; i <= 100; i++) {
                                         prog = i;
-                                        Thread.sleep(120);
+                                        Thread.sleep(35);
                                         publishProgress(prog);
                                     }
                                     break;
                                 case 5:
                                     for (int i = 0; i <= 100; i++) {
                                         prog = i;
-                                        Thread.sleep(140);
+                                        Thread.sleep(45);
                                         publishProgress(prog);
                                     }
                                     break;
                             }
+                            result = keyDifferent;
 //                    Toast.makeText(ScanQR.this, "Differences found: " + differences, Toast.LENGTH_SHORT).show();
                         }
                         publishProgress(prog);

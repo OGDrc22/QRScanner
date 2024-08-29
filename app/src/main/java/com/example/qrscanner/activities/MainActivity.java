@@ -4,6 +4,8 @@ package com.example.qrscanner.activities;
 import android.Manifest;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -17,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,24 +43,32 @@ import android.widget.Toast;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
+import com.example.qrscanner.adapter.GadgetAdapterMainUI;
+import com.example.qrscanner.adapter.GadgetsAdapterList;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.GadgetsList;
+import com.example.qrscanner.models.GadgetsMainUi;
 import com.example.qrscanner.utils.ExportDateBaseToExcel;
 import com.example.qrscanner.utils.ImportDataAsyncTask;
+import com.example.qrscanner.utils.Utils;
 
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int CREATE_FILE_REQUEST_CODE = 16168;
+    private static final int REQUEST_CODE = 003;
     private CardView addBtn, laptopBtn, tabletBtn, phoneBtn, pcBtn, allBtn, unknownBtn, importBtn, exportBtn, unknownUserBtn, expiredBtn;
 
     private ImageView settings, currentActivity, backBtn;
     private SearchView searchView;
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerView, recyclerViewSearch;
     private ConstraintLayout main, constraintLayout;
     private ItemAdapter adapter;
+    private GadgetAdapterMainUI gadgetAdapterMainUI;
     private ArrayList<Assigned_to_User_Model> deviceList;
     private ArrayList<String>  serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
 
@@ -124,8 +135,6 @@ public class MainActivity extends AppCompatActivity {
         main = findViewById(R.id.main);
         constraintLayout = findViewById(R.id.constraintLayoutOp);
 
-        recyclerView = findViewById(R.id.recyclerViewSearch);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(MainActivity.this.LAYOUT_INFLATER_SERVICE);
@@ -143,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    recyclerView.setVisibility(View.VISIBLE);
+                    recyclerViewSearch.setVisibility(View.VISIBLE);
                     constraintLayout.setVisibility(View.GONE);
 
                     ImageView backBtn = findViewById(R.id.backBtn);
@@ -155,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             searchView.clearFocus();
-                            recyclerView.setVisibility(View.GONE);
+                            recyclerViewSearch.setVisibility(View.GONE);
                             constraintLayout.setVisibility(View.VISIBLE);
                         }
                     });
@@ -199,15 +208,49 @@ public class MainActivity extends AppCompatActivity {
         availability_id = new ArrayList<>();
         adapter = new ItemAdapter(R.layout.info_layout, this, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, this::onDeleteClick, this::onEditClick);
 
-        recyclerView.setAdapter(adapter);
+        recyclerViewSearch = findViewById(R.id.recyclerViewSearch);
+        recyclerViewSearch.setLayoutManager(new LinearLayoutManager(this));
 
-        if (recyclerView.getVisibility() == View.GONE) {
+        recyclerViewSearch.setAdapter(adapter);
+
+        if (recyclerViewSearch.getVisibility() == View.GONE) {
             backBtn.setVisibility(View.GONE);
         } else {
             backBtn.setVisibility(View.VISIBLE);
         }
+
+
+        addDefaultGadgets(); // For icons of the gadget
+
+        List<GadgetsList> allGadget = dbHelper.getAllGadgetsCategory();
+        gadgetAdapterMainUI = new GadgetAdapterMainUI(R.layout.gadgets_option_main_ui, MainActivity.this, dbHelper, allGadget);
+        recyclerView = findViewById(R.id.recyclerViewMainUi);
+        recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
+        recyclerView.setAdapter(gadgetAdapterMainUI);
+
         setUpButtons();
     }
+
+    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    // Get the intent returned from the second activity
+                    Intent data = result.getData();
+                    String intentToUpdate = data != null ? data.getStringExtra("gadgetsLists") : null;
+                    Log.d("MainActivity", "Received intent: " + intentToUpdate);
+                    updateGadgetAdapter();
+                }
+            }
+    );
+
+    private void updateGadgetAdapter() {
+        List<GadgetsList> gadgetsList = dbHelper.getAllGadgetsCategory();
+        gadgetAdapterMainUI = new GadgetAdapterMainUI(R.layout.gadgets_option_main_ui, MainActivity.this, dbHelper, gadgetsList);
+        recyclerView.setAdapter(gadgetAdapterMainUI);
+        gadgetAdapterMainUI.notifyDataSetChanged();
+    }
+
 
     public void filterList(@NonNull String text) {
 
@@ -263,17 +306,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-//    private boolean matchesSearchCriteria(Assigned_to_User_Model item, String searchText) {
-//        String lowerCaseSearchText = searchText.toLowerCase();
-//        return item.getSerialNumber().toLowerCase().contains(lowerCaseSearchText)
-//                || item.getUserName().toLowerCase().contains(lowerCaseSearchText)
-//                || item.getDepartment().toLowerCase().contains(lowerCaseSearchText)
-//                || item.getDeviceType().toLowerCase().contains(lowerCaseSearchText)
-//                || item.getDeviceBrand().toLowerCase().contains(lowerCaseSearchText)
-//                || item.getDatePurchased().toLowerCase().contains(lowerCaseSearchText)
-//                || item.getDateExpired().toLowerCase().contains(lowerCaseSearchText);
-//    }
-
     private void setUpButtons() {
         addBtn = findViewById(R.id.addBtn);
 
@@ -294,7 +326,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(MainActivity.this, ScanQR.class);
-                startActivity(intent);
+//                startActivity(intent);
+                launcher.launch(intent);
 
             }
         });
@@ -407,7 +440,6 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select File"), FILE_REQUEST_CODE);
     }
 
-    // Importing excel code block
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -527,4 +559,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void addDefaultGadgets() {
+        // Add default gadgets if database is empty
+        List<GadgetsList> gadgetsList = dbHelper.getAllGadgetsCategory();
+        if (gadgetsList.isEmpty()) {
+            dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_unknown_device));
+            dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.laptop_icon));
+            dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_mobile_phone));
+            dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_tablet));
+            dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_pc_computer));
+            dbHelper.addGadgetCategory("Monitor", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_monitor));
+            dbHelper.addGadgetCategory("Mouse", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_mouse));
+            dbHelper.addGadgetCategory("Keyboard", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_keyboard));
+            dbHelper.addGadgetCategory("Headset", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_headset));
+        }
+    }
+
 }
