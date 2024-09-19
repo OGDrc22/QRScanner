@@ -11,22 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
-import com.example.qrscanner.activities.DesktopsActivity;
+import com.example.qrscanner.activities.ExpiredDevicesActivity;
 import com.example.qrscanner.activities.GadgetTypeActivity;
-import com.example.qrscanner.activities.LaptopActivity;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.activities.UnknownUserActivity;
+import com.example.qrscanner.activities.allDevice;
 import com.example.qrscanner.models.GadgetsList;
-import com.example.qrscanner.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GadgetAdapterMainUI extends RecyclerView.Adapter<GadgetAdapterMainUI.ViewHolder> {
@@ -93,42 +89,43 @@ public class GadgetAdapterMainUI extends RecyclerView.Adapter<GadgetAdapterMainU
             int pos = getAdapterPosition();
             GadgetsList data = gadgetsLists.get(pos);
             String categoryName = data.getGadgetCategoryName();
+            Log.d("TAG", "onClick: " + categoryName);
 
-            // Debug
-//            if (data != null) {
-//                Log.d("GadgetsAdapter", "onClick: " + categoryName);
-//            } else {
-//                Log.d("GadgetsAdapter", "onClick: Data is null");
-//            }
+            switch (categoryName) {
+                case "All Device": {
+                    Intent intent1 = new Intent(context, allDevice.class);
+                    context.startActivity(intent1);
+                    break;
+                }
+                case "Unknown User": {
+                    Intent intent1 = new Intent(context, UnknownUserActivity.class);
+                    context.startActivity(intent1);
+                    break;
+                }
+                case "Expired Device": {
+                    Intent intent1 = new Intent(context, ExpiredDevicesActivity.class);
+                    context.startActivity(intent1);
+                    break;
+                }
+                default: {
+                    Intent intent = new Intent(context, GadgetTypeActivity.class);
 
-            Intent intent = new Intent(context, GadgetTypeActivity.class);
+                    if (categoryName.equals(data.getGadgetCategoryName())) {
+                        intent.putExtra("deviceType", data.getGadgetCategoryName());
+                        byte[] byteArray = data.getImage();
+                        intent.putExtra("img", byteArray);
+                        Log.d("GadgetsAdapter", "onClick: " + categoryName.equals(gadgetsLists.get(pos).toString()) + intent.getStringExtra("deviceType"));
 
-            if (categoryName.equals(data.getGadgetCategoryName())) {
-                intent.putExtra("deviceType", data.getGadgetCategoryName());
-                byte[] byteArray = data.getImage();
-                intent.putExtra("img", byteArray);
-                Log.d("GadgetsAdapter", "onClick: " + categoryName.equals(gadgetsLists.get(pos).toString()) + intent.getStringExtra("deviceType"));
+                        if (context instanceof Activity) {
+                            ((Activity) context).setResult(Activity.RESULT_OK, intent);
+                        }
+                        context.startActivity(intent);
+                        Log.d("GadgetsAdapter", "onClick: " + categoryName.equals(gadgetsLists.get(pos).toString()) + intent.getStringExtra("deviceType"));
+                        Log.d("GadgetsAdapter", "onClick: last " + categoryName);
+
+                    }
+                }
             }
-//            else if (String.valueOf(data.getGadgetCategoryName()).equals(data.getGadgetCategoryName())) {
-//                intent.putExtra("deviceType", "desktop");
-//                Log.d("GadgetsAdapter", "onClick: " + categoryName + intent.getStringExtra("deviceType"));
-//            } else if (String.valueOf(data.getGadgetCategoryName()).equals(data.getGadgetCategoryName())) {
-//                intent.putExtra("deviceType", "phone");
-//                Log.d("GadgetsAdapter", "onClick: " + categoryName + intent.getStringExtra("deviceType"));
-//            } else if (String.valueOf(data.getGadgetCategoryName()).equals(data.getGadgetCategoryName())) {
-//                intent.putExtra("deviceType", "tablet");
-//                Log.d("GadgetsAdapter", "onClick: " + categoryName + intent.getStringExtra("deviceType"));
-//            } else if (String.valueOf(data.getGadgetCategoryName()).equals(data.getGadgetCategoryName())) {
-//                intent.putExtra("deviceType", "unknown");
-//                Log.d("GadgetsAdapter", "onClick: " + categoryName + intent.getStringExtra("deviceType"));
-//            }
-
-            if (context instanceof Activity) {
-                ((Activity) context).setResult(Activity.RESULT_OK, intent);
-            }
-            context.startActivity(intent);
-            Log.d("GadgetsAdapter", "onClick: " + categoryName.equals(gadgetsLists.get(pos).toString()) + intent.getStringExtra("deviceType"));
-            Log.d("GadgetsAdapter", "onClick: last " + categoryName);
 
         }
     }

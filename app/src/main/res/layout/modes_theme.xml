@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/cardView_Dialog">
+
+        <RadioGroup
+            android:id="@+id/themeGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_16"
+            android:paddingStart="@dimen/padding_26">
+
+            <RadioButton
+                android:id="@+id/radioLight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Light Mode"
+                style="@style/textStyle1"
+                android:button="@null"
+                android:drawableStart="@drawable/radio_bullet"
+                android:drawablePadding="@dimen/padding_16"/>
+
+            <RadioButton
+                android:id="@+id/radioDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dark Mode"
+                style="@style/textStyle1"
+                android:background="@null"
+                android:button="@null"
+                android:drawableStart="@drawable/radio_bullet"
+                android:drawablePadding="@dimen/padding_16"/>
+
+            <RadioButton
+                android:id="@+id/radioSystem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="System Default"
+                style="@style/textStyle1"
+                android:background="@null"
+                android:button="@null"
+                android:drawableStart="@drawable/radio_bullet"
+                android:drawablePadding="@dimen/padding_16"/>
+        </RadioGroup>
+
+
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

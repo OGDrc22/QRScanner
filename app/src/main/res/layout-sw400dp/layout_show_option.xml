@@ -40,7 +40,7 @@
 
 
                 <ImageView
-                    style="@style/icConstantColor1"
+                    style="@style/sizeICScan_400dp"
                     android:src="@drawable/ic_edit"
                     android:id="@+id/warning"
                     android:layout_marginVertical="12dp"
@@ -52,13 +52,13 @@
                     android:id="@+id/titleText"
                     android:text="Select Item"
                     android:paddingHorizontal="8dp"
-                    style="@style/textStyleBoldConstantColorTitle"/>
+                    style="@style/textStyleTitleDialog"/>
 
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/addGadgetBtn"
-                style="@style/icConstantColor1"
+                style="@style/sizeICScan_400dp"
                 android:layout_marginEnd="12dp"
                 android:elevation="6dp"
                 android:src="@drawable/add_icon"

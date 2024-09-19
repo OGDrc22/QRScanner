@@ -34,12 +34,13 @@
     <color name="txtTitleD">#C9E8F1</color>
     <color name="txtHeader">#171717</color>
     <color name="txtSubHeader">#80171717</color>
-    <color name="txtTranslucentLight">#66969696</color>
+    <color name="txtTranslucentLight">#80D2D2D2</color>
 
     <color name="txtHeaderLight">#e6e9f6</color>
     <color name="txtSubHeaderLight">#80e6e9f6</color>
 
     <color name="divider">#807E7E7E</color>
+    <color name="TranslucentL">#807E7E7E</color>
 
     <color name="textL">#0F0E16</color>
     <color name="textD">#BBB2F2</color>

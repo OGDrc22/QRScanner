@@ -54,6 +54,7 @@
     import java.util.Date;
     import java.util.List;
     import java.util.Locale;
+    import java.util.stream.Collectors;
 
     public class UpdateDataActivity extends AppCompatActivity {
 
@@ -443,8 +444,8 @@
                         gadgetCategoryName = gadgetPosition.getGadgetCategoryName();
                         itemDialog.dismiss();
                         chooserDevice.setText(gadgetCategoryName);
-                        int positionNew = position+1;
-                        Utils.displayGadgetImageInt(UpdateDataActivity.this, dbHelper, textInputLayoutDevice, positionNew, parentHeight);
+                        int pos = gadgetPosition.getId();
+                        Utils.displayGadgetImageInt(UpdateDataActivity.this, dbHelper, textInputLayoutDevice, pos, parentHeight);
 
                         Toast.makeText(UpdateDataActivity.this, "Selected " + gadgetCategoryName, Toast.LENGTH_SHORT).show();
                     } else {
@@ -628,36 +629,14 @@
         private List<GadgetsList> getGadgetsCategoryFromDatabase() {
             List<GadgetsList> gadgetsList = dbHelper.getAllGadgetsCategory();
 
-            // Add default gadgets if database is empty
-            if (gadgetsList.isEmpty()) {
+            List<GadgetsList> gadgetsListNew = gadgetsList.stream()
+                    .filter(gadget -> !(gadget.getGadgetCategoryName().equals("All Device") ||
+                            gadget.getGadgetCategoryName().equals("Unknown User") ||
+                            gadget.getGadgetCategoryName().equals("Expired Device")))
+                    .collect(Collectors.toList());
 
-                dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_unknown_device));
-                dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.laptop_icon));
-                dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_mobile_phone));
-                dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_tablet));
-                dbHelper.addGadgetCategory("Desktop", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_pc_computer));
-                dbHelper.addGadgetCategory("Monitor", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_monitor));
-                dbHelper.addGadgetCategory("Mouse", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_mouse));
-                dbHelper.addGadgetCategory("Keyboard", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_keyboard));
-                dbHelper.addGadgetCategory("Headset", Utils.getDefaultImageByteArray(UpdateDataActivity.this, R.drawable.ic_headset));
-
-                gadgetsList = dbHelper.getAllGadgetsCategory();
-            }
-
-            return gadgetsList;
+            return gadgetsListNew;
         }
-
-//        public void displayGadgetImageInt(Context context, ImageView imageView, int gadgetId) {
-//            byte[] imageBytes = dbHelper.getGadgetCategoryImageInt(gadgetId);
-//            if (imageBytes != null) {
-//                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-//                imageView.setImageBitmap(bitmap);
-//            } else {
-//                // Set a default image if no image is found
-//                imageView.setImageResource(R.drawable.device_model);
-//            }
-//        }
-
 
 
         private void openDepartmentCategoryOption() {

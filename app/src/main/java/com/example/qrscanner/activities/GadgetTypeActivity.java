@@ -68,7 +68,7 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_laptop);
+        setContentView(R.layout.activity_gadget_type);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -153,15 +153,14 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
-                    if (!filter.isEmpty()) {
-                        String identifier = "laptop";
-                        Utils.deleteDataByDeviceType(GadgetTypeActivity.this, identifier, adapter, main);
+                    if (!filter.isEmpty()) {;
+                        Utils.deleteDataByDeviceType(GadgetTypeActivity.this, deviceType, adapter, main);
                     } else if (adapter.getItemCount() == 0) {
                         getView(GadgetTypeActivity.this);
                         topSnack_icon.setImageResource(R.drawable.warning_sign);
                         String emptyText = deviceType + " is already empty.";
                         topSnackMessage.setText(emptyText);
-                        TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true);
+                        TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true, "up");
                     } else {
                         Log.d("Laptop", "onClick: adapter" + adapter.getItemCount());
                     }
@@ -214,7 +213,7 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
             if (resA != null && resA.equals(keyIdentical)) {
 
                 topSnackMessage.setText(data.getStringExtra("keyIdentical"));
-                TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true, "up");
                 Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyIdentical"));
 
             } else if (resB != null && resB.equals(keyDifferent)) {
@@ -241,7 +240,7 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
                 topSnackDesc.setVisibility(View.VISIBLE);
                 String updateSuccess = "Updated Successfully";
                 topSnackDesc.setText(updateSuccess);
-                TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(GadgetTypeActivity.this, main, topSnackView, null, null, true, "up");
                 Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyDifferent"));
 
             }

@@ -2,6 +2,7 @@ package com.example.qrscanner.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -20,10 +22,14 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
 import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.utils.AfterAsyncListener;
+import com.example.qrscanner.utils.DataLoader;
+import com.example.qrscanner.utils.FilteredDataLoader;
 import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
@@ -121,7 +127,10 @@ public class allDevice extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        displayData();
+        DataLoader loader = new DataLoader(allDevice.this, main, dbHelper, adapter, textViewItemCount, deviceList);
+        loader.execute();
+
+//        displayData();
 
         if (deviceList.isEmpty()) {
             textViewNoData.setVisibility(View.VISIBLE);
@@ -198,18 +207,50 @@ public class allDevice extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Refresh the UI here, for example, reload data from the database
-            loadDataFromDatabase();
-            adapter.notifyDataSetChanged(); // Notify the adapter of dataset changes
+        String keyIdentical = "No differences found";
+        String keyDifferent = "Difference found";
+
+        if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+
+//            Get the passed Data from UpdateActivity
+            String ser = data.getStringExtra("serial");
+            String resA = data.getStringExtra("keyIdentical");
+            String resB = data.getStringExtra("keyDifferent");
+
+            if (resA != null && resA.equals(keyIdentical)) {
+
+                topSnackMessage.setText(data.getStringExtra("keyIdentical"));
+                TopSnack.createCustomTopSnack(allDevice.this, main, topSnackView, null, null, true, "up");
+                Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyIdentical"));
+
+            } else if (resB != null && resB.equals(keyDifferent)) {
+
+                DataLoader loader = getItemAdapterDataLoader(data, ser);
+
+                loader.execute();
+
+            } else {
+                Log.d("result", "onActivityResult: resA & resB is null" );
+            }
         }
     }
 
-    private void loadDataFromDatabase() {
-        deviceList.clear();
-        deviceList.addAll(dbHelper.fetchDevice());
-        Collections.reverse(deviceList);
-        adapter.notifyDataSetChanged();
+    //    After the Item data has change, show this Notification
+    private @NonNull DataLoader getItemAdapterDataLoader(@NonNull Intent data, String ser) {
+        DataLoader loader = new DataLoader(allDevice.this, main, dbHelper, adapter, textViewItemCount, deviceList);
+        loader.setOnAfterAsync(new AfterAsyncListener() {
+            @Override
+            public void after(int delay) {
 
+                topSnackMessage.setText(ser);
+                topSnackDesc.setVisibility(View.VISIBLE);
+                String updateSuccess = "Updated Successfully";
+                topSnackDesc.setText(updateSuccess);
+                TopSnack.createCustomTopSnack(allDevice.this, main, topSnackView, null, null, true, "up");
+                Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyDifferent"));
+
+            }
+        });
+        return loader;
     }
 }

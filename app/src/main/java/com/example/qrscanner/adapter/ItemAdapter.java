@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
@@ -188,9 +189,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
             int color2 = ContextCompat.getColor(this.context, R.color.txtSubHeader);
             int colorInDarkMode2 = ContextCompat.getColor(this.context, R.color.txtSubHeaderLight);
-            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
                 viewHolder.subHeader.setTextColor(colorInDarkMode2);
-            } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+            } else if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
                 viewHolder.subHeader.setTextColor(color2);
             }
             viewHolder.subHeader.setTextSize(0, viewHolder.textSize_for_textHolderAssigned);
@@ -217,9 +218,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             if (stsExtra.equals("Fresh")) {
                 viewHolder.topExpiration.setVisibility(View.GONE);
                 viewHolder.textHolderStatus.setTextColor(clGreen);
-                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
                     viewHolder.cardViewMain.setCardBackgroundColor(clDark);
-                } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                } else if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
                     viewHolder.cardViewMain.setCardBackgroundColor(clLight);
                 }
 //                ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(viewHolder.imgVwStatus, "rotation", 0.0f, 180.0f);
@@ -229,6 +230,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 viewHolder.topExpiration.setVisibility(View.VISIBLE);
                 viewHolder.textHolderStatus.setTextColor(clRed);
 
+            }
+
+            if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+                viewHolder.topExpiration.setImageResource(R.drawable.ic_expiration_light);
+            } else {
+                viewHolder.topExpiration.setImageResource(R.drawable.ic_expiration);
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -554,9 +561,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
                         int color = ContextCompat.getColor(context, R.color.txtHeader);
                         int colorInDarkMode = ContextCompat.getColor(context, R.color.txtHeaderLight);
-                        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                        if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
                             subHeader.setTextColor(colorInDarkMode);
-                        } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                        } else if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
                             subHeader.setTextColor(color);
                         }
                         subHeader.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize_for_header);
@@ -705,9 +712,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         constraintSet.applyTo(constraintHolder);
                         int color2 = ContextCompat.getColor(ItemAdapter.this.context, R.color.txtSubHeader);
                         int colorInDarkMode2 = ContextCompat.getColor(ItemAdapter.this.context, R.color.txtSubHeaderLight);
-                        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                        if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
                             this.subHeader.setTextColor(colorInDarkMode2);
-                        } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                        } else if ((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
                             this.subHeader.setTextColor(color2);
                         }
                         Log.d("ItemAdapter", "Collapsed: Before Setting Text Sizes: serialNum_tv TextSZ " + serialNum_tv.getTextSize());

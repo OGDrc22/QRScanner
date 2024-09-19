@@ -113,6 +113,10 @@ public class FilteredDataLoader {
 
                 Collections.reverse(deviceList);
 
+                if (deviceList.isEmpty()) {
+                    return false;
+                }
+
                 filteredList = new ArrayList<>();
                 filteredList.clear();
                 Log.d("TAG", "doInBackground: filteredList count " + filteredList.size());
@@ -191,9 +195,10 @@ public class FilteredDataLoader {
                     }
 
                     if (!result) {
+                        getView(context);
                         topSnack_icon.setImageResource(R.drawable.warning_sign);
                         topSnackMessage.setText("No data in NoUser");
-                        TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+                        TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
                     }
                     delay = currentCount + delayBeforeClosing;
                     if (listener != null) {
@@ -372,7 +377,7 @@ public class FilteredDataLoader {
                         getView(context);
                         topSnack_icon.setImageResource(R.drawable.warning_sign);
                         topSnackMessage.setText("No data in here [Expired Devices]");
-                        TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+                        TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
                     }
 
                     delay = currentCount + delayBeforeClosing;
@@ -465,6 +470,10 @@ public class FilteredDataLoader {
 
                 Collections.reverse(deviceList);
 
+                if (deviceList.isEmpty()) {
+                    return false;
+                }
+
                 filteredList = new ArrayList<>();
                 filteredList.clear();
                 if (deviceList.isEmpty()) {
@@ -556,7 +565,7 @@ public class FilteredDataLoader {
                         topSnack_icon.setImageResource(R.drawable.warning_sign);
                         String activityName = filterKey.substring(0, 1).toUpperCase() + filterKey.substring(1);// Capitalize the first letter of the word
                         topSnackMessage.setText("No data in here [" + activityName + "]");
-                        TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+                        TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
                     }
 
                     delay = currentCount + delayBeforeClosing;

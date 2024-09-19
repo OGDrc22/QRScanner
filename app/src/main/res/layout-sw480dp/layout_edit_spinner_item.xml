@@ -45,13 +45,13 @@
 
                 <ImageView
                     android:id="@+id/warning"
-                    style="@style/icConstantColor1"
+                    style="@style/sizeICScan"
                     android:layout_marginVertical="12dp"
                     android:src="@drawable/ic_edit"/>
 
                 <TextView
                     android:id="@+id/titleText"
-                    style="@style/textStyleBoldConstantColorTitle"
+                    style="@style/textStyleTitleDialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="8dp"
@@ -165,6 +165,7 @@
                     android:paddingVertical="18dp"
                     android:backgroundTint="@android:color/transparent"
                     android:text="Cancel"
+                    android:foreground="?android:selectableItemBackground"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/view3"
                     app:layout_constraintStart_toEndOf="@+id/view2"

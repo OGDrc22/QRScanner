@@ -221,11 +221,11 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Integer, Boolean> {
         if (result) {
             topSnack_icon.setImageResource(R.drawable.check);
             topSnackMessage.setText("Excel file saved to: " + selectedFileUri.getPath());
-            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
         } else {
             topSnack_icon.setImageResource(R.drawable.warning_sign);
             topSnackMessage.setText("Failed to export data");
-            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
         }
     }
 }

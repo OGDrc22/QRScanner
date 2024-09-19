@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
+    android:id="@+id/design_bottom_sheet"
     android:orientation="vertical">
 
     <ImageView
@@ -75,6 +76,7 @@
                 android:hint="Assigned to"
                 app:endIconDrawable="@drawable/ic_edit"
                 app:endIconMode="custom"
+                app:helperTextEnabled="false"
                 app:startIconDrawable="@drawable/ic_user">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -252,7 +254,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/padding_32"
-            android:layout_marginBottom="@dimen/padding_32">
+            android:layout_marginBottom="@dimen/padding_16">
 
             <LinearLayout
                 android:layout_width="wrap_content"

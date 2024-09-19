@@ -2,6 +2,7 @@ package com.example.qrscanner.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -138,11 +139,13 @@ public class UnknownUserActivity extends AppCompatActivity {
         currentActivity.setVisibility(View.GONE);
         currentActivity2 = findViewById(R.id.currentActivity2);
         currentActivity2.setVisibility(View.VISIBLE);
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            currentActivity2.setImageResource(R.drawable.user_unknown);
-            currentActivity2.setColorFilter(Color.argb(255, 255, 255, 255));
+        currentActivity2.setImageResource(R.drawable.user_unknown);
+        int cl1 = ContextCompat.getColor(UnknownUserActivity.this, R.color.txtHeaderLight);
+        int cl2 = ContextCompat.getColor(UnknownUserActivity.this, R.color.txtHeader);
+        if ((UnknownUserActivity.this.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            currentActivity2.setColorFilter(cl1);
         } else {
-            currentActivity2.setImageResource(R.drawable.user_unknown);
+            currentActivity2.setColorFilter(cl2);
         }
 
         constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
@@ -158,7 +161,7 @@ public class UnknownUserActivity extends AppCompatActivity {
                         getView(UnknownUserActivity.this);
                         topSnack_icon.setImageResource(R.drawable.warning_sign);
                         topSnackMessage.setText("NoUsers is already empty.");
-                        TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true);
+                        TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true, "up");
                     } else {
                         Log.d("Laptop", "onClick: adapter" + adapter.getItemCount());
                     }
@@ -211,7 +214,7 @@ public class UnknownUserActivity extends AppCompatActivity {
             if (resA != null && resA.equals(keyIdentical)) {
 
                 topSnackMessage.setText(data.getStringExtra("keyIdentical"));
-                TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true, "up");
                 Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyIdentical"));
 
             } else if (resB != null && resB.equals(keyDifferent)) {
@@ -236,7 +239,7 @@ public class UnknownUserActivity extends AppCompatActivity {
                 topSnackMessage.setText(ser);
                 topSnackDesc.setVisibility(View.VISIBLE);
                 topSnackDesc.setText("Updated Successfully");
-                TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(UnknownUserActivity.this, main, topSnackView, null, null, true, "up");
                 Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyDifferent"));
 
             }

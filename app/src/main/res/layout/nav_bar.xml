@@ -61,7 +61,7 @@
         android:focusable="true"
         android:gravity="end"
         android:padding="8dp"
-        android:src="@drawable/gear"
+        android:src="@drawable/gear_out_line"
         android:background="?android:selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"

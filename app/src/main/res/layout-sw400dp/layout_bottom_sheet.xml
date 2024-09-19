@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
+    android:id="@+id/design_bottom_sheet"
     android:orientation="vertical">
 
     <ImageView
@@ -25,8 +27,10 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView4">
+        app:layout_constraintTop_toTopOf="@+id/imageView4"
+        app:layout_constraintVertical_bias="1.0">
 
         <View
             style="@style/divider"
@@ -38,14 +42,14 @@
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_16"
+            android:layout_margin="@dimen/padding_10"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/padding_16">
 
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/TIL_QRText"
-                style="@style/TextInputLayout"
+                style="@style/TextInputLayout_400dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Scanned QR"
@@ -56,20 +60,19 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/qrText"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    style="@style/TextInputEditText"
-                    android:textSize="@dimen/text_14sp" />
+                    android:focusableInTouchMode="false" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/TIL_AssignedTo"
-                style="@style/TextInputLayout"
+                style="@style/TextInputLayout_400dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Assigned to"
@@ -79,16 +82,16 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/assignedTo"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/TIl_Department"
-                style="@style/TextInputLayout"
+                style="@style/TextInputLayout_400dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Select Department"
@@ -98,18 +101,18 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/chooserDepartment"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusableInTouchMode="false"
-                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/TIL_Device"
-                style="@style/TextInputLayout"
+                style="@style/TextInputLayout_400dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Select Device"
@@ -120,11 +123,11 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/chooserDevice"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusableInTouchMode="false"
-                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -132,7 +135,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/TIL_Device_Model"
-                style="@style/TextInputLayout"
+                style="@style/TextInputLayout_400dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Device Model"
@@ -146,16 +149,16 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/deviceModel"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/TIL_DatePurchased"
-                style="@style/TextInputLayout"
+                style="@style/TextInputLayout_400dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Pick Date"
@@ -167,12 +170,12 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textDatePurchased"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -184,18 +187,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Expiration Date"
-                app:helperText="Auto Compute —5 years"
                 app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Auto Compute —5 years"
                 app:startIconDrawable="@drawable/expiration">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textdateExpired"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -207,18 +210,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Status"
-                app:helperText="Autogenerated"
                 app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Autogenerated"
                 app:startIconDrawable="@drawable/ic_reload">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/status"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -228,18 +231,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="availabilty"
-                app:helperText="Autogenerated"
                 app:errorIconDrawable="@drawable/warning_sign"
+                app:helperText="Autogenerated"
                 app:startIconDrawable="@drawable/ic_stocks">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/availability"
+                    style="@style/TextInputEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    style="@style/TextInputEditText"
                     android:textSize="@dimen/text_14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -252,7 +255,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/padding_32"
-            android:layout_marginBottom="@dimen/padding_32">
+            android:layout_marginBottom="@dimen/padding_16">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -261,7 +264,7 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingHorizontal="40dp"
-                android:paddingVertical="12dp">
+                android:paddingVertical="@dimen/padding_8">
 
                 <ImageView
                     android:id="@+id/saveIC"
@@ -280,12 +283,12 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cancelButton"
-            android:visibility="gone"
             style="@style/btnStyleCancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/padding_32"
-            android:layout_marginBottom="@dimen/padding_32">
+            android:layout_marginBottom="@dimen/padding_32"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -294,7 +297,7 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingHorizontal="40dp"
-                android:paddingVertical="@dimen/padding_18">
+                android:paddingVertical="@dimen/padding_14">
 
 
                 <TextView

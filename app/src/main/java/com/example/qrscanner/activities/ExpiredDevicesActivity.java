@@ -2,6 +2,7 @@ package com.example.qrscanner.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -140,11 +141,20 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
         currentActivity.setVisibility(View.GONE);
         currentActivity2 = findViewById(R.id.currentActivity2);
         currentActivity2.setVisibility(View.VISIBLE);
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            currentActivity2.setImageResource(R.drawable.ic_expiration_light); // TODO FIX
+
+        int cl1 = ContextCompat.getColor(ExpiredDevicesActivity.this, R.color.txtHeaderLight);
+        int cl2 = ContextCompat.getColor(ExpiredDevicesActivity.this, R.color.txtHeader);
+        if ((ExpiredDevicesActivity.this.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+//            currentActivity2.setColorFilter(cl1);
+            currentActivity2.setImageResource(R.drawable.ic_expiration_light);
         } else {
             currentActivity2.setImageResource(R.drawable.ic_expiration);
         }
+//        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+//            currentActivity2.setImageResource(R.drawable.ic_expiration_light); // TODO FIX
+//        } else {
+//
+//        }
 
         constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
         constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +217,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
             if (resA != null && resA.equals(keyIdentical)) {
 
                 topSnackMessage.setText(data.getStringExtra("keyIdentical"));
-                TopSnack.createCustomTopSnack(ExpiredDevicesActivity.this, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(ExpiredDevicesActivity.this, main, topSnackView, null, null, true, "up");
                 Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyIdentical"));
 
             } else if (resB != null && resB.equals(keyDifferent)) {
@@ -232,7 +242,7 @@ public class ExpiredDevicesActivity extends AppCompatActivity {
                 topSnackMessage.setText(ser);
                 topSnackDesc.setVisibility(View.VISIBLE);
                 topSnackDesc.setText("Updated Successfully");
-                TopSnack.createCustomTopSnack(ExpiredDevicesActivity.this, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(ExpiredDevicesActivity.this, main, topSnackView, null, null, true, "up");
                 Log.d("TAG", "onActivityResult: " + data.getStringExtra("keyDifferent"));
 
             }

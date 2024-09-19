@@ -9,6 +9,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardViewNotif"
         style="@style/itemBG"
+        app:cardCornerRadius="@dimen/padding_12"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

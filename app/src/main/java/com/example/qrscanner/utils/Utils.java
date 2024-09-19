@@ -580,14 +580,14 @@ public class Utils {
                 topSnackMessage.setText("Success");
                 topSnackDesc.setVisibility(View.VISIBLE);
                 topSnackDesc.setText("All " + filterKey + " is deleted");
-                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
             } else {
 //                Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
                 topSnack_icon.setImageResource(R.drawable.warning_sign);
                 topSnackMessage.setText("Failed");
                 topSnackDesc.setVisibility(View.VISIBLE);
                 topSnackDesc.setText("Failed to delete " + filterKey);
-                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
             }
         }
     }
@@ -662,12 +662,12 @@ public class Utils {
 //                Toast.makeText(context, "All Data Deleted", Toast.LENGTH_SHORT).show();
                 topSnack_icon.setImageResource(R.drawable.check);
                 topSnackMessage.setText("All Data Deleted");
-                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
             } else {
 //                Toast.makeText(context, "Failed to delete data", Toast.LENGTH_SHORT).show();
                 topSnack_icon.setImageResource(R.drawable.warning_sign);
                 topSnackMessage.setText("Failed to delete data");
-                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+                TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
             }
         }
     }

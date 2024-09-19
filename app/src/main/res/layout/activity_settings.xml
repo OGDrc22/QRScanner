@@ -27,6 +27,7 @@
       android:padding="16dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/themeCardView"
         style="@style/itemBG"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

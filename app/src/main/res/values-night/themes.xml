@@ -6,13 +6,6 @@
         <item name="android:statusBarColor" targetApi="1">@color/bgD</item>
     </style>
 
-    <style name="Theme.QRScanner.Dark" parent="Base.Theme.QRScanner" />
-
-    <style name="Theme.QRScanner.Fullscreen" parent="Theme.QRScanner.Dark">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-    </style>
-
     <style name="AppDatePicker" parent="@style/ThemeOverlay.MaterialComponents.MaterialCalendar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorSecondary">@color/bgD</item>
@@ -62,7 +55,7 @@
     </style>
 
     <style name="TitleStyle_400dp">
-        <item name="android:textSize">@dimen/text_18sp</item>
+        <item name="android:textSize">@dimen/text_20sp</item>
         <item name="android:textColor">@color/light1</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
@@ -116,48 +109,18 @@
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
-    <style name="textStyle1_400dp">
-        <item name="android:textSize">12dp</item>
-        <item name="android:textColor">@color/txtHeaderLight</item>
+    <style name="textStyleTitleDialog">
+        <item name="android:textSize">@dimen/text_16sp</item>
+        <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
-    <style name="textStyle2">
-        <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/bgD</item>
+    <style name="textStyleTitleDialog_400dp">
+        <item name="android:textSize">@dimen/text_14sp</item>
+        <item name="android:textColor">@color/txtHeader</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
-    <style name="textStyle2Bold">
-        <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/bgD</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-
-    <style name="textStyle3">
-        <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/bgL</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-
-    <style name="textStyle3Bold">
-        <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/bgL</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-
-    <style name="textStyleBoldConstantColorTitle">
-        <item name="android:textSize">16dp</item>
-        <item name="android:textColor">@color/bgD</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="textStyleBoldConstantColorTitle_400dp">
-        <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/bgD</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
     <!-- TEXT STYLES ^^^^^ -->
 
     <!-- BUTTONS -->
@@ -168,37 +131,17 @@
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
-    <style name="textStyleConstantColorRed_400dp">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">@dimen/text_14sp</item>
-        <item name="android:textColor">@color/clDelete</item>
-        <item name="android:fontFamily">@font/gotham_medium</item>
-    </style>
-
     <style name="CancelBTNTextStyle">
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/txtTranslucentLight</item>
-        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-
-    <style name="CancelBTNTextStyle_400dp">
-        <item name="android:textSize">@dimen/text_14sp</item>
-        <item name="android:textColor">@color/txtTranslucentLight</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
     <style name="ExportBTNTextStyle">
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/secondary</item>
-        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
-        <item name="android:fontFamily">@font/gotham_medium</item>
-    </style>
-
-    <style name="ExportBTNTextStyle_400dp">
-        <item name="android:textSize">12dp</item>
-        <item name="android:textColor">@color/secondary</item>
-        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
@@ -208,22 +151,16 @@
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
 
-    <style name="EditText_400dp">
-        <item name="android:textSize">@dimen/text_12sp</item>
-        <item name="android:textColor">@color/txtHeaderLight</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-
     <style name="btnStyleSave">
-        <item name="android:foreground">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:backgroundTint">@color/primary</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_12</item>
     </style>
 
     <style name="SaveText">
         <item name="android:textSize">@dimen/text_16sp</item>
         <item name="android:textColor">@color/txtHeader</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
+        <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
     <style name="SaveText_400dp">
@@ -234,10 +171,10 @@
 
     <style name="btnStyleCancel">
         <item name="strokeWidth">2dp</item>
-        <item name="strokeColor">@color/txtTranslucentLight</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
+        <item name="strokeColor">@color/TranslucentL</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_12</item>
         <item name="cardBackgroundColor">@android:color/transparent</item>
-        <item name="android:foreground">?android:selectableItemBackgroundBorderless</item>
+        <item name="android:foreground">?android:selectableItemBackground</item>
     </style>
 
     <style name="editBtnStyle">
@@ -245,7 +182,7 @@
         <item name="android:textColor">@color/txtHeaderLight</item>
         <item name="android:fontFamily">@font/gotham_medium</item>
         <item name="android:backgroundTint">@color/light1</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_12</item>
     </style>
     <!---BUTTON STYLES ^^^^^ -->
 
@@ -293,10 +230,11 @@
     </style>
 
     <style name="backBtnIC_400dp">
-        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="tint">@color/light1</item>
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
-        <item name="tint">@color/light1</item>
+        <item name="android:padding">@dimen/padding_4</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
     </style>
 
     <style name="bottomSheetBg">
@@ -305,6 +243,12 @@
 
     <style name="cardBtnTxtStyle">
         <item name="android:textSize">@dimen/text_18sp</item>
+        <item name="android:textColor">@color/light1</item>
+        <item name="android:fontFamily">@font/gotham_bold</item>
+    </style>
+
+    <style name="cardBtnTxtStyle_400dp">
+        <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/light1</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
@@ -327,18 +271,6 @@
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
 
-    <style name="cardBtnTxtStyleScan_400dp">
-        <item name="android:textSize">@dimen/text_14sp</item>
-        <item name="android:textColor">@color/textL</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-
-    <style name="cardBtnTxtStyle_400dp">
-        <item name="android:textSize">@dimen/text_12sp</item>
-        <item name="android:textColor">@color/light1</item>
-        <item name="android:fontFamily">@font/gotham_bold</item>
-    </style>
-
     <style name="cardViewBtn1">
         <item name="android:layout_gravity">right|center_horizontal|clip_horizontal</item>
         <item name="android:layout_width">0dp</item>
@@ -352,20 +284,29 @@
     </style>
 
     <style name="cardViewBtnAdd">
-        <item name="android:layout_gravity">right|center_horizontal|clip_horizontal</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:foreground">?android:attr/selectableItemBackgroundBorderless</item>
-        <item name="android:layout_rowWeight">1</item>
-        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginVertical">@dimen/padding_8</item>
         <item name="cardBackgroundColor">@color/primary</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_MainActivity</item>
+        <item name="cardCornerRadius">@dimen/padding_10</item>
+        <item name="android:foreground">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="cardElevation">0dp</item>
+    </style>
+
+    <style name="cardViewBtnUn">
+        <item name="maxHeight">160dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cardBackgroundColor">@color/dark1</item>
+        <item name="cardCornerRadius">@dimen/padding_10</item>
+        <item name="android:layout_marginVertical">@dimen/padding_8</item>
+        <item name="cardElevation">0dp</item>
+        <item name="android:foreground">?android:attr/selectableItemBackgroundBorderless</item>
     </style>
 
     <style name="cardViewBtnGeneral">
         <item name="cardBackgroundColor">@color/light1</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_12</item>
     </style>
 
     <style name="alertDialogAccents">
@@ -373,17 +314,21 @@
     </style>
 
 
-    <style name="cardViewBtnUn">
-        <item name="android:layout_gravity">right|center_horizontal|clip_horizontal</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:foreground">?android:attr/selectableItemBackgroundBorderless</item>
-        <item name="android:layout_rowWeight">1</item>
-        <item name="android:layout_columnWeight">1</item>
-        <item name="cardBackgroundColor">@color/cardBtn2</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_MainActivity</item>
-        <item name="cardElevation">0dp</item>
+    <style name="linearlayoutstyle">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_gravity">center</item>
     </style>
+
+    <style name="linearlayoutstyle2">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
 
     <style name="cardView_Dialog">
         <item name="cardBackgroundColor">@color/dark1</item>
@@ -393,8 +338,8 @@
 
 
     <style name="expiredIC">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
         <item name="android:src">@drawable/ic_expiration_light</item>
     </style>
 
@@ -439,7 +384,7 @@
 
     <style name="itemBG_400dp">
         <item name="cardBackgroundColor">@color/itemBg2</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_16</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_12</item>
     </style>
 
 
@@ -498,25 +443,6 @@
         <item name="tint">@color/clDelete</item>
     </style>
 
-    <style name="deleteICMedium">
-        <item name="android:layout_width">36dp</item>
-        <item name="android:layout_height">36dp</item>
-        <item name="tint">@color/clDelete</item>
-    </style>
-
-    <style name="deleteIC_400dp">
-        <item name="android:layout_width">20dp</item>
-        <item name="android:layout_height">20dp</item>
-        <item name="tint">@color/clDelete</item>
-    </style>
-
-    <style name="spinner">
-        <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/bgD</item>
-        <item name="android:popupBackground">@drawable/bg_gadgets_options_dark</item>
-        <item name="android:fontFamily">@font/gotham_medium</item>
-    </style>
-
 
     <style name="textStyleCounter">
         <item name="android:textSize">14dp</item>
@@ -524,11 +450,6 @@
         <item name="android:fontFamily">@font/gotham_medium</item>
     </style>
 
-
-    <style name="toastNotification">
-        <item name="cardBackgroundColor">@color/dark1</item>
-        <item name="cardCornerRadius">16dp</item>
-    </style>
 
     <style name="unknownDeviceIC">
         <item name="android:layout_width">32dp</item>

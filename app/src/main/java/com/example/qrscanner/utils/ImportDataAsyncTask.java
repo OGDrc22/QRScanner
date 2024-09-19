@@ -279,11 +279,11 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
             }
             topSnackDesc.setVisibility(View.VISIBLE);
             topSnackDesc.setText(itemCount + " " + item + " Imported");
-            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
         } else {
             topSnack_icon.setImageResource(R.drawable.warning_sign);
             topSnackMessage.setText("Error importing data");
-            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true);
+            TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
         }
     }
 

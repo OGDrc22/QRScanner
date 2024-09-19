@@ -27,6 +27,7 @@
       android:padding="16dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/themeCardView"
         style="@style/itemBG"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,25 +51,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/textIndicator"
+                style="@style/textStyle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day"
+                android:layout_marginEnd="@dimen/padding_10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/theme_indicator"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/theme_indicator"
                 style="@style/sizeIC"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_night_mode"
-                android:layout_marginEnd="6dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/switchTheme"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Switch
-                android:id="@+id/switchTheme"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:src="@drawable/ic_light_mode"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

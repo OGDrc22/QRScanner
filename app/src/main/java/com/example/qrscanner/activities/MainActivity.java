@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -38,6 +39,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,13 +62,13 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int CREATE_FILE_REQUEST_CODE = 16168;
-    private static final int REQUEST_CODE = 003;
-    private CardView addBtn, laptopBtn, tabletBtn, phoneBtn, pcBtn, allBtn, unknownBtn, importBtn, exportBtn, unknownUserBtn, expiredBtn;
+    private CardView  laptopBtn, tabletBtn, phoneBtn, pcBtn, unknownBtn;
+    private LinearLayout allBtn, importBtn, exportBtn, unknownUserBtn, expiredBtn;
 
     private ImageView settings, currentActivity, backBtn;
     private SearchView searchView;
     private RecyclerView recyclerView, recyclerViewSearch;
-    private ConstraintLayout main, constraintLayout;
+    private ConstraintLayout main, constraintLayout, addBtn;
     private ItemAdapter adapter;
     private GadgetAdapterMainUI gadgetAdapterMainUI;
     private ArrayList<Assigned_to_User_Model> deviceList;
@@ -84,19 +86,36 @@ public class MainActivity extends AppCompatActivity {
     private String fileNameToExport;
     private Uri selectedFileUri;
 
-    private void applyTheme() {
-        SharedPreferences sharedPref = getSharedPreferences("isDarkMode", Context.MODE_PRIVATE);
-        boolean isSwitchThemeChecked = sharedPref.getBoolean("isDark", true);
+    private Intent intentSettings;
+    private static final int SETTINGS_REQUEST_CODE = 147;
 
-        if (isSwitchThemeChecked) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+    private void applyTheme() {
+        SharedPreferences sharedPref = getSharedPreferences("ThemePref", Context.MODE_PRIVATE);
+        String themePreference = sharedPref.getString("selectedTheme", "System");  // Default to "System"
+
+        intentSettings = new Intent(MainActivity.this, Settings.class);
+
+        String themes = "themes";
+        switch (themePreference) {
+            case "Light":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                intentSettings.putExtra(themes, "Light");
+                break;
+            case "Dark":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                intentSettings.putExtra(themes, "Dark");
+                break;
+            case "System":
+            default:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                intentSettings.putExtra(themes, "System");
+                break;
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        applyTheme();
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -105,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        applyTheme();
 
         findViewById(R.id.main).bringToFront();
 
@@ -122,8 +140,8 @@ public class MainActivity extends AppCompatActivity {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Settings.class);
-                startActivity(intent);
+                setResult(RESULT_OK, intentSettings);
+                startActivityForResult(intentSettings, SETTINGS_REQUEST_CODE);
                 Log.d("TAG", "Clicked Success");
             }
         });
@@ -223,9 +241,14 @@ public class MainActivity extends AppCompatActivity {
         addDefaultGadgets(); // For icons of the gadget
 
         List<GadgetsList> allGadget = dbHelper.getAllGadgetsCategory();
-        gadgetAdapterMainUI = new GadgetAdapterMainUI(R.layout.gadgets_option_main_ui, MainActivity.this, dbHelper, allGadget);
         recyclerView = findViewById(R.id.recyclerViewMainUi);
-        recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
+        gadgetAdapterMainUI = new GadgetAdapterMainUI(R.layout.gadgets_option_main_ui, MainActivity.this, dbHelper, allGadget);
+
+        if (recyclerView != null){
+            recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
+        } else {
+            Log.d("MainActivity", "onCreate: recyclerView is null");
+        }
         recyclerView.setAdapter(gadgetAdapterMainUI);
 
         setUpButtons();
@@ -312,21 +335,11 @@ public class MainActivity extends AppCompatActivity {
         importBtn = findViewById(R.id.importBtn);
         exportBtn = findViewById(R.id.exportBtn);
 
-        laptopBtn = findViewById(R.id.laptopBtn);
-        tabletBtn = findViewById(R.id.tabletBtn);
-        phoneBtn = findViewById(R.id.phoneBtn);
-        pcBtn = findViewById(R.id.pcBtn);
-        allBtn = findViewById(R.id.allBtn);
-        unknownBtn = findViewById(R.id.unknownBtn);
-        unknownUserBtn = findViewById(R.id.unknownUserBtn);
-        expiredBtn = findViewById(R.id.expiredDevices);
-
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent intent = new Intent(MainActivity.this, ScanQR.class);
-//                startActivity(intent);
                 launcher.launch(intent);
 
             }
@@ -359,75 +372,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 //                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "To be added", null, null, null);
                 promptExportWithFileName();
-            }
-        });
-
-        laptopBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LaptopActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        tabletBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TabletActivity.class);
-                startActivity(intent);
-//                Toast.makeText(MainActivity.this, "To be Added", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        phoneBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MobileActivity.class);
-                startActivity(intent);
-//                Toast.makeText(MainActivity.this, "To be Added", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        pcBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DesktopsActivity.class);
-                startActivity(intent);
-//                Toast.makeText(MainActivity.this, "To be Added", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        unknownUserBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, UnknownUserActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        expiredBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ExpiredDevicesActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        allBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, allDevice.class);
-                startActivity(intent);
-//                Toast.makeText(MainActivity.this, "To be Added", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        unknownBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, UnknownDeviceActivity.class);
-                startActivity(intent);
-//                Toast.makeText(MainActivity.this, "To be Added", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -564,7 +508,10 @@ public class MainActivity extends AppCompatActivity {
         // Add default gadgets if database is empty
         List<GadgetsList> gadgetsList = dbHelper.getAllGadgetsCategory();
         if (gadgetsList.isEmpty()) {
+            dbHelper.addGadgetCategory("All Device", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.device_model));
             dbHelper.addGadgetCategory("Unknown", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_unknown_device));
+            dbHelper.addGadgetCategory("Unknown User", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.user_unknown_bulk));
+            dbHelper.addGadgetCategory("Expired Device", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_expiration));
             dbHelper.addGadgetCategory("Laptop", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.laptop_icon));
             dbHelper.addGadgetCategory("Phone", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_mobile_phone));
             dbHelper.addGadgetCategory("Tablet", Utils.getDefaultImageByteArray(MainActivity.this, R.drawable.ic_tablet));

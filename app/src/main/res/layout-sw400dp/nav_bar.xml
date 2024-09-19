@@ -9,9 +9,7 @@
 
     <ImageView
         android:id="@+id/backBtn"
-        style="@style/backBtnIC"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        style="@style/backBtnIC_400dp"
         android:background="?android:selectableItemBackgroundBorderless"
         android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +21,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingVertical="@dimen/padding_2"
+        android:paddingVertical="@dimen/padding_6"
         app:layout_constraintStart_toEndOf="@+id/backBtn"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -32,7 +30,7 @@
             style="@style/sizeIC2"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_margin="4dp"
+            android:layout_margin="@dimen/padding_2"
             android:src="@drawable/laptop_icon"
             android:visibility="visible" />
 
@@ -40,7 +38,7 @@
             android:id="@+id/currentActivity2"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_margin="4dp"
+            android:layout_margin="@dimen/padding_2"
             android:src="@drawable/laptop_icon"
             android:visibility="gone" />
 
@@ -49,6 +47,7 @@
             style="@style/TitleStyle_400dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/padding_2"
             android:layout_marginStart="12dp"
             android:text="QR Scanner" />
 
@@ -56,15 +55,13 @@
 
     <ImageView
         android:id="@+id/settingsIcon"
-        style="@style/sizeIC2"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        style="@style/sizeIC2M"
         android:background="?android:selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
         android:gravity="end"
-        android:padding="8dp"
-        android:src="@drawable/gear"
+        android:padding="2dp"
+        android:src="@drawable/gear_out_line"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/linearLayout4" />

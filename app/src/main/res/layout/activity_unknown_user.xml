@@ -26,6 +26,8 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="@dimen/padding_12"
         android:padding="16dp"/>
 
 
