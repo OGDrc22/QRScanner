@@ -27,12 +27,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,12 +46,13 @@ import android.widget.Toast;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.GadgetAdapterMainUI;
-import com.example.qrscanner.adapter.GadgetsAdapterList;
 import com.example.qrscanner.adapter.ItemAdapter;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 import com.example.qrscanner.models.GadgetsList;
-import com.example.qrscanner.models.GadgetsMainUi;
+import com.example.qrscanner.utils.DeleteSelected;
 import com.example.qrscanner.utils.ExportDateBaseToExcel;
+import com.example.qrscanner.utils.ExportSelectedDialogHelper;
+import com.example.qrscanner.utils.ExportSelectedItemToExcel;
 import com.example.qrscanner.utils.ImportDataAsyncTask;
 import com.example.qrscanner.utils.Utils;
 
@@ -62,8 +63,17 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int CREATE_FILE_REQUEST_CODE = 16168;
+    private static final int CREATE_FILE_REQUEST_CODE_SELECTED = 16169;
+    private static final int FILE_REQUEST_CODE = 013;
+    private static final int STORAGE_PERMISSION_CODE = 22;
+
+    private String fileNameToExport;
+    private Uri selectedFileUri;
+
+
     private CardView  laptopBtn, tabletBtn, phoneBtn, pcBtn, unknownBtn;
     private LinearLayout allBtn, importBtn, exportBtn, unknownUserBtn, expiredBtn;
+    private TextView titleTextView;
 
     private ImageView settings, currentActivity, backBtn;
     private SearchView searchView;
@@ -71,20 +81,25 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout main, constraintLayout, addBtn;
     private ItemAdapter adapter;
     private GadgetAdapterMainUI gadgetAdapterMainUI;
-    private ArrayList<Assigned_to_User_Model> deviceList;
+    private ArrayList<ItemModel> deviceList;
     private ArrayList<String>  serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id;
+
+    private View spacerView;
+    private LinearLayout deselectID, deleteSelectedID, selectAllID, multiSelectID, exportSelected;
+    private TextView textViewItemCount, textViewCountSelection;
+
+    private CardView cardView_options;
+    private LinearLayout linearContent;
 
     private View topSnackView;
     private ImageView topSnack_icon;
     private TextView topSnackMessage, topSnackDesc;
 
     private DBHelper dbHelper;
+    private ArrayList<ItemModel> filteredList;
 
-    private static final int FILE_REQUEST_CODE = 013;
-    private static final int STORAGE_PERMISSION_CODE = 22;
+    private boolean hasFocusBoolean = false;
 
-    private String fileNameToExport;
-    private Uri selectedFileUri;
 
     private Intent intentSettings;
     private static final int SETTINGS_REQUEST_CODE = 147;
@@ -128,25 +143,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.main).bringToFront();
 
 
-        currentActivity = findViewById(R.id.currentActivity);
-        currentActivity.setVisibility(View.GONE);
-
-        backBtn = findViewById(R.id.backBtn);
-        backBtn.setVisibility(View.GONE);
-
-        settings = findViewById(R.id.settingsIcon);
-//        mainOption = findViewById(R.id.gridLayoutMainOption);
-
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(RESULT_OK, intentSettings);
-                startActivityForResult(intentSettings, SETTINGS_REQUEST_CODE);
-                Log.d("TAG", "Clicked Success");
-            }
-        });
-
-
         searchView = findViewById(R.id.search_bar);
         searchView.clearFocus();
 
@@ -154,6 +150,25 @@ public class MainActivity extends AppCompatActivity {
         constraintLayout = findViewById(R.id.constraintLayoutOp);
 
 
+        currentActivity = findViewById(R.id.currentActivity);
+        currentActivity.setVisibility(View.GONE);
+
+        titleTextView = findViewById(R.id.titleTextView);
+
+        backBtn = findViewById(R.id.backBtn);
+        backBtn.setVisibility(View.GONE);
+        settings = findViewById(R.id.settingsIcon);
+
+        cardView_options = findViewById(R.id.cardView_options);
+        linearContent = findViewById(R.id.linearContent);
+        textViewItemCount = findViewById(R.id.textViewItemCount);
+        textViewCountSelection = findViewById(R.id.textViewCountSelection);
+        spacerView = findViewById(R.id.spacerView);
+        selectAllID = findViewById(R.id.selectAllID);
+        deselectID = findViewById(R.id.deselectID);
+        multiSelectID = findViewById(R.id.multi_selectID);
+        exportSelected = findViewById(R.id.exportSelectedID);
+        deleteSelectedID = findViewById(R.id.deleteSelectedID);
 
         LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(MainActivity.this.LAYOUT_INFLATER_SERVICE);
         topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
@@ -161,39 +176,25 @@ public class MainActivity extends AppCompatActivity {
         topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
         topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
 
+        // Database
+        dbHelper = new DBHelper(this);
+        deviceList = new ArrayList<>();
 
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+        serialNum_id = new ArrayList<>();
+        assignedTo_id = new ArrayList<>();
+        department_id = new ArrayList<>();
+        device_id = new ArrayList<>();
+        deviceModel_id = new ArrayList<>();
+        datePurchased_id = new ArrayList<>();
+        dateExpire_id = new ArrayList<>();
+        status_id = new ArrayList<>();
+        availability_id = new ArrayList<>();
+        adapter = new ItemAdapter(R.layout.info_layout, this, main, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, this::onDeleteClick, this::onEditClick);
 
-            TextView titleTextView = findViewById(R.id.titleTextView);
-            ImageView currentActivity = findViewById(R.id.currentActivity);
+        recyclerViewSearch = findViewById(R.id.recyclerViewSearch);
+        recyclerViewSearch.setLayoutManager(new LinearLayoutManager(this));
 
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    recyclerViewSearch.setVisibility(View.VISIBLE);
-                    constraintLayout.setVisibility(View.GONE);
-
-                    ImageView backBtn = findViewById(R.id.backBtn);
-                    titleTextView.setText("Search");
-                    currentActivity.setVisibility(View.GONE);
-
-                    backBtn.setVisibility(View.VISIBLE);
-                    backBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            searchView.clearFocus();
-                            recyclerViewSearch.setVisibility(View.GONE);
-                            constraintLayout.setVisibility(View.VISIBLE);
-                        }
-                    });
-
-
-                } else { //  Clear Focus
-                    backBtn.setVisibility(View.GONE);
-                    titleTextView.setText("QR Scanner");
-                }
-            }
-        });
+        recyclerViewSearch.setAdapter(adapter);
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -210,32 +211,108 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
 
-        // Database
-        dbHelper = new DBHelper(this);
-        deviceList = new ArrayList<>();
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    hasFocusBoolean = true;
 
-        serialNum_id = new ArrayList<>();
-        assignedTo_id = new ArrayList<>();
-        department_id = new ArrayList<>();
-        device_id = new ArrayList<>();
-        deviceModel_id = new ArrayList<>();
-        datePurchased_id = new ArrayList<>();
-        dateExpire_id = new ArrayList<>();
-        status_id = new ArrayList<>();
-        availability_id = new ArrayList<>();
-        adapter = new ItemAdapter(R.layout.info_layout, this, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, this::onDeleteClick, this::onEditClick);
+                } else { //  Clear Focus
+                    hasFocusBoolean = false;
+                }
+                navBar();
+            }
+        });
 
-        recyclerViewSearch = findViewById(R.id.recyclerViewSearch);
-        recyclerViewSearch.setLayoutManager(new LinearLayoutManager(this));
 
-        recyclerViewSearch.setAdapter(adapter);
 
-        if (recyclerViewSearch.getVisibility() == View.GONE) {
-            backBtn.setVisibility(View.GONE);
-        } else {
-            backBtn.setVisibility(View.VISIBLE);
-        }
+
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (hasFocusBoolean){
+                    int duration = 300;
+                    Utils.smoothTransition(cardView_options, duration);
+                    if (linearContent.getVisibility() == View.GONE) {
+                        Utils.rotateUp(settings);
+                        linearContent.setVisibility(View.VISIBLE);
+                        spacerView.setVisibility(View.VISIBLE);
+                        textViewItemCount.setVisibility(View.VISIBLE);
+                        Utils.expandCardView(cardView_options, duration);
+                    } else {
+                        Utils.rotateDown(settings);
+                        linearContent.setVisibility(View.GONE);
+                        textViewItemCount.setVisibility(View.GONE);
+                        spacerView.setVisibility(View.GONE);
+                        Utils.collapseCardView(cardView_options, cardView_options, duration);
+                    }
+                } else {
+                    Utils.rotateUp(settings);
+
+                    setResult(RESULT_OK, intentSettings);
+                    startActivityForResult(intentSettings, SETTINGS_REQUEST_CODE);
+                    Log.d("TAG", "Clicked Success");
+                }
+            }
+        });
+
+        multiSelectID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (adapter.getItemCount() > 0) {
+                    adapter.enableMultiSelect();
+                }
+            }
+        });
+
+        selectAllID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (adapter.getItemCount() > 0) {
+                    Log.d("MainActivity", "onClick: filteredlist size " + getFilteredList().size() );;
+                    adapter.selectAll(getFilteredList());
+                }
+            }
+        });
+
+        deselectID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (adapter.getItemCount() > 0) {
+                    adapter.clearSelection();
+
+                    adapter.updateSelectionCount();
+                    adapter.refreshSelectionOption();
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        deleteSelectedID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (adapter.getItemCount() > 0) {
+                    DeleteSelected deleteSelected = new DeleteSelected(MainActivity.this, adapter, main);
+                    deleteSelected.execute();
+                    adapter.disableMultiSelect();
+                    Utils.getSelectedItemCounter(MainActivity.this, textViewCountSelection);
+                }
+            }
+        });
+
+        exportSelected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ExportSelectedDialogHelper exportDialogHelper = new ExportSelectedDialogHelper(MainActivity.this, MainActivity.this, adapter, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc);
+                exportDialogHelper.promptExportWithFileName();
+            }
+        });
+
+
+
+        Utils.getItemCounterInAdapter(adapter, textViewItemCount);
+
 
 
         addDefaultGadgets(); // For icons of the gadget
@@ -253,6 +330,61 @@ public class MainActivity extends AppCompatActivity {
 
         setUpButtons();
     }
+
+    private void navBar() {
+        if (hasFocusBoolean) {
+            constraintLayout.setVisibility(View.GONE);
+            if (constraintLayout.getVisibility() == View.GONE) {
+                recyclerViewSearch.setVisibility(View.VISIBLE);
+
+
+                settings.setImageResource(R.drawable.drop_down);
+
+                titleTextView.setText("Search");
+                currentActivity.setVisibility(View.GONE);
+
+                backBtn.setVisibility(View.VISIBLE);
+                backBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        searchView.clearFocus();
+                        searchView.setQuery("", false);
+                        recyclerViewSearch.setVisibility(View.GONE);
+                        constraintLayout.setVisibility(View.VISIBLE);
+
+                        settings.setImageResource(R.drawable.gear_out_line);
+                        backBtn.setVisibility(View.GONE);
+                        titleTextView.setText("QR Scanner");
+                        if (constraintLayout.getVisibility() == View.VISIBLE) {
+                            adapter.clearSelection();
+                            adapter.updateSelectionCount();
+                            adapter.refreshSelectionOption();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        searchView.clearFocus();
+        searchView.setQuery("", false);
+        recyclerViewSearch.setVisibility(View.GONE);
+        constraintLayout.setVisibility(View.VISIBLE);
+
+        settings.setImageResource(R.drawable.gear_out_line);
+        backBtn.setVisibility(View.GONE);
+        titleTextView.setText("QR Scanner");
+
+        if (constraintLayout.getVisibility() == View.VISIBLE) {
+            adapter.clearSelection();
+            adapter.updateSelectionCount();
+            adapter.refreshSelectionOption();
+        }
+    }
+
 
     private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -277,11 +409,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void filterList(@NonNull String text) {
 
-        ArrayList<Assigned_to_User_Model> filteredList = new ArrayList<>();
+        filteredList = new ArrayList<>();
 
         String searchText = text.toLowerCase();
 
-        ArrayList<Assigned_to_User_Model> dataLists = dbHelper.fetchDevice();
+        ArrayList<ItemModel> dataLists = dbHelper.fetchDevice();
         Collections.reverse(dataLists);
 
 //        for (int i = 0; i < filteredList.size(); i++) {
@@ -294,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
             filteredList.clear();
         } else {
             // Iterate through the original list and add items that match the search text to the filtered list
-            for (Assigned_to_User_Model item : dataLists) {
+            for (ItemModel item : dataLists) {
                 String serialNum = item.getSerialNumber();
                 String serialNumString = String.valueOf(serialNum);
                 // Perform case-insensitive search by converting both text and item data to lowercase
@@ -313,13 +445,8 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getDateExpired().toLowerCase().contains(searchText)) {
                     filteredList.add(item);
                 }
-            }
 
-//            for (Assigned_to_User_Model item : deviceList) {
-//                if (matchesSearchCriteria(item, searchText)) {
-//                    filteredList.add(item);
-//                }
-//            }
+            }
 
         }
         // Update the dataset used by the adapter with the filtered results
@@ -327,6 +454,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Notify the adapter of dataset changes
         adapter.notifyDataSetChanged();
+
+        Utils.getItemCounterInAdapter(adapter, textViewItemCount);
+    }
+
+    public ArrayList<ItemModel> getFilteredList() {
+        return filteredList;
     }
 
     private void setUpButtons() {
@@ -349,28 +482,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openFileChooser();
-//                Dialog dialog = new Dialog(MainActivity.this);
-//                LayoutInflater inflater = getLayoutInflater();
-//                View dialogView = inflater.inflate(R.layout.loading_dialog, null);
-//                ImageView loadingIc = dialogView.findViewById(R.id.loading_icon);
-//                Utils.CustomFpsInterpolator fpsInterpolator = new Utils.CustomFpsInterpolator(16);
-//                ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(loadingIc, "rotation", 0, 360);
-//                objectAnimator.setDuration(1000);
-//                objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
-//                objectAnimator.setInterpolator(fpsInterpolator);
-//                objectAnimator.start();
-//                dialog.setContentView(dialogView);
-//                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-//                dialog.getWindow().setDimAmount(0.8f);
-//                dialog.setCancelable(true);
-//                dialog.show();
             }
         });
 
         exportBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                customToastMethod.notify(R.layout.toasty, R.drawable.warning_sign, "To be added", null, null, null);
                 promptExportWithFileName();
             }
         });
@@ -387,6 +504,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CREATE_FILE_REQUEST_CODE_SELECTED && resultCode == RESULT_OK && data != null) {
+            Uri selectedFileUriSelected = data.getData();
+            new ExportSelectedItemToExcel(MainActivity.this, main, adapter, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUriSelected);
+        }
+
         if (requestCode == CREATE_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             selectedFileUri = data.getData();
             new ExportDateBaseToExcel(MainActivity.this, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUri);
@@ -451,7 +574,7 @@ public class MainActivity extends AppCompatActivity {
                     checkStoragePermission();
                     createFile();
                     new ExportDateBaseToExcel(MainActivity.this, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUri);
-                    alertDialog.hide();
+                    alertDialog.dismiss();
                 } else {
                     Toast.makeText(MainActivity.this, "File name cannot be empty", Toast.LENGTH_SHORT).show();
                 }
@@ -503,6 +626,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
     private void addDefaultGadgets() {
         // Add default gadgets if database is empty

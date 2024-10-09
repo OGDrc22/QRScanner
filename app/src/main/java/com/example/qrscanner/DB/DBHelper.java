@@ -9,7 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 import com.example.qrscanner.models.Department;
 import com.example.qrscanner.models.GadgetsList;
 
@@ -142,14 +142,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<Assigned_to_User_Model> fetchDevice() {
+    public ArrayList<ItemModel> fetchDevice() {
         SQLiteDatabase database = this.getReadableDatabase();
         String query = "SELECT al.*, go." + KEY_GADGETS_CATEGORY_IMAGE + " FROM " + TABLE_ASSIGNED_TO_USER + " al LEFT JOIN " + TABLE_GADGETS_CATEGORY + " go ON al.device = go." + KEY_GADGETS_CATEGORY_NAME;
         Cursor cursor = database.rawQuery(query, null);
-        ArrayList<Assigned_to_User_Model> arrayList = new ArrayList<>();
+        ArrayList<ItemModel> arrayList = new ArrayList<>();
 
         while (cursor.moveToNext()) {
-            Assigned_to_User_Model assignedToUserModel = new Assigned_to_User_Model();
+            ItemModel assignedToUserModel = new ItemModel();
 
             // TABLE_ASSIGNED_TO_USER TABLE_ASSIGNED_TO_USER
             assignedToUserModel.id = cursor.getInt(0);
@@ -209,7 +209,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteDevice(Assigned_to_User_Model device) {
+    public void deleteDevice(ItemModel device) {
         // Get the writable database
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -224,7 +224,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteDeviceNoUser(Assigned_to_User_Model device) {
+    public void deleteDeviceNoUser(ItemModel device) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = KEY_NAME + " = ?";
         String[] selectionArgs = {device.getUserName()};
@@ -232,7 +232,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteExpiredDevice(Assigned_to_User_Model device) {
+    public void deleteExpiredDevice(ItemModel device) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = KEY_DATE_EXPIRED + " = ?";
         String[] selectionArgs = {device.getDateExpired()};

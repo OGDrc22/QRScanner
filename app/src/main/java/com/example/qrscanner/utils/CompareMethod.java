@@ -19,7 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -187,12 +187,12 @@ public class CompareMethod {
         @Override
         protected String doInBackground(Void... voids) {
             try {
-                ArrayList<Assigned_to_User_Model> dataList = dbHelper.fetchDevice();
+                ArrayList<ItemModel> dataList = dbHelper.fetchDevice();
                 String inputSerial = serialNumber.getText().toString();
                 boolean found = false;
                 result = "";
                 int prog = 0;
-                for (Assigned_to_User_Model items : dataList) {
+                for (ItemModel items : dataList) {
                     if (inputSerial.equals(items.getSerialNumber())) {
                         found = true;
 

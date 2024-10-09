@@ -20,7 +20,7 @@ import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +30,8 @@ public class DataLoader extends AsyncTask<Void, Integer, Boolean> {
     private Context context;
     private DBHelper dbHelper;
     private ItemAdapter itemAdapter;
-    private ArrayList<Assigned_to_User_Model> deviceList;
-    private ArrayList<Assigned_to_User_Model> filteredList;
+    private ArrayList<ItemModel> deviceList;
+    private ArrayList<ItemModel> filteredList;
 
     private Dialog customLoading;
 
@@ -52,7 +52,7 @@ public class DataLoader extends AsyncTask<Void, Integer, Boolean> {
     public static TextView topSnackMessage;
     public static TextView topSnackDesc;
 
-    public DataLoader(Context context, LinearLayout main, DBHelper dbHelper, ItemAdapter itemAdapter, TextView textViewItemCount, ArrayList<Assigned_to_User_Model> deviceList) {
+    public DataLoader(Context context, LinearLayout main, DBHelper dbHelper, ItemAdapter itemAdapter, TextView textViewItemCount, ArrayList<ItemModel> deviceList) {
         this.main = main;
         this.dbHelper = dbHelper;
         this.context = context;
@@ -109,15 +109,15 @@ public class DataLoader extends AsyncTask<Void, Integer, Boolean> {
 
             filteredList = new ArrayList<>();
             filteredList.clear();
-            Log.d("TAG", "doInBackground: filteredList count " + filteredList.size());
+//            Log.d("TAG", "doInBackground: filteredList count " + filteredList.size());
 
             if (filteredList.isEmpty()) {
-                for (Assigned_to_User_Model device : deviceList) {
+                for (ItemModel device : deviceList) {
                     filteredList.add(device);
                     itemAdapter.setDeviceList(filteredList);
                     prog += 1;
                     publishProgress(prog);
-                    Thread.sleep(5);
+                    Thread.sleep(1);
                 }
             }
 
@@ -137,7 +137,7 @@ public class DataLoader extends AsyncTask<Void, Integer, Boolean> {
         int currentItemCount = values[0];
         TextView loadingText = customLoading.findViewById(R.id.loading_textView);
         loadingText.setText("Processing... [" + currentItemCount + "] items processed");
-        Log.d("TAG", "onProgressUpdate: " + filteredList.size());
+//        Log.d("TAG", "onProgressUpdate: " + filteredList.size());
         int cl = ContextCompat.getColor(context, R.color.primary);
         int cl1 = ContextCompat.getColor(context, R.color.txtHeaderLight);
         if (currentItemCount == filteredList.size()) {
@@ -146,7 +146,7 @@ public class DataLoader extends AsyncTask<Void, Integer, Boolean> {
         } else {
             loadingText.setTextColor(cl1);
         }
-        itemAdapter.notifyDataSetChanged();
+//        itemAdapter.notifyDataSetChanged();
     }
 
     public void setOnAfterAsync(AfterAsyncListener listener) {
@@ -164,6 +164,10 @@ public class DataLoader extends AsyncTask<Void, Integer, Boolean> {
                     customLoading.dismiss();
                 }
 
+                if (result) {
+                    itemAdapter.notifyDataSetChanged();
+                }
+
                 if (!result) {
                     getView(context);
                     topSnack_icon.setImageResource(R.drawable.warning_sign);
@@ -179,5 +183,9 @@ public class DataLoader extends AsyncTask<Void, Integer, Boolean> {
             }
         }, delayBeforeClosing);
 
+    }
+
+    public ArrayList<ItemModel> getFilteredList() {
+        return filteredList;
     }
 }

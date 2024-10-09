@@ -10,7 +10,7 @@
     tools:context=".activities.MainActivity">
 
     <include
-        android:id="@+id/nav_bar"
+        android:id="@+id/nav_bar_id"
         layout="@layout/nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

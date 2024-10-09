@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,8 +33,11 @@ import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 import com.example.qrscanner.utils.AfterAsyncListener;
+import com.example.qrscanner.utils.DeleteSelected;
+import com.example.qrscanner.utils.ExportSelectedDialogHelper;
+import com.example.qrscanner.utils.ExportSelectedItemToExcel;
 import com.example.qrscanner.utils.FilteredDataLoader;
 import com.example.qrscanner.utils.Utils;
 
@@ -42,19 +46,24 @@ import java.util.ArrayList;
 public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter.OnDeleteClickListener {
 
     private static final int YOUR_REQUEST_CODE = 1;
+    private static final int CREATE_FILE_REQUEST_CODE_SELECTED = 16169;
     private RecyclerView recyclerView;
     private ArrayList<String> serialNum, assignedTo, department, device, deviceModel, datePurchased, dateExpire, status, availability;
     private DBHelper dbHelper;
 
-    private ItemAdapter adapter;
-    private ArrayList<Assigned_to_User_Model> deviceList;
-    private ArrayList<Assigned_to_User_Model> filteredList;
+    private Uri selectedFileUri;
 
-    private TextView textViewInfo, textViewNoData, textViewItemCount;
+    private ItemAdapter adapter;
+    private ArrayList<ItemModel> deviceList;
+
+    private TextView textViewInfo, textViewNoData, textViewItemCount, textViewCountSelection;
     private CardView cardView_options;
     private ImageView currentActivity, settingsIcon, backBtn;
-    private ConstraintLayout constraintLayoutDeleteAll;
-    private LinearLayout main, cardViewContent;
+    private LinearLayout linearLayoutDeleteAll;
+    private LinearLayout main, linearContent;
+
+    private View spacerView;
+    private LinearLayout deselectID, deleteSelectedID, selectAllID, multiSelectID, exportSelected;
 
     private static View topSnackView;
     private static ImageView topSnack_icon;
@@ -62,6 +71,7 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
     private static TextView topSnackDesc;
 
     private String deviceType;
+
 
 
     @Override
@@ -81,37 +91,17 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
         settingsIcon.setImageResource(R.drawable.drop_down);
         backBtn = findViewById(R.id.backBtn);
         cardView_options = findViewById(R.id.cardView_options);
-        cardViewContent = findViewById(R.id.cardViewContent);
+        linearContent = findViewById(R.id.linearContent);
         textViewNoData = findViewById(R.id.textViewNoData);
+        linearLayoutDeleteAll = findViewById(R.id.linearLayoutDeleteAll);
         textViewItemCount = findViewById(R.id.textViewItemCount);
-
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
-        settingsIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int duration = 300;
-                Utils.smoothTransition(cardView_options, duration);
-                if (cardViewContent.getVisibility() == View.GONE) {
-                    Utils.rotateUp(settingsIcon);
-                    cardViewContent.setVisibility(View.VISIBLE);
-                    textViewItemCount.setVisibility(View.VISIBLE);
-                    Utils.expandCardView(cardView_options, duration);
-                } else {
-                    Utils.rotateDown(settingsIcon);
-                    cardViewContent.setVisibility(View.GONE);
-                    textViewItemCount.setVisibility(View.GONE);
-                    Utils.collapseCardView(cardView_options, cardView_options, duration);
-                }
-            }
-        });
-
+        textViewCountSelection = findViewById(R.id.textViewCountSelection);
+        spacerView = findViewById(R.id.spacerView);
+        selectAllID = findViewById(R.id.selectAllID);
+        deselectID = findViewById(R.id.deselectID);
+        deleteSelectedID = findViewById(R.id.deleteSelectedID);
+        exportSelected = findViewById(R.id.exportSelectedID);
+        multiSelectID = findViewById(R.id.multi_selectID);
 
 
         dbHelper = new DBHelper(this);
@@ -128,7 +118,7 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
         availability = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerView);
 
-        adapter = new ItemAdapter( R.layout.info_layout, this, deviceList, device, serialNum, assignedTo, department, deviceModel, datePurchased, dateExpire, status, availability, this::onDeleteClick, this::onEditClick);
+        adapter = new ItemAdapter( R.layout.info_layout, this, main, deviceList, device, serialNum, assignedTo, department, deviceModel, datePurchased, dateExpire, status, availability, this::onDeleteClick, this::onEditClick);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -148,8 +138,88 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
         Drawable drawable = new BitmapDrawable(bitmap);
         currentActivity.setImageDrawable(drawable);
 
-        constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
-        constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
+        if (adapter.getItemCount() == 0) {
+            textViewNoData.setVisibility(View.VISIBLE);
+        } else {
+            textViewNoData.setVisibility(View.GONE);
+        }
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
+        settingsIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int duration = 300;
+                Utils.smoothTransition(cardView_options, duration);
+                if (linearContent.getVisibility() == View.GONE) {
+                    Utils.rotateUp(settingsIcon);
+                    linearContent.setVisibility(View.VISIBLE);
+                    textViewItemCount.setVisibility(View.VISIBLE);
+                    spacerView.setVisibility(View.VISIBLE);
+                    Utils.expandCardView(cardView_options, duration);
+                } else {
+                    Utils.rotateDown(settingsIcon);
+                    linearContent.setVisibility(View.GONE);
+                    textViewItemCount.setVisibility(View.GONE);
+                    spacerView.setVisibility(View.GONE);
+                    Utils.collapseCardView(cardView_options, cardView_options, duration);
+                }
+            }
+        });
+
+        selectAllID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.selectAll(filter.getFilteredList());
+            }
+        });
+
+        multiSelectID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.enableMultiSelect();
+            }
+        });
+
+        deselectID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.clearSelection();
+
+                adapter.updateSelectionCount();
+                adapter.refreshSelectionOption();
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        deleteSelectedID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteSelected deleteSelected = new DeleteSelected(GadgetTypeActivity.this, adapter, main);
+                deleteSelected.execute();
+                adapter.disableMultiSelect();
+                Utils.getSelectedItemCounter(GadgetTypeActivity.this, textViewItemCount);
+            }
+        });
+
+        exportSelected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getView(GadgetTypeActivity.this);
+                ExportSelectedDialogHelper exportDialogHelper = new ExportSelectedDialogHelper(GadgetTypeActivity.this, GadgetTypeActivity.this, adapter, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc);
+                exportDialogHelper.promptExportWithFileName();
+            }
+        });
+
+
+
+        linearLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
@@ -169,6 +239,8 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
         });
 
         filter.execute();
+
+        Utils.getItemCounterInAdapter(adapter, textViewItemCount);
 
     }
 
@@ -194,6 +266,12 @@ public class GadgetTypeActivity extends AppCompatActivity implements ItemAdapter
         super.onActivityResult(requestCode, resultCode, data);
         String keyIdentical = "No differences found";
         String keyDifferent = "Difference found";
+
+        if (requestCode == CREATE_FILE_REQUEST_CODE_SELECTED && resultCode == RESULT_OK && data != null) {
+            Uri selectedFileUriSelection = data.getData();
+            new ExportSelectedItemToExcel(GadgetTypeActivity.this, main, adapter, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUriSelection);
+        }
+
 
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             getView(GadgetTypeActivity.this);

@@ -15,14 +15,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ import java.util.Date;
 
 public class FilteredDataLoader {
 
-    private static int sleepTime = 5;
+    private static int sleepTime = 1;
     private static int delayBeforeClosing = 1000;
 
     public static View topSnackView;
@@ -53,8 +52,8 @@ public class FilteredDataLoader {
         private Context context;
         private DBHelper dbHelper;
         private ItemAdapter itemAdapter;
-        private ArrayList<Assigned_to_User_Model> deviceList;
-        private ArrayList<Assigned_to_User_Model> filteredList;
+        private ArrayList<ItemModel> deviceList;
+        private ArrayList<ItemModel> filteredList;
 
         private Dialog customLoading;
 
@@ -68,7 +67,7 @@ public class FilteredDataLoader {
 
         private boolean isEmpty = true;
 
-        public UnknownUserFilteredDataLoader(Context context, DBHelper dbHelper, View main, ItemAdapter itemAdapter, ArrayList<Assigned_to_User_Model> deviceList, TextView textViewItemCount) {
+        public UnknownUserFilteredDataLoader(Context context, DBHelper dbHelper, View main, ItemAdapter itemAdapter, ArrayList<ItemModel> deviceList, TextView textViewItemCount) {
             this.context = context;
             this.dbHelper = dbHelper;
             this.main = (LinearLayout) main;
@@ -124,7 +123,7 @@ public class FilteredDataLoader {
                 if (filteredList.isEmpty()) {
                     boolean hasNoUser = true;
                     // Iterate through the original list and add items that match the criteria to the filtered list
-                    for (Assigned_to_User_Model device : deviceList) {
+                    for (ItemModel device : deviceList) {
                         // Assuming device contains the name of the gadget
                         String userName = device.getUserName();
                         Log.d("TAG", "userName: " + userName);
@@ -213,6 +212,10 @@ public class FilteredDataLoader {
             return isEmpty;
         }
 
+        public ArrayList<ItemModel> getFilteredList() {
+            return filteredList;
+        }
+
     }
 
 
@@ -226,8 +229,8 @@ public class FilteredDataLoader {
         private Context context;
         private DBHelper dbHelper;
         private ItemAdapter itemAdapter;
-        private ArrayList<Assigned_to_User_Model> deviceList;
-        private ArrayList<Assigned_to_User_Model> filteredList;
+        private ArrayList<ItemModel> deviceList;
+        private ArrayList<ItemModel> filteredList;
 
         private Dialog customLoading;
 
@@ -242,7 +245,7 @@ public class FilteredDataLoader {
 
         private boolean isEmpty = true;
 
-        public ExpiredDevice(Context context, DBHelper dbHelper, View main, ItemAdapter itemAdapter, ArrayList<Assigned_to_User_Model> deviceList, TextView textViewItemCount) {
+        public ExpiredDevice(Context context, DBHelper dbHelper, View main, ItemAdapter itemAdapter, ArrayList<ItemModel> deviceList, TextView textViewItemCount) {
             this.context = context;
             this.dbHelper = dbHelper;
             this.main = (LinearLayout) main;
@@ -295,7 +298,7 @@ public class FilteredDataLoader {
                 } else {
                     boolean noExpiredDevices = true;
                     // Iterate through the original list and add items that match the criteria to the filtered list
-                    for (Assigned_to_User_Model device : deviceList) {
+                    for (ItemModel device : deviceList) {
                         String input = device.getDatePurchased();
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
                         Date dateInput = dateFormat.parse(input);
@@ -393,6 +396,10 @@ public class FilteredDataLoader {
             return isEmpty;
         }
 
+        public ArrayList<ItemModel> getFilteredList() {
+            return filteredList;
+        }
+
     }
 
 
@@ -407,8 +414,8 @@ public class FilteredDataLoader {
         private DBHelper dbHelper;
         private String filterKey;
         private ItemAdapter itemAdapter;
-        private ArrayList<Assigned_to_User_Model> deviceList;
-        private ArrayList<Assigned_to_User_Model> filteredList;
+        private ArrayList<ItemModel> deviceList;
+        private ArrayList<ItemModel> filteredList;
 
         private Dialog customLoading;
 
@@ -423,7 +430,7 @@ public class FilteredDataLoader {
         private boolean isEmpty = true;
 
 
-        public DeviceFilteredDataLoader(Context context, DBHelper dbHelper, View main, ItemAdapter itemAdapter, @NonNull String filterKey,  ArrayList<Assigned_to_User_Model> deviceList, TextView textViewItemCount) {
+        public DeviceFilteredDataLoader(Context context, DBHelper dbHelper, View main, ItemAdapter itemAdapter, @NonNull String filterKey, ArrayList<ItemModel> deviceList, TextView textViewItemCount) {
             this.context = context;
             this.filterKey = filterKey;
             this.dbHelper = dbHelper;
@@ -481,7 +488,7 @@ public class FilteredDataLoader {
                 } else {
                     boolean noFilterKey = true;
                     // Iterate through the original list and add items that match the criteria to the filtered list
-                    for (Assigned_to_User_Model device : deviceList) {
+                    for (ItemModel device : deviceList) {
                         // Assuming device contains the name of the gadget
                         String deviceName = device.getDeviceType();
                         // Check if the device name contains "laptop" (case-insensitive)
@@ -579,6 +586,10 @@ public class FilteredDataLoader {
 
         public Boolean isEmpty() {
             return isEmpty;
+        }
+
+        public ArrayList<ItemModel> getFilteredList() {
+            return filteredList;
         }
 
     }

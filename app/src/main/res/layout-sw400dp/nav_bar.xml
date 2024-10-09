@@ -30,7 +30,6 @@
             style="@style/sizeIC2"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_margin="@dimen/padding_2"
             android:src="@drawable/laptop_icon"
             android:visibility="visible" />
 
@@ -91,40 +90,12 @@
                 android:visibility="gone">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintDeleteAll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="24dp">
-
-                    <ImageView
-                        android:id="@+id/deleteIC"
-                        style="@style/deleteIC"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/trash_can_10416"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        style="@style/textStyleConstantColorRed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Delete all"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/deleteIC"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/sortConstraint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="16dp"
-                    android:paddingVertical="26dp">
+                    android:paddingVertical="26dp"
+                    android:visibility="gone">
 
                     <TextView
                         style="@style/textStyle_info_bold_opaque"
@@ -141,14 +112,13 @@
                 <View
                     style="@style/divider"
                     android:layout_width="match_parent"
-                    android:layout_height="2dp" />
+                    android:layout_height="2dp"
+                    android:visibility="gone"/>
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="24dp">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/textViewItemCount"
@@ -156,13 +126,146 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Item Count: "
+                        android:layout_marginStart="@dimen/padding_16"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/linearLayoutDeleteAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="24dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/deleteIC"
+                            style="@style/deleteIC"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/trash_can_10416"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            style="@style/textStyleConstantColorRed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Delete all"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/deleteIC"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <View
+            android:id="@+id/spacerView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_16"
+            android:visibility="gone"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/selectionCardOp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/itemBG">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/selectionConstraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/textViewCountSelection"
+                    style="@style/SubTitle_14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Seleted Items: "
+                    app:layout_constraintBottom_toTopOf="@+id/view4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view4"
+                    style="@style/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/deselectID"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/padding_12"
+                    android:paddingVertical="@dimen/padding_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/deleteSelectedID"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view4">
+
+                    <ImageView
+                        android:id="@+id/clearSelection"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="@dimen/padding_4"
+                        android:src="@drawable/radio_unchecked" />
+
+                    <TextView
+                        android:id="@+id/deselect"
+                        style="@style/EditText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Deselect Selected" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/deleteSelectedID"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/padding_12"
+                    android:paddingVertical="@dimen/padding_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/deselectID"
+                    app:layout_constraintTop_toBottomOf="@+id/view4">
+
+                    <ImageView
+                        android:id="@+id/deleteIC2"
+                        style="@style/deleteIC"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/trash_can_10416" />
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        style="@style/textStyleConstantColorRed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Selected" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
 

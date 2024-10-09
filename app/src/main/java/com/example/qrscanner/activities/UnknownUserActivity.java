@@ -3,7 +3,7 @@ package com.example.qrscanner.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -31,8 +30,11 @@ import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 import com.example.qrscanner.utils.AfterAsyncListener;
+import com.example.qrscanner.utils.DeleteSelected;
+import com.example.qrscanner.utils.ExportSelectedDialogHelper;
+import com.example.qrscanner.utils.ExportSelectedItemToExcel;
 import com.example.qrscanner.utils.FilteredDataLoader;
 import com.example.qrscanner.utils.Utils;
 
@@ -41,26 +43,28 @@ import java.util.ArrayList;
 public class UnknownUserActivity extends AppCompatActivity {
 
     private static final int YOUR_REQUEST_CODE = 1;
+    private static final int CREATE_FILE_REQUEST_CODE_SELECTED = 16169;
     private RecyclerView recyclerView;
     private ArrayList<String> serialNum, assignedTo, department, device, deviceModel, datePurchased, dateExpire, status, availability;
     private DBHelper dbHelper;
 
     private ItemAdapter adapter;
-    private ArrayList<Assigned_to_User_Model> deviceList;
-    private ArrayList<Assigned_to_User_Model> filteredList;
+    private ArrayList<ItemModel> deviceList;
+    private ArrayList<ItemModel> filteredList;
 
-    private TextView textViewInfo, textViewNoData, textViewItemCount;
+    private TextView textViewInfo, textViewNoData, textViewItemCount, textViewCountSelection;
     private CardView cardView_options;
     private ImageView currentActivity, currentActivity2, settingsIcon, backBtn;
-    private ConstraintLayout constraintLayoutDeleteAll;
-    private LinearLayout main, cardViewContent;
+    private LinearLayout linearLayoutDeleteAll;
+    private LinearLayout main, linearContent;
 
     private static View topSnackView;
     private static ImageView topSnack_icon;
     private static TextView topSnackMessage;
     private static TextView topSnackDesc;
 
-
+    private View spacerView;
+    private LinearLayout deselectID, deleteSelectedID, selectAllID, multiSelectID, exportSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,39 +83,19 @@ public class UnknownUserActivity extends AppCompatActivity {
         settingsIcon.setImageResource(R.drawable.drop_down);
         backBtn = findViewById(R.id.backBtn);
         cardView_options = findViewById(R.id.cardView_options);
-        cardViewContent = findViewById(R.id.cardViewContent);
+        linearContent = findViewById(R.id.linearContent);
         textViewNoData = findViewById(R.id.textViewNoData);
+        linearLayoutDeleteAll = findViewById(R.id.linearLayoutDeleteAll);
         textViewItemCount = findViewById(R.id.textViewItemCount);
+        textViewCountSelection = findViewById(R.id.textViewCountSelection);
+        spacerView = findViewById(R.id.spacerView);
+        selectAllID = findViewById(R.id.selectAllID);
+        deselectID = findViewById(R.id.deselectID);
+        deleteSelectedID = findViewById(R.id.deleteSelectedID);
+        exportSelected = findViewById(R.id.exportSelectedID);
+        multiSelectID = findViewById(R.id.multi_selectID);
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
-        settingsIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int initialHeight = cardView_options.getHeight();
-                int duration = 300;
-                Utils.smoothTransition(cardView_options, duration);
-                if (cardViewContent.getVisibility() == View.GONE) {
-                    Utils.rotateUp(settingsIcon);
-                    cardViewContent.setVisibility(View.VISIBLE);
-                    textViewItemCount.setVisibility(View.VISIBLE);
-                    Utils.expandCardView(cardView_options, duration);
-                } else {
-                    Utils.rotateDown(settingsIcon);
-                    cardViewContent.setVisibility(View.GONE);
-                    textViewItemCount.setVisibility(View.GONE);
-                    Utils.collapseCardView(cardView_options, cardView_options, duration);
-                }
-            }
-        });
-
-
+        linearLayoutDeleteAll = findViewById(R.id.linearLayoutDeleteAll);
 
         dbHelper = new DBHelper(this);
         deviceList = dbHelper.fetchDevice();
@@ -127,7 +111,7 @@ public class UnknownUserActivity extends AppCompatActivity {
         availability = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerView);
 
-        adapter = new ItemAdapter( R.layout.info_layout, this, deviceList, device, serialNum, assignedTo, department, deviceModel, datePurchased, dateExpire, status, availability, this::onDeleteClick, this::onEditClick);
+        adapter = new ItemAdapter( R.layout.info_layout, this, main, deviceList, device, serialNum, assignedTo, department, deviceModel, datePurchased, dateExpire, status, availability, this::onDeleteClick, this::onEditClick);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -140,6 +124,7 @@ public class UnknownUserActivity extends AppCompatActivity {
         currentActivity2 = findViewById(R.id.currentActivity2);
         currentActivity2.setVisibility(View.VISIBLE);
         currentActivity2.setImageResource(R.drawable.user_unknown);
+
         int cl1 = ContextCompat.getColor(UnknownUserActivity.this, R.color.txtHeaderLight);
         int cl2 = ContextCompat.getColor(UnknownUserActivity.this, R.color.txtHeader);
         if ((UnknownUserActivity.this.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
@@ -148,15 +133,96 @@ public class UnknownUserActivity extends AppCompatActivity {
             currentActivity2.setColorFilter(cl2);
         }
 
-        constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
-        constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
+
+        if (adapter.getItemCount() == 0) {
+            textViewNoData.setVisibility(View.VISIBLE);
+        } else {
+            textViewNoData.setVisibility(View.GONE);
+        }
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
+        settingsIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int initialHeight = cardView_options.getHeight();
+                int duration = 300;
+                Utils.smoothTransition(cardView_options, duration);
+                if (linearContent.getVisibility() == View.GONE) {
+                    Utils.rotateUp(settingsIcon);
+                    linearContent.setVisibility(View.VISIBLE);
+                    textViewItemCount.setVisibility(View.VISIBLE);
+                    spacerView.setVisibility(View.VISIBLE);
+                    Utils.expandCardView(cardView_options, duration);
+                } else {
+                    Utils.rotateDown(settingsIcon);
+                    linearContent.setVisibility(View.GONE);
+                    textViewItemCount.setVisibility(View.GONE);
+                    spacerView.setVisibility(View.GONE);
+                    Utils.collapseCardView(cardView_options, cardView_options, duration);
+                }
+            }
+        });
+
+        selectAllID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.selectAll(filter.getFilteredList());
+            }
+        });
+
+        multiSelectID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.enableMultiSelect();
+            }
+        });
+
+        deselectID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.clearSelection();
+
+                adapter.updateSelectionCount();
+                adapter.refreshSelectionOption();
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        deleteSelectedID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteSelected deleteSelected = new DeleteSelected(UnknownUserActivity.this, adapter, main);
+                deleteSelected.execute();
+                FilteredDataLoader.UnknownUserFilteredDataLoader filter = (FilteredDataLoader.UnknownUserFilteredDataLoader) new FilteredDataLoader.UnknownUserFilteredDataLoader(UnknownUserActivity.this, dbHelper, main, adapter, deviceList, textViewItemCount);
+                filter.execute();
+                Utils.getSelectedItemCounter(UnknownUserActivity.this, textViewCountSelection);
+            }
+        });
+
+        exportSelected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getView(UnknownUserActivity.this);
+                ExportSelectedDialogHelper exportDialogHelper = new ExportSelectedDialogHelper(UnknownUserActivity.this, UnknownUserActivity.this, adapter, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc);
+                exportDialogHelper.promptExportWithFileName();
+            }
+        });
+
+
+        linearLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
                     if (!filter.isEmpty()) {
                         String identifier = "unknown user device";
                         Utils.showDeleteAllDialog(UnknownUserActivity.this, identifier, adapter, main);
-                        adapter.notifyDataSetChanged();
                     } else if (adapter.getItemCount() == 0) {
                         getView(UnknownUserActivity.this);
                         topSnack_icon.setImageResource(R.drawable.warning_sign);
@@ -170,6 +236,8 @@ public class UnknownUserActivity extends AppCompatActivity {
         });
 
         filter.execute();
+
+        Utils.getItemCounterInAdapter(adapter, textViewItemCount);
 
     }
 
@@ -189,12 +257,24 @@ public class UnknownUserActivity extends AppCompatActivity {
         topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
     }
 
+    private void itemCounter() {
+        deviceList = dbHelper.fetchDevice();
+        String deviceCount = String.valueOf(deviceList.size());
+        textViewItemCount.setText("Item Count: " + deviceCount);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String keyIdentical = "No differences found";
         String keyDifferent = "Difference found";
+
+        if (requestCode == CREATE_FILE_REQUEST_CODE_SELECTED && resultCode == RESULT_OK && data != null) {
+            Uri selectedFileUriSelection = data.getData();
+            new ExportSelectedItemToExcel(UnknownUserActivity.this, main, adapter, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUriSelection);
+        }
+
 
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             getView(UnknownUserActivity.this);

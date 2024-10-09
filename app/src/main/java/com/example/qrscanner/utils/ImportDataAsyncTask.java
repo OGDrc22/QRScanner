@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
+public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, String> {
 
     private Context context;
 
@@ -86,7 +86,10 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(Uri... uris) {
+    protected String doInBackground(Uri... uris) {
+
+        String r = "";
+
         Uri selectedFileUri = uris[0];
 
         try {
@@ -111,9 +114,19 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
             }
 
             // Check for required headers
+//            The contains method does not require an exact match. It checks if the specified substring exists anywhere within the target string.
+//            For example:
+//                  If header is "Content-Type" and keyword is "type", the condition will evaluate to true.
+//                  If header is "Authorization" and keyword is "auth", the condition will also evaluate to true.
+
             if (!containsKeyword(headerMap, "Serial")) {
                 throw new IllegalArgumentException("Missing required header: Serial");
+            } else if (!containsKeyword(headerMap, "Service Tag")) {
+                throw new IllegalArgumentException("Missing required header: Serial or Service Tag");
+            } else if (!containsKeyword(headerMap, "IMEI")) {
+                throw new IllegalArgumentException("Missing required header: IMEI");
             }
+
             if (!containsKeyword(headerMap, "User") && !containsKeyword(headerMap, "Assigned To") && !containsKeyword(headerMap, "Name")) {
                 throw new IllegalArgumentException("Missing required header: Name or User or ");
             }
@@ -152,8 +165,12 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
 
                 String availability;
                 if (!name.isEmpty()) {
-                    availability = "In Use";
-                } else {
+                    if (name.equalsIgnoreCase("available")){
+                        availability = "In Stock";
+                    } else {
+                        availability = "In Use";
+                    }
+                } else{
                     availability = "In Stock";
                 }
 
@@ -240,16 +257,24 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
                 Thread.sleep(50);
                 itemCount++;
                 publishProgress(itemCount);
+                r = "Success";
+
             }
 
-            return true; // Indicate successful completion
+            return r;
+
+//            return true; // Indicate successful completion
 
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+//            return false;
+            r = e.getMessage();
+            return r;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+//            return false;
+            r = e.getMessage();
+            return r;
         }
     }
 
@@ -263,14 +288,14 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
     }
 
     @Override
-    protected void onPostExecute(Boolean result) {
+    protected void onPostExecute(String result) {
         super.onPostExecute(result);
         // Dismiss loading animation
         if (customLoading.isShowing()) {
             customLoading.dismiss();
         }
 
-        if (result) {
+        if (result.equalsIgnoreCase("success")) {
             topSnack_icon.setImageResource(R.drawable.check);
             topSnackMessage.setText("Data imported successfully");
             String item = "Item";
@@ -283,6 +308,8 @@ public class ImportDataAsyncTask extends AsyncTask<Uri, Integer, Boolean> {
         } else {
             topSnack_icon.setImageResource(R.drawable.warning_sign);
             topSnackMessage.setText("Error importing data");
+            topSnackDesc.setVisibility(View.VISIBLE);
+            topSnackDesc.setText(result);
             TopSnack.createCustomTopSnack(context, main, topSnackView, null, null, true, "up");
         }
     }

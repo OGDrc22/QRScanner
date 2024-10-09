@@ -15,14 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/center"
-            android:layout_width="1dp"
-            android:layout_height="24dp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <FrameLayout
             android:id="@+id/topUserF"
@@ -106,9 +98,11 @@
             android:id="@+id/textSN_F"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_marginTop="@dimen/padding_12"
+            app:layout_constraintBottom_toBottomOf="@+id/headerF"
             app:layout_constraintStart_toEndOf="@+id/linearLayout5"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/imgScan_Frame">
 
             <TextView
                 android:id="@+id/textSN"
@@ -116,7 +110,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Serial Number"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/imgScan_Frame"
                 app:layout_constraintStart_toEndOf="@+id/linearLayout5"
                 app:layout_constraintTop_toTopOf="@+id/imgScan_Frame" />
@@ -178,342 +171,364 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/connector"
-            style="@style/sizeIC2"
-            android:layout_marginStart="@dimen/padding_16"
-            android:src="@drawable/ic_vertical_lines"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imgScan_Frame" />
-
-        <ImageView
-            android:id="@+id/assignedToIC"
-            style="@style/sizeIC2"
-            android:src="@drawable/user_bulk_48"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/connector"
-            app:layout_constraintStart_toStartOf="@+id/connector"
-            app:layout_constraintTop_toBottomOf="@+id/connector" />
-
-        <TextView
-            android:id="@+id/hintAssignedTo"
-            style="@style/Identifier_text_upper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Assigned To"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/assignedToIC"
-            app:layout_constraintStart_toEndOf="@+id/assignedToIC"
-            app:layout_constraintTop_toTopOf="@+id/assignedToIC" />
-
-        <TextView
-            android:id="@+id/textHolderAssignedTo"
-            style="@style/textStyle_info_bold_opaque"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxEms="11"
-            android:text="Unassigned"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/assignedToIC"
-            app:layout_constraintStart_toStartOf="@+id/hintAssignedTo"
-            app:layout_constraintTop_toBottomOf="@+id/hintAssignedTo" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintDepartment"
-            android:layout_width="wrap_content"
+            android:id="@+id/other"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/assignedToIC"
-            app:layout_constraintStart_toEndOf="@+id/center"
-            app:layout_constraintTop_toTopOf="@+id/assignedToIC">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgScan_Frame"
+            android:visibility="gone">
 
-            <ImageView
-                android:id="@+id/imgVwDepartment"
-                style="@style/sizeIC2"
-                android:layout_marginTop="@dimen/padding_8"
-                android:src="@drawable/ic_department"
+            <View
+                android:id="@+id/center"
+                android:layout_width="1dp"
+                android:layout_height="24dp"
                 android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/connector"
+                style="@style/sizeIC2"
+                android:layout_marginStart="@dimen/padding_16"
+                android:src="@drawable/ic_vertical_lines"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imgScan_Frame" />
+
+            <ImageView
+                android:id="@+id/assignedToIC"
+                style="@style/sizeIC2"
+                android:src="@drawable/user_bulk_48"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/connector"
+                app:layout_constraintStart_toStartOf="@+id/connector"
+                app:layout_constraintTop_toBottomOf="@+id/connector" />
+
             <TextView
-                android:id="@+id/hintDepartment"
+                android:id="@+id/hintAssignedTo"
+                style="@style/Identifier_text_upper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Assigned To"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/assignedToIC"
+                app:layout_constraintStart_toEndOf="@+id/assignedToIC"
+                app:layout_constraintTop_toTopOf="@+id/assignedToIC" />
+
+            <TextView
+                android:id="@+id/textHolderAssignedTo"
+                style="@style/textStyle_info_bold_opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxEms="11"
+                android:text="Unassigned"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/assignedToIC"
+                app:layout_constraintStart_toStartOf="@+id/hintAssignedTo"
+                app:layout_constraintTop_toBottomOf="@+id/hintAssignedTo" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintDepartment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_16"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/assignedToIC"
+                app:layout_constraintStart_toEndOf="@+id/center"
+                app:layout_constraintTop_toTopOf="@+id/assignedToIC">
+
+                <ImageView
+                    android:id="@+id/imgVwDepartment"
+                    style="@style/sizeIC2"
+                    android:layout_marginTop="@dimen/padding_8"
+                    android:src="@drawable/ic_department"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/hintDepartment"
+                    style="@style/Identifier_text_upper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding_16"
+                    android:text="Department"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toEndOf="@+id/imgVwDepartment"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textHolderDepartment"
+                    style="@style/textStyle_info_bold_opaque"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:maxEms="8"
+                    android:maxLines="1"
+                    android:text="Department"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@+id/imgVwDepartment"
+                    app:layout_constraintStart_toStartOf="@+id/hintDepartment"
+                    app:layout_constraintTop_toBottomOf="@+id/hintDepartment" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/connector2"
+                style="@style/sizeIC2"
+                android:src="@drawable/ic_vertical_lines"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/assignedToIC"
+                app:layout_constraintStart_toStartOf="@+id/assignedToIC"
+                app:layout_constraintTop_toBottomOf="@+id/assignedToIC" />
+
+            <ImageView
+                android:id="@+id/deviceTypeIC"
+                style="@style/sizeIC2"
+                android:src="@drawable/device_model"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/connector2"
+                app:layout_constraintStart_toStartOf="@+id/connector2"
+                app:layout_constraintTop_toBottomOf="@+id/connector2" />
+
+            <TextView
+                android:id="@+id/hintDeviceType"
+                style="@style/Identifier_text_upper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Device Type"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/deviceTypeIC"
+                app:layout_constraintStart_toEndOf="@+id/deviceTypeIC"
+                app:layout_constraintTop_toTopOf="@+id/deviceTypeIC" />
+
+            <TextView
+                android:id="@+id/textHolderDeviceType"
+                style="@style/textStyle_info_bold_opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device Type"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/deviceTypeIC"
+                app:layout_constraintStart_toStartOf="@+id/hintDeviceType"
+                app:layout_constraintTop_toBottomOf="@+id/hintDeviceType" />
+
+            <ImageView
+                android:id="@+id/connector4"
+                style="@style/sizeIC2"
+                android:layout_marginStart="@dimen/padding_16"
+                android:src="@drawable/ic_vertical_lines"
+                android:visibility="visible"
+                app:layout_constraintStart_toEndOf="@+id/center"
+                app:layout_constraintTop_toBottomOf="@+id/constraintDepartment" />
+
+            <ImageView
+                android:id="@+id/deviceModelIC"
+                style="@style/sizeIC2"
+                android:layout_marginStart="@dimen/padding_16"
+                android:src="@drawable/device_model"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/deviceTypeIC"
+                app:layout_constraintStart_toEndOf="@+id/center"
+                app:layout_constraintTop_toTopOf="@+id/deviceTypeIC" />
+
+            <TextView
+                android:id="@+id/hintDeviceModel"
                 style="@style/Identifier_text_upper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/padding_16"
-                android:text="Department"
+                android:text="Device Model"
                 android:visibility="visible"
-                app:layout_constraintStart_toEndOf="@+id/imgVwDepartment"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toTopOf="@+id/deviceModelIC"
+                app:layout_constraintStart_toEndOf="@+id/deviceModelIC"
+                app:layout_constraintTop_toTopOf="@+id/deviceModelIC" />
 
             <TextView
-                android:id="@+id/textHolderDepartment"
+                android:id="@+id/textHolderDeviceModel"
                 style="@style/textStyle_info_bold_opaque"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:maxEms="8"
                 android:maxLines="1"
-                android:text="Department"
+                android:text="Device Model"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/imgVwDepartment"
-                app:layout_constraintStart_toStartOf="@+id/hintDepartment"
-                app:layout_constraintTop_toBottomOf="@+id/hintDepartment" />
+                app:layout_constraintBottom_toBottomOf="@+id/deviceModelIC"
+                app:layout_constraintStart_toStartOf="@+id/hintDeviceModel"
+                app:layout_constraintTop_toBottomOf="@+id/hintDeviceModel" />
+
+            <ImageView
+                android:id="@+id/imgVwDatePur"
+                style="@style/sizeIC2"
+                android:src="@drawable/ic_calendar"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/connector3"
+                app:layout_constraintStart_toStartOf="@+id/connector3"
+                app:layout_constraintTop_toBottomOf="@+id/connector3" />
+
+            <TextView
+                android:id="@+id/hintDatePurchased"
+                style="@style/Identifier_text_upper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Date Purchased"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/imgVwDatePur"
+                app:layout_constraintStart_toEndOf="@+id/imgVwDatePur"
+                app:layout_constraintTop_toTopOf="@+id/imgVwDatePur" />
+
+            <TextView
+                android:id="@+id/textHolderDatePur"
+                style="@style/textStyle_info_bold_opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date Purchased"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/imgVwDatePur"
+                app:layout_constraintStart_toStartOf="@+id/hintDatePurchased"
+                app:layout_constraintTop_toBottomOf="@+id/hintDatePurchased" />
+
+            <ImageView
+                android:id="@+id/connector3"
+                style="@style/sizeIC2"
+                android:src="@drawable/ic_vertical_lines"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/deviceTypeIC"
+                app:layout_constraintStart_toStartOf="@+id/deviceTypeIC"
+                app:layout_constraintTop_toBottomOf="@+id/deviceTypeIC" />
+
+            <ImageView
+                android:id="@+id/connector5"
+                style="@style/sizeIC2"
+                android:layout_marginStart="@dimen/padding_16"
+                android:src="@drawable/ic_vertical_lines"
+                android:visibility="visible"
+                app:layout_constraintStart_toEndOf="@+id/center"
+                app:layout_constraintTop_toBottomOf="@+id/deviceModelIC" />
+
+            <ImageView
+                android:id="@+id/imgVwDateExpired"
+                style="@style/sizeIC2"
+                android:layout_marginStart="@dimen/padding_16"
+                android:src="@drawable/ic_expiration"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/imgVwDatePur"
+                app:layout_constraintStart_toEndOf="@+id/center"
+                app:layout_constraintTop_toTopOf="@+id/imgVwDatePur" />
+
+            <TextView
+                android:id="@+id/hintExpirationDate"
+                style="@style/Identifier_text_upper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Expiration Date"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/imgVwDateExpired"
+                app:layout_constraintStart_toEndOf="@+id/imgVwDateExpired"
+                app:layout_constraintTop_toTopOf="@+id/imgVwDateExpired" />
+
+            <TextView
+                android:id="@+id/textHolderDateExpired"
+                style="@style/textStyle_info_bold_opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expiration"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/imgVwDateExpired"
+                app:layout_constraintStart_toStartOf="@+id/hintExpirationDate"
+                app:layout_constraintTop_toBottomOf="@+id/hintExpirationDate" />
+
+            <ImageView
+                android:id="@+id/connector6"
+                style="@style/sizeIC2"
+                android:src="@drawable/ic_vertical_lines"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/imgVwDatePur"
+                app:layout_constraintStart_toStartOf="@+id/imgVwDatePur"
+                app:layout_constraintTop_toBottomOf="@+id/imgVwDatePur" />
+
+            <ImageView
+                android:id="@+id/imgVwStatus"
+                style="@style/sizeIC2"
+                android:src="@drawable/ic_reload"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/connector6"
+                app:layout_constraintStart_toStartOf="@+id/connector6"
+                app:layout_constraintTop_toBottomOf="@+id/connector6" />
+
+            <TextView
+                android:id="@+id/hintStatus"
+                style="@style/Identifier_text_upper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_16"
+                android:text="Status"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/imgVwStatus"
+                app:layout_constraintStart_toEndOf="@+id/imgVwStatus"
+                app:layout_constraintTop_toTopOf="@+id/imgVwStatus" />
+
+            <TextView
+                android:id="@+id/textHolderStatus"
+                style="@style/textStyle_info_bold_opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_16"
+                android:text="Status"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/imgVwStatus"
+                app:layout_constraintStart_toEndOf="@+id/imgVwStatus"
+                app:layout_constraintTop_toBottomOf="@+id/hintStatus" />
+
+            <ImageView
+                android:id="@+id/connector7"
+                style="@style/sizeIC2"
+                android:layout_marginStart="@dimen/padding_16"
+                android:src="@drawable/ic_vertical_lines"
+                android:visibility="visible"
+                app:layout_constraintStart_toEndOf="@+id/center"
+                app:layout_constraintTop_toBottomOf="@+id/imgVwDateExpired" />
+
+            <ImageView
+                android:id="@+id/imgVwAvailability"
+                style="@style/sizeIC2"
+                android:src="@drawable/ic_stocks"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/connector7"
+                app:layout_constraintStart_toStartOf="@+id/connector7"
+                app:layout_constraintTop_toBottomOf="@+id/connector7" />
+
+            <TextView
+                android:id="@+id/hintAvailability"
+                style="@style/Identifier_text_upper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_16"
+                android:text="Availability"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/imgVwAvailability"
+                app:layout_constraintStart_toEndOf="@+id/imgVwAvailability"
+                app:layout_constraintTop_toTopOf="@+id/imgVwAvailability" />
+
+            <TextView
+                android:id="@+id/textHolderAvailability"
+                style="@style/textStyle_info_bold_opaque"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_16"
+                android:text="Availability"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/imgVwAvailability"
+                app:layout_constraintStart_toEndOf="@+id/imgVwAvailability"
+                app:layout_constraintTop_toBottomOf="@+id/hintAvailability" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <ImageView
-            android:id="@+id/connector2"
-            style="@style/sizeIC2"
-            android:src="@drawable/ic_vertical_lines"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/assignedToIC"
-            app:layout_constraintStart_toStartOf="@+id/assignedToIC"
-            app:layout_constraintTop_toBottomOf="@+id/assignedToIC" />
-
-        <ImageView
-            android:id="@+id/deviceTypeIC"
-            style="@style/sizeIC2"
-            android:src="@drawable/device_model"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/connector2"
-            app:layout_constraintStart_toStartOf="@+id/connector2"
-            app:layout_constraintTop_toBottomOf="@+id/connector2" />
-
-        <TextView
-            android:id="@+id/hintDeviceType"
-            style="@style/Identifier_text_upper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Device Type"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/deviceTypeIC"
-            app:layout_constraintStart_toEndOf="@+id/deviceTypeIC"
-            app:layout_constraintTop_toTopOf="@+id/deviceTypeIC" />
-
-        <TextView
-            android:id="@+id/textHolderDeviceType"
-            style="@style/textStyle_info_bold_opaque"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Device Type"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/deviceTypeIC"
-            app:layout_constraintStart_toStartOf="@+id/hintDeviceType"
-            app:layout_constraintTop_toBottomOf="@+id/hintDeviceType" />
-
-        <ImageView
-            android:id="@+id/connector4"
-            style="@style/sizeIC2"
-            android:layout_marginStart="@dimen/padding_16"
-            android:src="@drawable/ic_vertical_lines"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/center"
-            app:layout_constraintTop_toBottomOf="@+id/constraintDepartment" />
-
-        <ImageView
-            android:id="@+id/deviceModelIC"
-            style="@style/sizeIC2"
-            android:layout_marginStart="@dimen/padding_16"
-            android:src="@drawable/device_model"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/deviceTypeIC"
-            app:layout_constraintStart_toEndOf="@+id/center"
-            app:layout_constraintTop_toTopOf="@+id/deviceTypeIC" />
-
-        <TextView
-            android:id="@+id/hintDeviceModel"
-            style="@style/Identifier_text_upper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:text="Device Model"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/deviceModelIC"
-            app:layout_constraintStart_toEndOf="@+id/deviceModelIC"
-            app:layout_constraintTop_toTopOf="@+id/deviceModelIC" />
-
-        <TextView
-            android:id="@+id/textHolderDeviceModel"
-            style="@style/textStyle_info_bold_opaque"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Device Model"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/deviceModelIC"
-            app:layout_constraintStart_toStartOf="@+id/hintDeviceModel"
-            app:layout_constraintTop_toBottomOf="@+id/hintDeviceModel" />
-
-        <ImageView
-            android:id="@+id/imgVwDatePur"
-            style="@style/sizeIC2"
-            android:src="@drawable/ic_calendar"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/connector3"
-            app:layout_constraintStart_toStartOf="@+id/connector3"
-            app:layout_constraintTop_toBottomOf="@+id/connector3" />
-
-        <TextView
-            android:id="@+id/hintDatePurchased"
-            style="@style/Identifier_text_upper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Date Purchased"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/imgVwDatePur"
-            app:layout_constraintStart_toEndOf="@+id/imgVwDatePur"
-            app:layout_constraintTop_toTopOf="@+id/imgVwDatePur" />
-
-        <TextView
-            android:id="@+id/textHolderDatePur"
-            style="@style/textStyle_info_bold_opaque"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date Purchased"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/imgVwDatePur"
-            app:layout_constraintStart_toStartOf="@+id/hintDatePurchased"
-            app:layout_constraintTop_toBottomOf="@+id/hintDatePurchased" />
-
-        <ImageView
-            android:id="@+id/connector3"
-            style="@style/sizeIC2"
-            android:src="@drawable/ic_vertical_lines"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/deviceTypeIC"
-            app:layout_constraintStart_toStartOf="@+id/deviceTypeIC"
-            app:layout_constraintTop_toBottomOf="@+id/deviceTypeIC" />
-
-        <ImageView
-            android:id="@+id/connector5"
-            style="@style/sizeIC2"
-            android:layout_marginStart="@dimen/padding_16"
-            android:src="@drawable/ic_vertical_lines"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/center"
-            app:layout_constraintTop_toBottomOf="@+id/deviceModelIC" />
-
-        <ImageView
-            android:id="@+id/imgVwDateExpired"
-            style="@style/sizeIC2"
-            android:layout_marginStart="@dimen/padding_16"
-            android:src="@drawable/ic_expiration"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/imgVwDatePur"
-            app:layout_constraintStart_toEndOf="@+id/center"
-            app:layout_constraintTop_toTopOf="@+id/imgVwDatePur" />
-
-        <TextView
-            android:id="@+id/hintExpirationDate"
-            style="@style/Identifier_text_upper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Expiration Date"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/imgVwDateExpired"
-            app:layout_constraintStart_toEndOf="@+id/imgVwDateExpired"
-            app:layout_constraintTop_toTopOf="@+id/imgVwDateExpired" />
-
-        <TextView
-            android:id="@+id/textHolderDateExpired"
-            style="@style/textStyle_info_bold_opaque"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Expiration"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/imgVwDateExpired"
-            app:layout_constraintStart_toStartOf="@+id/hintExpirationDate"
-            app:layout_constraintTop_toBottomOf="@+id/hintExpirationDate" />
-
-        <ImageView
-            android:id="@+id/connector6"
-            style="@style/sizeIC2"
-            android:src="@drawable/ic_vertical_lines"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/imgVwDatePur"
-            app:layout_constraintStart_toStartOf="@+id/imgVwDatePur"
-            app:layout_constraintTop_toBottomOf="@+id/imgVwDatePur" />
-
-        <ImageView
-            android:id="@+id/imgVwStatus"
-            style="@style/sizeIC2"
-            android:src="@drawable/ic_reload"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/connector6"
-            app:layout_constraintStart_toStartOf="@+id/connector6"
-            app:layout_constraintTop_toBottomOf="@+id/connector6" />
-
-        <TextView
-            android:id="@+id/hintStatus"
-            style="@style/Identifier_text_upper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:text="Status"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/imgVwStatus"
-            app:layout_constraintStart_toEndOf="@+id/imgVwStatus"
-            app:layout_constraintTop_toTopOf="@+id/imgVwStatus" />
-
-        <TextView
-            android:id="@+id/textHolderStatus"
-            style="@style/textStyle_info_bold_opaque"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:text="Status"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/imgVwStatus"
-            app:layout_constraintStart_toEndOf="@+id/imgVwStatus"
-            app:layout_constraintTop_toBottomOf="@+id/hintStatus" />
-
-        <ImageView
-            android:id="@+id/connector7"
-            style="@style/sizeIC2"
-            android:layout_marginStart="@dimen/padding_16"
-            android:src="@drawable/ic_vertical_lines"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/center"
-            app:layout_constraintTop_toBottomOf="@+id/imgVwDateExpired" />
-
-        <ImageView
-            android:id="@+id/imgVwAvailability"
-            style="@style/sizeIC2"
-            android:src="@drawable/ic_stocks"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/connector7"
-            app:layout_constraintStart_toStartOf="@+id/connector7"
-            app:layout_constraintTop_toBottomOf="@+id/connector7" />
-
-        <TextView
-            android:id="@+id/hintAvailability"
-            style="@style/Identifier_text_upper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:text="Availability"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/imgVwAvailability"
-            app:layout_constraintStart_toEndOf="@+id/imgVwAvailability"
-            app:layout_constraintTop_toTopOf="@+id/imgVwAvailability" />
-
-        <TextView
-            android:id="@+id/textHolderAvailability"
-            style="@style/textStyle_info_bold_opaque"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16"
-            android:text="Availability"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/imgVwAvailability"
-            app:layout_constraintStart_toEndOf="@+id/imgVwAvailability"
-            app:layout_constraintTop_toBottomOf="@+id/hintAvailability" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/actions"
@@ -524,7 +539,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imgVwStatus">
+            app:layout_constraintTop_toBottomOf="@+id/other">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/editBtn"

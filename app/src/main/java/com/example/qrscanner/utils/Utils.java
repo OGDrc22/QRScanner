@@ -1,12 +1,20 @@
 package com.example.qrscanner.utils;
 
+import static androidx.core.app.ActivityCompat.startActivityForResult;
+
+import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,34 +22,43 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.Settings;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
+import com.example.qrscanner.activities.MainActivity;
 import com.example.qrscanner.adapter.ItemAdapter;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.ByteArrayOutputStream;
@@ -57,11 +74,14 @@ public class Utils {
     // Expiration calculator
     private static final String pattern = "MM/dd/yy";
     private static DBHelper dbHelper;
-    private static ArrayList<Assigned_to_User_Model> deviceList;
+    private static ArrayList<ItemModel> deviceList;
     private static View topSnackView;
     private static ImageView topSnack_icon;
     private static TextView topSnackMessage;
     private static TextView topSnackDesc;
+
+
+
 
     public static byte[] imageViewToByte(Context context, ImageView imageView) {
         Drawable drawable = imageView.getDrawable();
@@ -313,20 +333,24 @@ public class Utils {
         animator.start();
     }
 
-    public static void expandCardViewItemAdapter(final CardView cardView, int duration) {
+//    public static void expandCardViewItemAdapter(final CardView cardView, int duration) {
+//
+//        int newHeight = (getWrapContentHeight(cardView));
+//
+//        ValueAnimator animator = ValueAnimator.ofInt(cardView.getHeight(), newHeight);
+//        animator.addUpdateListener(animation -> {
+//            cardView.getLayoutParams().height = (int) animation.getAnimatedValue();
+//            cardView.requestLayout();
+//        });
+//
+//        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+//        animator.setDuration(duration);
+//        animator.start();
+//    }
 
-        int newHeight = (getWrapContentHeight(cardView));
-
-        ValueAnimator animator = ValueAnimator.ofInt(cardView.getHeight(), newHeight);
-        animator.addUpdateListener(animation -> {
-            cardView.getLayoutParams().height = (int) animation.getAnimatedValue();
-            cardView.requestLayout();
-        });
-
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.setDuration(duration);
-        animator.start();
-    }
+//    public static void expandCardViewItemAdapter(final CardView cardView, int duration) {
+//
+//    }
 
     public static void collapseCardViewItemAdapter(final CardView cardView, CardView originalHeight, int duration) {
         final int initialHeight = cardView.getMeasuredHeight();
@@ -336,6 +360,11 @@ public class Utils {
             cardView.getLayoutParams().height = (int) animation.getAnimatedValue();
             cardView.requestLayout();
         });
+//        ValueAnimator animator = ValueAnimator.ofInt(initialHeight);
+//        animator.addUpdateListener(animation -> {
+//            cardView.getLayoutParams().height = (int) animation.getAnimatedValue();
+//            cardView.requestLayout();
+//        });
 
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.setDuration(duration);
@@ -549,9 +578,9 @@ public class Utils {
         protected Boolean doInBackground(Void... voids) {
             try {
                 // Iterate through the original list and remove items that match the gadget name
-                Iterator<Assigned_to_User_Model> iterator = deviceList.iterator();
+                Iterator<ItemModel> iterator = deviceList.iterator();
                 while (iterator.hasNext()) {
-                    Assigned_to_User_Model device = iterator.next();
+                    ItemModel device = iterator.next();
                     // Assuming getDeviceName() returns the name of the device
                     String filterKey2 = filterKey.toLowerCase();
                     if (device.getDeviceType().equalsIgnoreCase(filterKey2)) {
@@ -671,5 +700,24 @@ public class Utils {
             }
         }
     }
+
+
+    public static void getSelectedItemCounter(Context context, TextView textViewSelectedItemCount) {
+        dbHelper = new DBHelper(context);
+        deviceList = dbHelper.fetchDevice();
+        String deviceCount = String.valueOf(deviceList.size());
+        textViewSelectedItemCount.setText("Item Count: " + deviceCount);
+    }
+
+    public static void getItemCounterInAdapter(ItemAdapter adapter, TextView textViewItemCount) {
+        int count = adapter.getItemCount();
+        textViewItemCount.setText("Item Count: " + count);
+    }
+
+
+
+
+
+
 
 }

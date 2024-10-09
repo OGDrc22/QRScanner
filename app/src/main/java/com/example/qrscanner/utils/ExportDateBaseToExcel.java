@@ -18,7 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -37,6 +37,7 @@ import java.util.ArrayList;
 
 public class ExportDateBaseToExcel extends AsyncTask<Uri, Integer, Boolean> {
 
+    private String TAG = "ExportDatabaseToExcel";
     private Uri selectedFileUri;
 
     private String fileName;
@@ -92,10 +93,10 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Integer, Boolean> {
         try {
             DBHelper dbHelper = new DBHelper(context);
 
-            Log.d("MainActivity", "Storage permission granted");
+            Log.d(TAG, "Storage permission granted");
             // Fetch data from the database
-            ArrayList<Assigned_to_User_Model> deviceList = dbHelper.fetchDevice();
-            Log.d("MainActivity", "Fetched " + deviceList.size() + " records from the database");
+            ArrayList<ItemModel> deviceList = dbHelper.fetchDevice();
+            Log.d(TAG, "Fetched " + deviceList.size() + " records from the database");
 
             // Create an Excel workbook and sheet
             Workbook workbook = new XSSFWorkbook();
@@ -134,7 +135,7 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Integer, Boolean> {
                 }
 
                 cellLengthHeaders[i] = length * 256;
-                Log.d("TAG", "Header column " + i + " length: " + cellLengthHeaders[i]);
+//                Log.d("TAG", "Header column " + i + " length: " + cellLengthHeaders[i]);
                 cell.setCellStyle(wrapStyle);
                 headerRow.getCell(i).getCellStyle().setAlignment(HorizontalAlignment.CENTER);
                 headerRow.getCell(i).getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
@@ -142,7 +143,7 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Integer, Boolean> {
 
             // Fill data rows and calculate content widths
             int rowNum = 1;
-            for (Assigned_to_User_Model device : deviceList) {
+            for (ItemModel device : deviceList) {
                 Row row = sheet.createRow(rowNum++);
                 row.createCell(0).setCellValue(device.getSerialNumber());
                 row.createCell(1).setCellValue(device.getUserName());
@@ -151,11 +152,11 @@ public class ExportDateBaseToExcel extends AsyncTask<Uri, Integer, Boolean> {
                 row.createCell(4).setCellValue(device.getDeviceBrand());
                 row.createCell(5).setCellValue(device.getDatePurchased());
                 row.createCell(6).setCellValue(device.getDateExpired());
-                Log.d("MainActivity", "run: date expired " + row.getCell(6).getStringCellValue());
+//                Log.d(TAG, "run: date expired " + row.getCell(6).getStringCellValue());
                 row.createCell(7).setCellValue(device.getStatus());
-                Log.d("MainActivity", "run: status " + row.getCell(7).getStringCellValue());
+//                Log.d(TAG, "run: status " + row.getCell(7).getStringCellValue());
                 row.createCell(8).setCellValue(device.getAvailability());
-                Log.d("MainActivity", "Added row " + rowNum + " to the sheet");
+//                Log.d(TAG, "Added row " + rowNum + " to the sheet");
                 publishProgress(rowNum);
 
                 for (int i = 0; i <= 8; i++) {

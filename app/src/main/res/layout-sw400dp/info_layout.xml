@@ -210,7 +210,7 @@
 
         <TextView
             android:id="@+id/textHolderAssignedTo"
-            style="@style/textStyle_info_bold_opaque"
+            style="@style/textStyle_info_bold_opaque_400dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -252,7 +252,7 @@
 
             <TextView
                 android:id="@+id/textHolderDepartment"
-                style="@style/textStyle_info_bold_opaque"
+                style="@style/textStyle_info_bold_opaque_400dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
@@ -297,7 +297,7 @@
 
         <TextView
             android:id="@+id/textHolderDeviceType"
-            style="@style/textStyle_info_bold_opaque"
+            style="@style/textStyle_info_bold_opaque_400dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Device Type"
@@ -339,9 +339,12 @@
 
         <TextView
             android:id="@+id/textHolderDeviceModel"
-            style="@style/textStyle_info_bold_opaque"
+            style="@style/textStyle_info_bold_opaque_400dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:maxEms="8"
+            android:maxLines="1"
             android:text="Device Model"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/deviceModelIC"
@@ -371,7 +374,7 @@
 
         <TextView
             android:id="@+id/textHolderDatePur"
-            style="@style/textStyle_info_bold_opaque"
+            style="@style/textStyle_info_bold_opaque_400dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date Purchased"
@@ -422,7 +425,7 @@
 
         <TextView
             android:id="@+id/textHolderDateExpired"
-            style="@style/textStyle_info_bold_opaque"
+            style="@style/textStyle_info_bold_opaque_400dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Expiration"
@@ -463,7 +466,7 @@
 
         <TextView
             android:id="@+id/textHolderStatus"
-            style="@style/textStyle_info_bold_opaque"
+            style="@style/textStyle_info_bold_opaque_400dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_16"
@@ -505,7 +508,7 @@
 
         <TextView
             android:id="@+id/textHolderAvailability"
-            style="@style/textStyle_info_bold_opaque"
+            style="@style/textStyle_info_bold_opaque_400dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_16"

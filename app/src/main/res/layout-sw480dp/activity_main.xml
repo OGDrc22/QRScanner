@@ -10,7 +10,7 @@
     tools:context=".activities.MainActivity">
 
     <include
-        android:id="@+id/nav_bar"
+        android:id="@+id/nav_bar_id"
         layout="@layout/nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
         app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_bar"
+        app:layout_constraintTop_toBottomOf="@+id/nav_bar_id"
         app:queryBackground="@android:color/transparent"
         app:queryHint="Search here..."/>
 
@@ -178,7 +178,7 @@
                 android:id="@+id/recyclerViewMainUi"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:fadingEdge="vertical"
+                android:requiresFadingEdge="vertical"
                 android:fadingEdgeLength="@dimen/padding_12"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

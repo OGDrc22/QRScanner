@@ -51,9 +51,8 @@ import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.DepartmentAdapter;
-import com.example.qrscanner.adapter.GadgetAdapterMainUI;
 import com.example.qrscanner.adapter.GadgetsAdapterList;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 //import com.example.qrscanner.options.Data;
 import com.example.qrscanner.models.Department;
 import com.example.qrscanner.models.GadgetsList;
@@ -81,7 +80,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.zip.Inflater;
 
 
 public class ScanQR extends AppCompatActivity {
@@ -322,8 +320,8 @@ public class ScanQR extends AppCompatActivity {
                         openBottomSheetDialog();
                         scannedData = barcode.getRawValue();
 
-                        ArrayList<Assigned_to_User_Model> dataList = dbHelper.fetchDevice();
-                        for (Assigned_to_User_Model item : dataList) {
+                        ArrayList<ItemModel> dataList = dbHelper.fetchDevice();
+                        for (ItemModel item : dataList) {
                             String serialNum = item.getSerialNumber();
                             String serialNumString = String.valueOf(serialNum);
 
@@ -357,7 +355,7 @@ public class ScanQR extends AppCompatActivity {
 
                     }
 
-                    ArrayList<Assigned_to_User_Model> data = dbHelper.fetchDevice();
+                    ArrayList<ItemModel> data = dbHelper.fetchDevice();
                     image.close();
                     mediaImage.close();
                 });
@@ -535,6 +533,9 @@ public class ScanQR extends AppCompatActivity {
 //                                Toast.makeText(ScanQR.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
                                 Snackbar.make(btmMain, "Please fill up", Snackbar.LENGTH_INDEFINITE).show();
                             } else {// Proceed with saving data
+                                if (assignedTo.getText().toString().equalsIgnoreCase("available")) {
+                                    availability.setText("In Stock");
+                                }
                                 dbHelper.addDevice(
                                         qrText.getText().toString(),
                                         assignedTo.getText().toString(),

@@ -85,7 +85,7 @@
     </style>
 
     <style name="textStyle_info_bold_opaque_400dp">
-        <item name="android:textSize">@dimen/text_12sp</item>
+        <item name="android:textSize">@dimen/text_14sp</item>
         <item name="android:textColor">@color/txtHeaderLight</item>
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
@@ -373,7 +373,8 @@
 
     <style name="itemBG">
         <item name="cardBackgroundColor">@color/itemBg2</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_20</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_item</item>
+        <item name="strokeColor">@color/divider</item>
     </style>
 
     <style name="itemBGWithStroke">

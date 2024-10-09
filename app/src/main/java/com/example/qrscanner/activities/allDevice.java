@@ -1,6 +1,7 @@
 package com.example.qrscanner.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -26,34 +26,47 @@ import com.drc.mytopsnacklibrary.TopSnack;
 import com.example.qrscanner.DB.DBHelper;
 import com.example.qrscanner.R;
 import com.example.qrscanner.adapter.ItemAdapter;
-import com.example.qrscanner.models.Assigned_to_User_Model;
+import com.example.qrscanner.models.ItemModel;
 import com.example.qrscanner.utils.AfterAsyncListener;
 import com.example.qrscanner.utils.DataLoader;
-import com.example.qrscanner.utils.FilteredDataLoader;
+import com.example.qrscanner.utils.DeleteSelected;
+import com.example.qrscanner.utils.ExportSelectedDialogHelper;
+import com.example.qrscanner.utils.ExportSelectedItemToExcel;
 import com.example.qrscanner.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class allDevice extends AppCompatActivity {
 
     private static final int YOUR_REQUEST_CODE = 1;
+    private static final int CREATE_FILE_REQUEST_CODE_SELECTED = 16169;
+    private static final int FILE_REQUEST_CODE = 013;
+    private static final int STORAGE_PERMISSION_CODE = 22;
+
+    private String fileNameToExport;
+    private Uri selectedFileUri;
+
+
     private RecyclerView recyclerView;
     private ArrayList<String> serialNum, assignedTo, department, device, deviceModel, datePurchased, dateExpire, status, availability;
     private DBHelper dbHelper;
 
     private ItemAdapter adapter;
-    private ArrayList<Assigned_to_User_Model> deviceList;
+    private ArrayList<ItemModel> deviceList;
 
-    private TextView textViewInfo, textViewNoData, textViewItemCount;
+    private TextView textViewInfo, textViewNoData, textViewItemCount, textViewCountSelection;
     private CardView cardView_options;
     private ImageView currentActivity, settingsIcon, backBtn;
-    private ConstraintLayout constraintLayoutDeleteAll;
-    private LinearLayout main, cardViewContent;
+    private LinearLayout linearLayoutDeleteAll;
+    private LinearLayout main, linearContent;
+
+    private View spacerView;
+    private LinearLayout deselectID, deleteSelectedID, selectAllID, multiSelectID, exportSelected;
 
     private View topSnackView;
     private ImageView topSnack_icon;
     private TextView topSnackMessage, topSnackDesc;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +85,51 @@ public class allDevice extends AppCompatActivity {
         settingsIcon.setImageResource(R.drawable.drop_down);
         backBtn = findViewById(R.id.backBtn);
         cardView_options = findViewById(R.id.cardView_options);
-        cardViewContent = findViewById(R.id.cardViewContent);
+        linearContent = findViewById(R.id.linearContent);
         textViewNoData = findViewById(R.id.textViewNoData);
         textViewItemCount = findViewById(R.id.textViewItemCount);
+        textViewCountSelection = findViewById(R.id.textViewCountSelection);
+        spacerView = findViewById(R.id.spacerView);
+        selectAllID = findViewById(R.id.selectAllID);
+        deselectID = findViewById(R.id.deselectID);
+        multiSelectID = findViewById(R.id.multi_selectID);
+        exportSelected = findViewById(R.id.exportSelectedID);
+        deleteSelectedID = findViewById(R.id.deleteSelectedID);
 
+        linearLayoutDeleteAll = findViewById(R.id.linearLayoutDeleteAll);
+
+        dbHelper = new DBHelper(this);
+        deviceList = dbHelper.fetchDevice();
+
+        serialNum = new ArrayList<>();
+        assignedTo = new ArrayList<>();
+        department = new ArrayList<>();
+        device = new ArrayList<>();
+        deviceModel = new ArrayList<>();
+        datePurchased = new ArrayList<>();
+        dateExpire = new ArrayList<>();
+        status = new ArrayList<>();
+        availability = new ArrayList<>();
+        recyclerView = findViewById(R.id.recyclerView);
+
+        adapter = new ItemAdapter( R.layout.info_layout, this, main, deviceList, device, serialNum, assignedTo, department, deviceModel, datePurchased, dateExpire, status, availability, this::onDeleteClick, this::onEditClick);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        LayoutInflater inflater = (LayoutInflater) allDevice.this.getSystemService(allDevice.this.LAYOUT_INFLATER_SERVICE);
+        topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
+        topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
+        topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
+        topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
+
+
+        DataLoader loader = new DataLoader(allDevice.this, main, dbHelper, adapter, textViewItemCount, deviceList);
+
+
+        textViewInfo = findViewById(R.id.titleTextView);
+        textViewInfo.setText("All Devices");
+        currentActivity = findViewById(R.id.currentActivity);
+        currentActivity.setImageResource(R.drawable.device_model);
 
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -91,46 +145,78 @@ public class allDevice extends AppCompatActivity {
                 final int initialHeight = cardView_options.getHeight();
                 int duration = 300;
                 Utils.smoothTransition(cardView_options, duration);
-                if (cardViewContent.getVisibility() == View.GONE) {
+                if (linearContent.getVisibility() == View.GONE) {
                     Utils.rotateUp(settingsIcon);
-                    cardViewContent.setVisibility(View.VISIBLE);
+                    linearContent.setVisibility(View.VISIBLE);
                     textViewItemCount.setVisibility(View.VISIBLE);
+                    spacerView.setVisibility(View.VISIBLE);
                     Utils.expandCardView(cardView_options, duration);
                 } else {
                     Utils.rotateDown(settingsIcon);
-                    cardViewContent.setVisibility(View.GONE);
+                    linearContent.setVisibility(View.GONE);
                     textViewItemCount.setVisibility(View.GONE);
+                    spacerView.setVisibility(View.GONE);
                     Utils.collapseCardView(cardView_options, cardView_options, duration);
                 }
             }
         });
 
+        selectAllID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.selectAll(loader.getFilteredList());
+            }
+        });
+
+        multiSelectID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (adapter.getItemCount() > 0){
+                    adapter.enableMultiSelect();
+                }
+            }
+        });
+
+        deselectID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.clearSelection();
+
+                adapter.updateSelectionCount();
+                adapter.refreshSelectionOption();
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        deleteSelectedID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteSelected deleteSelected = new DeleteSelected(allDevice.this, adapter, main);
+                deleteSelected.execute();
+                adapter.disableMultiSelect();
+                Utils.getSelectedItemCounter(allDevice.this, textViewCountSelection);
+            }
+        });
+
+        exportSelected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ExportSelectedDialogHelper exportDialogHelper = new ExportSelectedDialogHelper(allDevice.this, allDevice.this, adapter, main, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc);
+                exportDialogHelper.promptExportWithFileName();
+            }
+        });
 
 
-        dbHelper = new DBHelper(this);
-        deviceList = dbHelper.fetchDevice();
-        String deviceCount = String.valueOf(deviceList.size());
-        textViewItemCount.setText("Item Count: " + deviceCount);
 
-        serialNum = new ArrayList<>();
-        assignedTo = new ArrayList<>();
-        department = new ArrayList<>();
-        device = new ArrayList<>();
-        deviceModel = new ArrayList<>();
-        datePurchased = new ArrayList<>();
-        dateExpire = new ArrayList<>();
-        status = new ArrayList<>();
-        availability = new ArrayList<>();
-        recyclerView = findViewById(R.id.recyclerView);
+        Utils.getItemCounterInAdapter(adapter, textViewItemCount);
 
-        adapter = new ItemAdapter( R.layout.info_layout, this, deviceList, device, serialNum, assignedTo, department, deviceModel, datePurchased, dateExpire, status, availability, this::onDeleteClick, this::onEditClick);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        if (adapter.getItemCount() == 0) {
+            textViewNoData.setVisibility(View.VISIBLE);
+        } else {
+            textViewNoData.setVisibility(View.GONE);
+        }
 
-        DataLoader loader = new DataLoader(allDevice.this, main, dbHelper, adapter, textViewItemCount, deviceList);
-        loader.execute();
 
-//        displayData();
 
         if (deviceList.isEmpty()) {
             textViewNoData.setVisibility(View.VISIBLE);
@@ -140,24 +226,16 @@ public class allDevice extends AppCompatActivity {
             recyclerView.setVisibility(View.VISIBLE);
         }
 
-        textViewInfo = findViewById(R.id.titleTextView);
-        textViewInfo.setText("All Devices");
-        currentActivity = findViewById(R.id.currentActivity);
-        currentActivity.setImageResource(R.drawable.device_model);
 
 
-        LayoutInflater inflater = (LayoutInflater) allDevice.this.getSystemService(allDevice.this.LAYOUT_INFLATER_SERVICE);
-        topSnackView = inflater.inflate(R.layout.top_snack_layout, null);
-        topSnack_icon = topSnackView.findViewById(R.id.topSnack_icon);
-        topSnackMessage = topSnackView.findViewById(R.id.textViewMessage);
-        topSnackDesc = topSnackView.findViewById(R.id.textViewDesc);
 
-        constraintLayoutDeleteAll = findViewById(R.id.constraintDeleteAll);
-        constraintLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
+
+        linearLayoutDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (dbHelper != null) {
                     String identifier = "device";
+                    itemCounter();
                     Utils.showDeleteAllDialog(allDevice.this, identifier, adapter, main);
                 }else {
                     Toast.makeText(allDevice.this, "There's no Data", Toast.LENGTH_SHORT).show();
@@ -166,32 +244,15 @@ public class allDevice extends AppCompatActivity {
         });
 
 
+        loader.execute();
+
     }
 
-
-    // Show All Item
-    private void displayData() {
-        if (deviceList.isEmpty()) {
-            Toast.makeText(this, "No Data Available", Toast.LENGTH_SHORT).show();
-        } else {
-
-            Collections.reverse(deviceList);
-            for (Assigned_to_User_Model devices : deviceList) {
-                serialNum.add(String.valueOf(devices.getSerialNumber()));
-                assignedTo.add(devices.getUserName());
-                department.add(devices.getDepartment());
-                device.add(devices.getDeviceType());
-                deviceModel.add(devices.getDeviceBrand());
-                datePurchased.add(devices.getDatePurchased());
-                dateExpire.add(devices.getDateExpired());
-                status.add(devices.getStatus());
-                availability.add(devices.getAvailability());
-            }
-        }
-        // Notify the adapter of dataset changes
-        adapter.notifyDataSetChanged();
+    private void itemCounter() {
+        deviceList = dbHelper.fetchDevice();
+        String deviceCount = String.valueOf(deviceList.size());
+        textViewItemCount.setText("Item Count: " + deviceCount);
     }
-
 
 
     private void onEditClick(int position) {
@@ -209,6 +270,13 @@ public class allDevice extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         String keyIdentical = "No differences found";
         String keyDifferent = "Difference found";
+
+
+        if (requestCode == CREATE_FILE_REQUEST_CODE_SELECTED && resultCode == RESULT_OK && data != null) {
+            Uri selectedFileUriSelection = data.getData();
+            new ExportSelectedItemToExcel(allDevice.this, main, adapter, topSnackView, topSnack_icon, topSnackMessage, topSnackDesc).execute(selectedFileUriSelection);
+        }
+
 
         if (requestCode == YOUR_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
 
@@ -253,4 +321,5 @@ public class allDevice extends AppCompatActivity {
         });
         return loader;
     }
+
 }

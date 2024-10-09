@@ -26,6 +26,7 @@
     <dimen name="cardCornerRadius_16">16dp</dimen>
     <dimen name="cardCornerRadius_20">20dp</dimen>
     <dimen name="cardCornerRadius_32">32dp</dimen>
+    <dimen name="cardCornerRadius_item">16dp</dimen>
 
     <dimen name="cardCornerRadius_MainActivity">26dp</dimen>
 

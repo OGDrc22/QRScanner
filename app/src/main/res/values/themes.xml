@@ -76,6 +76,12 @@
         <item name="android:fontFamily">@font/gotham_bold</item>
     </style>
 
+    <style name="textStyle_info_bold_opaque_400dp">
+        <item name="android:textSize">@dimen/text_14sp</item>
+        <item name="android:textColor">@color/txtHeader</item>
+        <item name="android:fontFamily">@font/gotham_bold</item>
+    </style>
+
     <style name="textStyle_ConstantColor_info_bold_opaque_light">
         <item name="android:textSize">@dimen/text_16sp</item>
         <item name="android:textColor">@color/txtHeaderLight</item>
@@ -296,7 +302,7 @@
 
     <style name="itemBG">
         <item name="cardBackgroundColor">@color/itemBg</item>
-        <item name="cardCornerRadius">@dimen/cardCornerRadius_20</item>
+        <item name="cardCornerRadius">@dimen/cardCornerRadius_item</item>
     </style>
 
     <style name="cardView_Dialog">

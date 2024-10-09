@@ -38,7 +38,7 @@
     import com.example.qrscanner.adapter.DepartmentAdapter;
     import com.example.qrscanner.adapter.GadgetsAdapterList;
     import com.example.qrscanner.adapter.ItemAdapter;
-    import com.example.qrscanner.models.Assigned_to_User_Model;
+    import com.example.qrscanner.models.ItemModel;
     //    import com.example.qrscanner.options.Data;
     import com.example.qrscanner.models.Department;
     import com.example.qrscanner.models.GadgetsList;
@@ -201,7 +201,7 @@
 
 
 
-            ArrayList<Assigned_to_User_Model> deviceList = new ArrayList<>();
+            ArrayList<ItemModel> deviceList = new ArrayList<>();
             serialNum_id = new ArrayList<>();
             assignedTo_id = new ArrayList<>();
             department_id = new ArrayList<>();
@@ -211,7 +211,7 @@
             dateExpire_id = new ArrayList<>();
             status_id = new ArrayList<>();
             availability_id = new ArrayList<>();
-            itemAdapter = new ItemAdapter(R.layout.info_layout, this, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, null, null);;
+            itemAdapter = new ItemAdapter(R.layout.info_layout, this, main, deviceList, serialNum_id, assignedTo_id, department_id, device_id, deviceModel_id, datePurchased_id, dateExpire_id, status_id, availability_id, null, null);;
 
 
             // Get Value from intent
@@ -221,10 +221,15 @@
 
             chooserDevice.setText(getIntent().getStringExtra("deviceType"));
             byte[] byteExtras = getIntent().getByteArrayExtra("deviceTypeImg");
-            Bitmap bitmap = BitmapFactory.decodeByteArray(byteExtras, 0, byteExtras.length);
-            Drawable imgDrawable = new BitmapDrawable(getResources(), bitmap);
-            textInputLayoutDevice.setStartIconDrawable(imgDrawable);
-            textInputLayoutDeviceModel.setStartIconDrawable(imgDrawable);
+            if (byteExtras != null) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(byteExtras, 0, byteExtras.length);
+                Drawable imgDrawable = new BitmapDrawable(getResources(), bitmap);
+                textInputLayoutDevice.setStartIconDrawable(imgDrawable);
+                textInputLayoutDeviceModel.setStartIconDrawable(imgDrawable);
+            } else {
+                textInputLayoutDevice.setStartIconDrawable(R.drawable.device_model);
+                textInputLayoutDeviceModel.setStartIconDrawable(R.drawable.device_model);
+            }
 
             deviceModel.setText(getIntent().getStringExtra("deviceModel"));
             datePurchased.setText(getIntent().getStringExtra("datePurchased"));
